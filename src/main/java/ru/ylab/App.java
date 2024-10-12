@@ -1,6 +1,5 @@
 package ru.ylab;
 
-import java.util.Map;
 import java.util.Scanner;
 
 import lombok.Getter;
@@ -8,16 +7,12 @@ import lombok.Setter;
 import ru.ylab.config.AppContext;
 import ru.ylab.handlers.Page;
 import ru.ylab.handlers.AbstractHandler;
-import ru.ylab.models.Habit;
 import ru.ylab.models.User;
-import ru.ylab.repositories.HabitRepository;
-import ru.ylab.repositories.UserRepository;
-import ru.ylab.utils.IdUtil;
 
 /**
  * Class representing application.
  *
- * @author azaty
+ * @author azatyamanaev
  */
 public class App {
 
