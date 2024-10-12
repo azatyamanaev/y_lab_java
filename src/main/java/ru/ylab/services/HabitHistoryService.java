@@ -15,7 +15,7 @@ import ru.ylab.repositories.HabitRepository;
 import ru.ylab.utils.InputParser;
 
 /**
- * Class .
+ * Service implementing logic for working with habit history.
  *
  * @author azatyamanaev
  */
