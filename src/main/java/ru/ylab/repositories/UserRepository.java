@@ -23,7 +23,6 @@ public class UserRepository {
     /**
      * Map for storing users data.
      */
-    @Getter
     private static final Map<Long, User> users = new HashMap<>();
 
     /**

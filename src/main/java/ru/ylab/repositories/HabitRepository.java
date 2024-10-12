@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
@@ -23,7 +22,6 @@ public class HabitRepository {
     /**
      * Map for storing habits data.
      */
-    @Getter
     private static final Map<Long, Habit> habits = new HashMap<>();
 
     /**
