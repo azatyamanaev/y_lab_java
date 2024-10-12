@@ -89,8 +89,7 @@ public class InputParser {
             input = scanner.next();
             try {
                 res = LocalDate.parse(input);
-            } catch (
-                    DateTimeParseException e) {
+            } catch (DateTimeParseException e) {
                 System.out.println("Invalid input. enter date in format yyyy-MM-dd: ");
                 res = null;
             }
