@@ -214,6 +214,6 @@ public class HabitHistoryService {
         }
 
         double value = (double) count / times;
-        return String.format("%.2f", value);
+        return String.format("%.2f", value) + "%";
     }
 }

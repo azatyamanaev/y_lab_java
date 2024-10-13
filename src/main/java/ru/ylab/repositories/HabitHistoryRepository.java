@@ -1,8 +1,5 @@
 package ru.ylab.repositories;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.models.HabitHistory;
 
@@ -14,9 +11,18 @@ import ru.ylab.models.HabitHistory;
 public class HabitHistoryRepository {
 
     /**
-     * Map for storing habit history data.
+     * Instance of a {@link Storage}
      */
-    private static final Map<Long, HabitHistory> habitHistory = new HashMap<>();
+    private final Storage storage;
+
+    /**
+     * Creates new HabitHistoryRepository.
+     *
+     * @param storage Storage instance
+     */
+    public HabitHistoryRepository(Storage storage) {
+        this.storage = storage;
+    }
 
     /**
      * Saves habit history to storage.
@@ -25,7 +31,7 @@ public class HabitHistoryRepository {
      * @return saved history
      */
     public HabitHistory save(HabitHistory history) {
-        habitHistory.put(history.getHabitId(), history);
+        storage.getHabitHistory().put(history.getHabitId(), history);
         return history;
     }
 
@@ -36,7 +42,7 @@ public class HabitHistoryRepository {
      * @return habit history or null
      */
     public HabitHistory getByHabitId(@NotNull Long habitId) {
-        return habitHistory.get(habitId);
+        return storage.getHabitHistory().get(habitId);
     }
 
     /**
@@ -46,6 +52,6 @@ public class HabitHistoryRepository {
      * @return whether deletion is successful
      */
     public boolean deleteByHabitId(@NotNull Long habitId) {
-        return habitHistory.remove(habitId) != null;
+        return storage.getHabitHistory().remove(habitId) != null;
     }
 }

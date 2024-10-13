@@ -17,6 +17,7 @@ import ru.ylab.handlers.UserProfileHandler;
 import ru.ylab.handlers.UsersHandler;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
+import ru.ylab.repositories.Storage;
 import ru.ylab.repositories.UserRepository;
 import ru.ylab.services.AuthService;
 import ru.ylab.services.HabitHistoryService;
@@ -35,6 +36,11 @@ public class AppContext {
      * Map for storing Handler implementations for each page.
      */
     private final Map<Page, AbstractHandler> handlers;
+
+    /**
+     * Instance of a {@link Storage}
+     */
+    private final Storage storage;
 
     /**
      * Instance of an {@link UserRepository}.
@@ -72,10 +78,10 @@ public class AppContext {
     private final AuthService authService;
 
     public AppContext() {
-
-        this.userRepository = new UserRepository();
-        this.habitRepository = new HabitRepository();
-        this.habitHistoryRepository = new HabitHistoryRepository();
+        this.storage = new Storage();
+        this.userRepository = new UserRepository(storage);
+        this.habitRepository = new HabitRepository(storage);
+        this.habitHistoryRepository = new HabitHistoryRepository(storage);
         this.userService = new UserService(userRepository);
         this.habitService = new HabitService(habitRepository, habitHistoryRepository);
         this.authService = new AuthService(userRepository);

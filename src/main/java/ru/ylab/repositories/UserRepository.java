@@ -20,9 +20,18 @@ import ru.ylab.models.User;
 public class UserRepository {
 
     /**
-     * Map for storing users data.
+     * Instance of a {@link Storage}
      */
-    private static final Map<Long, User> users = new HashMap<>();
+    private final Storage storage;
+
+    /**
+     * Creates new UserRepository.
+     *
+     * @param storage Storage instance
+     */
+    public UserRepository(Storage storage) {
+        this.storage = storage;
+    }
 
     /**
      * Finds user by name.
@@ -31,9 +40,9 @@ public class UserRepository {
      * @return {@code Optional<User>}
      */
     public Optional<User> findByEmail(String email) {
-        return users.values().stream()
-                    .filter(x -> x.getEmail().equals(email))
-                    .findAny();
+        return storage.getUsers().values().stream()
+                      .filter(x -> x.getEmail().equals(email))
+                      .findAny();
     }
 
     /**
@@ -62,7 +71,7 @@ public class UserRepository {
      * @return list of all users
      */
     public List<User> getAll() {
-        return new ArrayList<>(users.values());
+        return new ArrayList<>(storage.getUsers().values());
     }
 
     /**
@@ -72,9 +81,9 @@ public class UserRepository {
      * @return list of users
      */
     public List<User> search(@NotNull UserSearchForm form) {
-        return users.values().stream()
-                    .filter(getPredicates(form))
-                    .collect(Collectors.toList());
+        return storage.getUsers().values().stream()
+                      .filter(getPredicates(form))
+                      .collect(Collectors.toList());
     }
 
     /**
@@ -84,7 +93,7 @@ public class UserRepository {
      * @return saved user
      */
     public User save(User user) {
-        users.put(user.getId(), user);
+        storage.getUsers().put(user.getId(), user);
         return user;
     }
 
@@ -95,7 +104,7 @@ public class UserRepository {
      * @return updated user
      */
     public User update(User user) {
-        users.put(user.getId(), user);
+        storage.getUsers().put(user.getId(), user);
         return user;
     }
 
@@ -110,7 +119,7 @@ public class UserRepository {
         if (user == null) {
             return false;
         } else {
-            return users.remove(user.getId()) != null;
+            return storage.getUsers().remove(user.getId()) != null;
         }
     }
 
@@ -127,7 +136,7 @@ public class UserRepository {
             predicate = predicate.and(x -> x.getName().startsWith(form.getName()));
         }
 
-        if (form.getName() != null && !form.getEmail().isBlank()) {
+        if (form.getEmail() != null && !form.getEmail().isBlank()) {
             predicate = predicate.and(x -> x.getEmail().startsWith(form.getEmail()));
         }
 
