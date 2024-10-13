@@ -10,11 +10,13 @@ import ru.ylab.models.User;
 
 public class UserRepositoryTest {
 
+    private Storage storage;
     private UserRepository userRepository;
 
     @Before
     public void setUp() {
-        userRepository = new UserRepository(new Storage());
+        storage = new Storage();
+        userRepository = new UserRepository(storage);
         userRepository.save(new User(0L, "admin", "admin@mail.ru", "admin", User.Role.ADMIN));
         userRepository.save(new User(1L, "user1", "user1@mail.ru", "pass1", User.Role.USER));
         userRepository.save(new User(2L, "user2", "user2@mail.ru", "pass2", User.Role.USER));
@@ -78,7 +80,7 @@ public class UserRepositoryTest {
     @Test
     public void testSave() {
         userRepository.save(new User(3L, "user3", "user3@mail.ru", "pass3", User.Role.USER));
-        User user = userRepository.getByEmail("user3@mail.ru");
+        User user = storage.getUsers().get(3L);
         Assert.assertEquals("user3", user.getName());
 
     }
@@ -86,7 +88,7 @@ public class UserRepositoryTest {
     @Test
     public void testUpdate() {
         userRepository.update(new User(2L, "user22", "user2@mail.ru", "pass22", User.Role.USER));
-        User user = userRepository.getByEmail("user2@mail.ru");
+        User user = storage.getUsers().get(2L);
         Assert.assertEquals("user22", user.getName());
         Assert.assertEquals("pass22", user.getPassword());
 

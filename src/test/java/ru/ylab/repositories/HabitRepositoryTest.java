@@ -10,11 +10,13 @@ import ru.ylab.models.Habit;
 
 public class HabitRepositoryTest {
 
+    private Storage storage;
     private HabitRepository habitRepository;
 
     @Before
     public void setUp() {
-        habitRepository = new HabitRepository(new Storage());
+        storage = new Storage();
+        habitRepository = new HabitRepository(storage);
         habitRepository.save(new Habit(1L, "habit1", "desc1", Habit.Frequency.DAILY, 1L));
         habitRepository.save(new Habit(2L, "habit2", "desc1", Habit.Frequency.WEEKLY, 1L));
         habitRepository.save(new Habit(3L, "hb1", "d1", Habit.Frequency.WEEKLY, 2L));
@@ -96,7 +98,7 @@ public class HabitRepositoryTest {
     @Test
     public void testSave() {
         habitRepository.save(new Habit(10L, "habit10", "desc10", Habit.Frequency.DAILY, 3L));
-        Habit habit = habitRepository.getByName("habit10");
+        Habit habit = storage.getHabits().get(10L);
         Assert.assertEquals("habit10", habit.getName());
 
     }
@@ -104,7 +106,7 @@ public class HabitRepositoryTest {
     @Test
     public void testUpdate() {
         habitRepository.update(new Habit(1L, "habit11", "desc11", Habit.Frequency.MONTHLY, 1L));
-        Habit habit = habitRepository.getByName("habit11");
+        Habit habit = storage.getHabits().get(1L);
         Assert.assertEquals("habit11", habit.getName());
         Assert.assertEquals("desc11", habit.getDescription());
         Assert.assertEquals(Habit.Frequency.MONTHLY, habit.getFrequency());

@@ -10,11 +10,13 @@ import ru.ylab.models.HabitHistory;
 
 public class HabitHistoryRepositoryTest {
 
+    private Storage storage;
     private HabitHistoryRepository historyRepository;
 
     @Before
     public void setUp() {
-        historyRepository = new HabitHistoryRepository(new Storage());
+        storage = new Storage();
+        historyRepository = new HabitHistoryRepository(storage);
         historyRepository.save(new HabitHistory(1L, 1L, Set.of()));
         historyRepository.save(new HabitHistory(1L, 2L, Set.of(LocalDate.parse("2024-10-12"))));
         historyRepository.save(new HabitHistory(2L, 3L, Set.of(LocalDate.parse("2024-10-12"), LocalDate.parse("2024-10-05"))));
@@ -34,7 +36,7 @@ public class HabitHistoryRepositoryTest {
     @Test
     public void testSave() {
         HabitHistory history = historyRepository.save(new HabitHistory(2L, 4L, Set.of()));
-        HabitHistory saved = historyRepository.getByHabitId(4L);
+        HabitHistory saved = storage.getHabitHistory().get(4L);
         Assert.assertEquals(history.getUserId(), saved.getUserId());
     }
 
