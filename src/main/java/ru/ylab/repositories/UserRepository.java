@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
@@ -108,8 +107,11 @@ public class UserRepository {
      */
     public boolean deleteByEmail(String email) {
         User user = getByEmail(email);
-        users.remove(user.getId());
-        return true;
+        if (user == null) {
+            return false;
+        } else {
+            return users.remove(user.getId()) != null;
+        }
     }
 
     /**

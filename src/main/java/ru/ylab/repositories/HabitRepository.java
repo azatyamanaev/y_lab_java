@@ -134,8 +134,7 @@ public class HabitRepository {
      */
     public boolean delete(Long userId, @NotNull Habit habit) {
         if (habit.getUserId().equals(userId)) {
-            habits.remove(habit.getId());
-            return true;
+            return habits.remove(habit.getId()) != null;
         } else {
             return false;
         }

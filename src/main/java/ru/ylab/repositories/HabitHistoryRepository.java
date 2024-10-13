@@ -46,7 +46,6 @@ public class HabitHistoryRepository {
      * @return whether deletion is successful
      */
     public boolean deleteByHabitId(@NotNull Long habitId) {
-        habitHistory.remove(habitId);
-        return true;
+        return habitHistory.remove(habitId) != null;
     }
 }
