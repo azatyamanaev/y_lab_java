@@ -26,6 +26,10 @@ import ru.ylab.services.AuthService;
 import ru.ylab.services.HabitHistoryService;
 import ru.ylab.services.HabitService;
 import ru.ylab.services.UserService;
+import ru.ylab.services.impl.AuthServiceImpl;
+import ru.ylab.services.impl.HabitHistoryServiceImpl;
+import ru.ylab.services.impl.HabitServiceImpl;
+import ru.ylab.services.impl.UserServiceImpl;
 
 /**
  * Class representing application context.
@@ -85,10 +89,10 @@ public class AppContext {
         this.userRepository = new UserRepositoryImpl(storage);
         this.habitRepository = new HabitRepositoryImpl(storage);
         this.habitHistoryRepository = new HabitHistoryRepositoryImpl(storage);
-        this.userService = new UserService(userRepository);
-        this.habitService = new HabitService(habitRepository, habitHistoryRepository);
-        this.authService = new AuthService(userRepository);
-        this.habitHistoryService = new HabitHistoryService(habitRepository, habitHistoryRepository);
+        this.userService = new UserServiceImpl(userRepository);
+        this.habitService = new HabitServiceImpl(habitRepository, habitHistoryRepository);
+        this.authService = new AuthServiceImpl(userRepository);
+        this.habitHistoryService = new HabitHistoryServiceImpl(habitRepository, habitHistoryRepository);
 
         this.handlers = new HashMap<>();
         handlers.put(Page.AUTH_PAGE, new AuthHandler(authService));
