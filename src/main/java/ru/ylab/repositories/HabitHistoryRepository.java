@@ -4,25 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import ru.ylab.models.HabitHistory;
 
 /**
- * Class for working with habit history storage.
+ * Interface describing logic for working with habit history storage.
  *
  * @author azatyamanaev
  */
-public class HabitHistoryRepository {
-
-    /**
-     * Instance of a {@link Storage}
-     */
-    private final Storage storage;
-
-    /**
-     * Creates new HabitHistoryRepository.
-     *
-     * @param storage Storage instance
-     */
-    public HabitHistoryRepository(Storage storage) {
-        this.storage = storage;
-    }
+public interface HabitHistoryRepository {
 
     /**
      * Saves habit history to storage.
@@ -30,10 +16,7 @@ public class HabitHistoryRepository {
      * @param history habit history data
      * @return saved history
      */
-    public HabitHistory save(HabitHistory history) {
-        storage.getHabitHistory().put(history.getHabitId(), history);
-        return history;
-    }
+    HabitHistory save(HabitHistory history);
 
     /**
      * Gets habit history by habit id
@@ -41,9 +24,7 @@ public class HabitHistoryRepository {
      * @param habitId habit id
      * @return habit history or null
      */
-    public HabitHistory getByHabitId(@NotNull Long habitId) {
-        return storage.getHabitHistory().get(habitId);
-    }
+    HabitHistory getByHabitId(@NotNull Long habitId);
 
     /**
      * Deletes history of a habit by habit id.
@@ -51,7 +32,5 @@ public class HabitHistoryRepository {
      * @param habitId habit id
      * @return whether deletion is successful
      */
-    public boolean deleteByHabitId(@NotNull Long habitId) {
-        return storage.getHabitHistory().remove(habitId) != null;
-    }
+    boolean deleteByHabitId(@NotNull Long habitId);
 }

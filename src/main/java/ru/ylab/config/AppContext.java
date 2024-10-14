@@ -17,8 +17,11 @@ import ru.ylab.handlers.UserProfileHandler;
 import ru.ylab.handlers.UsersHandler;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.repositories.Storage;
 import ru.ylab.repositories.UserRepository;
+import ru.ylab.repositories.impl.HabitHistoryRepositoryImpl;
+import ru.ylab.repositories.impl.HabitRepositoryImpl;
+import ru.ylab.repositories.Storage;
+import ru.ylab.repositories.impl.UserRepositoryImpl;
 import ru.ylab.services.AuthService;
 import ru.ylab.services.HabitHistoryService;
 import ru.ylab.services.HabitService;
@@ -79,9 +82,9 @@ public class AppContext {
 
     public AppContext() {
         this.storage = new Storage();
-        this.userRepository = new UserRepository(storage);
-        this.habitRepository = new HabitRepository(storage);
-        this.habitHistoryRepository = new HabitHistoryRepository(storage);
+        this.userRepository = new UserRepositoryImpl(storage);
+        this.habitRepository = new HabitRepositoryImpl(storage);
+        this.habitHistoryRepository = new HabitHistoryRepositoryImpl(storage);
         this.userService = new UserService(userRepository);
         this.habitService = new HabitService(habitRepository, habitHistoryRepository);
         this.authService = new AuthService(userRepository);

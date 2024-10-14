@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
+import ru.ylab.repositories.impl.HabitRepositoryImpl;
 
 public class HabitRepositoryTest {
 
@@ -16,7 +17,7 @@ public class HabitRepositoryTest {
     @Before
     public void setUp() {
         storage = new Storage();
-        habitRepository = new HabitRepository(storage);
+        habitRepository = new HabitRepositoryImpl(storage);
         habitRepository.save(new Habit(1L, "habit1", "desc1", Habit.Frequency.DAILY, 1L));
         habitRepository.save(new Habit(2L, "habit2", "desc1", Habit.Frequency.WEEKLY, 1L));
         habitRepository.save(new Habit(3L, "hb1", "d1", Habit.Frequency.WEEKLY, 2L));

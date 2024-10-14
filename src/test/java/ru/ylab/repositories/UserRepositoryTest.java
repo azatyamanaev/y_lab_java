@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
+import ru.ylab.repositories.impl.UserRepositoryImpl;
 
 public class UserRepositoryTest {
 
@@ -16,7 +17,7 @@ public class UserRepositoryTest {
     @Before
     public void setUp() {
         storage = new Storage();
-        userRepository = new UserRepository(storage);
+        userRepository = new UserRepositoryImpl(storage);
         userRepository.save(new User(0L, "admin", "admin@mail.ru", "admin", User.Role.ADMIN));
         userRepository.save(new User(1L, "user1", "user1@mail.ru", "pass1", User.Role.USER));
         userRepository.save(new User(2L, "user2", "user2@mail.ru", "pass2", User.Role.USER));

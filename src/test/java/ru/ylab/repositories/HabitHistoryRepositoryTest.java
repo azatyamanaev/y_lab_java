@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.ylab.models.HabitHistory;
+import ru.ylab.repositories.impl.HabitHistoryRepositoryImpl;
 
 public class HabitHistoryRepositoryTest {
 
@@ -16,7 +17,7 @@ public class HabitHistoryRepositoryTest {
     @Before
     public void setUp() {
         storage = new Storage();
-        historyRepository = new HabitHistoryRepository(storage);
+        historyRepository = new HabitHistoryRepositoryImpl(storage);
         historyRepository.save(new HabitHistory(1L, 1L, Set.of()));
         historyRepository.save(new HabitHistory(1L, 2L, Set.of(LocalDate.parse("2024-10-12"))));
         historyRepository.save(new HabitHistory(2L, 3L, Set.of(LocalDate.parse("2024-10-12"), LocalDate.parse("2024-10-05"))));

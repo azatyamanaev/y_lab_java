@@ -1,35 +1,18 @@
 package ru.ylab.repositories;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
 
 /**
- * Class for working with habits storage.
+ * Interface describing logic for working with habits storage.
  *
  * @author azatyamanaev
  */
-public class HabitRepository {
-
-    /**
-     * Instance of a {@link Storage}
-     */
-    private final Storage storage;
-
-    /**
-     * Creates new HabitRepository.
-     *
-     * @param storage Storage instance
-     */
-    public HabitRepository(Storage storage) {
-        this.storage = storage;
-    }
+public interface HabitRepository {
 
     /**
      * Finds habit by name.
@@ -37,11 +20,7 @@ public class HabitRepository {
      * @param name habit name
      * @return {@code Optional<Habit>}
      */
-    public Optional<Habit> findByName(String name) {
-        return storage.getHabits().values().stream()
-                      .filter(x -> x.getName().equals(name))
-                      .findAny();
-    }
+    Optional<Habit> findByName(String name);
 
     /**
      * Gets habit by name.
@@ -49,9 +28,7 @@ public class HabitRepository {
      * @param name habit name
      * @return habit or null
      */
-    public Habit getByName(String name) {
-        return findByName(name).orElse(null);
-    }
+    Habit getByName(String name);
 
     /**
      * Checks whether habit exists by name.
@@ -59,18 +36,14 @@ public class HabitRepository {
      * @param name habit name
      * @return whether habit exists
      */
-    public boolean existsByName(String name) {
-        return findByName(name).isPresent();
-    }
+    boolean existsByName(String name);
 
     /**
      * Gets all habits.
      *
      * @return list of all habits
      */
-    public List<Habit> getAll() {
-        return new ArrayList<>(storage.getHabits().values());
-    }
+    List<Habit> getAll();
 
     /**
      * Searches habits with specified filters.
@@ -78,11 +51,7 @@ public class HabitRepository {
      * @param form filters to apply
      * @return list of habits
      */
-    public List<Habit> search(@NotNull HabitSearchForm form) {
-        return storage.getHabits().values().stream()
-                      .filter(getPredicates(form))
-                      .collect(Collectors.toList());
-    }
+    List<Habit> search(@NotNull HabitSearchForm form);
 
     /**
      * Gets all habits created by user.
@@ -90,11 +59,7 @@ public class HabitRepository {
      * @param userId user id
      * @return list of all habits
      */
-    public List<Habit> getAllForUser(@NotNull Long userId) {
-        return storage.getHabits().values().stream()
-                      .filter(x -> x.getUserId().equals(userId))
-                      .collect(Collectors.toList());
-    }
+    List<Habit> getAllForUser(@NotNull Long userId);
 
     /**
      * Searches habits with specified filters created by user.
@@ -103,12 +68,7 @@ public class HabitRepository {
      * @param form   filters to apply
      * @return list of habits
      */
-    public List<Habit> searchForUser(@NotNull Long userId, @NotNull HabitSearchForm form) {
-        return storage.getHabits().values().stream()
-                      .filter(x -> x.getUserId().equals(userId))
-                      .filter(getPredicates(form))
-                      .collect(Collectors.toList());
-    }
+    List<Habit> searchForUser(@NotNull Long userId, @NotNull HabitSearchForm form);
 
     /**
      * Saves habit to storage.
@@ -116,10 +76,7 @@ public class HabitRepository {
      * @param habit instance of Habit to save
      * @return saved habit
      */
-    public Habit save(Habit habit) {
-        storage.getHabits().put(habit.getId(), habit);
-        return habit;
-    }
+    Habit save(Habit habit);
 
     /**
      * Updates habit in storage.
@@ -127,10 +84,7 @@ public class HabitRepository {
      * @param habit instance of Habit to update
      * @return updated habit
      */
-    public Habit update(Habit habit) {
-        storage.getHabits().put(habit.getId(), habit);
-        return habit;
-    }
+    Habit update(Habit habit);
 
     /**
      * Deletes habit from storage.
@@ -139,39 +93,5 @@ public class HabitRepository {
      * @param habit  habit data
      * @return whether deletion is successful
      */
-    public boolean delete(Long userId, @NotNull Habit habit) {
-        if (habit.getUserId().equals(userId)) {
-            return storage.getHabits().remove(habit.getId()) != null;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Forms predicate according to passed HabitSearchForm.
-     *
-     * @param form form to create predicate from
-     * @return created instance of a Predicate
-     */
-    private Predicate<Habit> getPredicates(@NotNull HabitSearchForm form) {
-        Predicate<Habit> predicate = (x) -> true;
-
-        if (form.getName() != null && !form.getName().isBlank()) {
-            predicate = predicate.and(x -> x.getName().startsWith(form.getName()));
-        }
-
-        if (form.getFrequency() != null) {
-            predicate = predicate.and(x -> x.getFrequency().equals(Habit.Frequency.valueOf(form.getFrequency())));
-        }
-
-        if (form.getFrom() != null) {
-            predicate = predicate.and(x -> x.getCreated().isAfter(form.getFrom().minusDays(1)));
-        }
-
-        if (form.getTo() != null) {
-            predicate = predicate.and(x -> x.getCreated().isBefore(form.getTo().plusDays(1)));
-        }
-
-        return predicate;
-    }
+    boolean delete(Long userId, @NotNull Habit habit);
 }
