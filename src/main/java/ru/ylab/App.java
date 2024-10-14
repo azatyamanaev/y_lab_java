@@ -24,11 +24,13 @@ public class App {
     /**
      * Parameter determining which page application is currently on.
      */
+    @Getter
     private static Page page;
 
     /**
      * Handler for the current page.
      */
+    @Getter
     private static AbstractHandler handler;
 
     /**

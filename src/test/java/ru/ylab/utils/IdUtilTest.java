@@ -1,17 +1,17 @@
 package ru.ylab.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class IdUtilTest {
 
     @Test
     public void testGenerateUserId() {
-        Assert.assertEquals(1L, IdUtil.generateUserId());
+        Assertions.assertEquals(1L, IdUtil.generateUserId());
     }
 
     @Test
     public void testGenerateHabitId() {
-        Assert.assertEquals(1L, IdUtil.generateHabitId());
+        Assertions.assertEquals(1L, IdUtil.generateHabitId());
     }
 }

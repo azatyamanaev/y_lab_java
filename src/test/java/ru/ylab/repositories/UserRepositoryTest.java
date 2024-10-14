@@ -2,9 +2,9 @@ package ru.ylab.repositories;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.impl.UserRepositoryImpl;
@@ -14,7 +14,7 @@ public class UserRepositoryTest {
     private Storage storage;
     private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         storage = new Storage();
         userRepository = new UserRepositoryImpl(storage);
@@ -26,27 +26,27 @@ public class UserRepositoryTest {
     @Test
     public void testGetByEmail() {
         User user = userRepository.getByEmail("admin@mail.ru");
-        Assert.assertEquals("admin", user.getName());
+        Assertions.assertEquals("admin", user.getName());
     }
 
     @Test
     public void testGetByEmailFail() {
-        Assert.assertNull(userRepository.getByEmail("a123@mail.ru"));
+        Assertions.assertNull(userRepository.getByEmail("a123@mail.ru"));
     }
 
     @Test
     public void testExistsByEmail() {
-        Assert.assertTrue(userRepository.existsByEmail("admin@mail.ru"));
+        Assertions.assertTrue(userRepository.existsByEmail("admin@mail.ru"));
     }
 
     @Test
     public void testExistsByEmailFail() {
-        Assert.assertFalse(userRepository.existsByEmail("a123@mail.ru"));
+        Assertions.assertFalse(userRepository.existsByEmail("a123@mail.ru"));
     }
 
     @Test
     public void testGetAll() {
-        Assert.assertEquals(3, userRepository.getAll().size());
+        Assertions.assertEquals(3, userRepository.getAll().size());
     }
 
     @Test
@@ -54,9 +54,9 @@ public class UserRepositoryTest {
         UserSearchForm form = new UserSearchForm();
         form.setRole(User.Role.USER.name());
         List<User> users = userRepository.search(form);
-        Assert.assertEquals(2, users.size());
-        Assert.assertEquals(User.Role.USER, users.get(0).getRole());
-        Assert.assertEquals(User.Role.USER, users.get(1).getRole());
+        Assertions.assertEquals(2, users.size());
+        Assertions.assertEquals(User.Role.USER, users.get(0).getRole());
+        Assertions.assertEquals(User.Role.USER, users.get(1).getRole());
     }
 
     @Test
@@ -64,8 +64,8 @@ public class UserRepositoryTest {
         UserSearchForm form = new UserSearchForm();
         form.setName("ad");
         List<User> users = userRepository.search(form);
-        Assert.assertEquals(1, users.size());
-        Assert.assertEquals("admin", users.get(0).getName());
+        Assertions.assertEquals(1, users.size());
+        Assertions.assertEquals("admin", users.get(0).getName());
     }
 
     @Test
@@ -73,16 +73,16 @@ public class UserRepositoryTest {
         UserSearchForm form = new UserSearchForm();
         form.setEmail("user");
         List<User> users = userRepository.search(form);
-        Assert.assertEquals(2, users.size());
-        Assert.assertTrue(users.get(0).getEmail().startsWith("user"));
-        Assert.assertTrue(users.get(1).getEmail().startsWith("user"));
+        Assertions.assertEquals(2, users.size());
+        Assertions.assertTrue(users.get(0).getEmail().startsWith("user"));
+        Assertions.assertTrue(users.get(1).getEmail().startsWith("user"));
     }
 
     @Test
     public void testSave() {
         userRepository.save(new User(3L, "user3", "user3@mail.ru", "pass3", User.Role.USER));
         User user = storage.getUsers().get(3L);
-        Assert.assertEquals("user3", user.getName());
+        Assertions.assertEquals("user3", user.getName());
 
     }
 
@@ -90,18 +90,18 @@ public class UserRepositoryTest {
     public void testUpdate() {
         userRepository.update(new User(2L, "user22", "user2@mail.ru", "pass22", User.Role.USER));
         User user = storage.getUsers().get(2L);
-        Assert.assertEquals("user22", user.getName());
-        Assert.assertEquals("pass22", user.getPassword());
+        Assertions.assertEquals("user22", user.getName());
+        Assertions.assertEquals("pass22", user.getPassword());
 
     }
 
     @Test
     public void testDeleteByEmail() {
-        Assert.assertTrue(userRepository.deleteByEmail("user2@mail.ru"));
+        Assertions.assertTrue(userRepository.deleteByEmail("user2@mail.ru"));
     }
 
     @Test
     public void testDeleteByEmailFail() {
-        Assert.assertFalse(userRepository.deleteByEmail("a123@mail.ru"));
+        Assertions.assertFalse(userRepository.deleteByEmail("a123@mail.ru"));
     }
 }

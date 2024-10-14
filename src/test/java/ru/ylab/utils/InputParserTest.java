@@ -11,8 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class InputParserTest {
 
@@ -26,47 +26,47 @@ public class InputParserTest {
 
             InputParser.parseCKey(new Scanner(new ByteArrayInputStream("c".getBytes(StandardCharsets.UTF_8))));
             String s = outReader.readLine();
-            Assert.assertEquals("Enter 'c' to continue", s);
+            Assertions.assertEquals("Enter 'c' to continue", s);
             System.setOut(System.out);
         } catch (
                 IOException e) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
     @Test
     public void testParseDate() {
         LocalDate date = InputParser.parseDate(new Scanner(new ByteArrayInputStream("2024-10-12".getBytes(StandardCharsets.UTF_8))));
-        Assert.assertEquals("2024-10-12", date.toString());
+        Assertions.assertEquals("2024-10-12", date.toString());
     }
 
     @Test
     public void testParseFrequencyDaily() {
         String res = InputParser.parseFrequency(new Scanner(new ByteArrayInputStream("1".getBytes(StandardCharsets.UTF_8))));
-        Assert.assertEquals("DAILY", res);
+        Assertions.assertEquals("DAILY", res);
     }
 
     @Test
     public void testParseFrequencyWeekly() {
         String res = InputParser.parseFrequency(new Scanner(new ByteArrayInputStream("2".getBytes(StandardCharsets.UTF_8))));
-        Assert.assertEquals("WEEKLY", res);
+        Assertions.assertEquals("WEEKLY", res);
     }
 
     @Test
     public void testParseFrequencyMonthly() {
         String res = InputParser.parseFrequency(new Scanner(new ByteArrayInputStream("3".getBytes(StandardCharsets.UTF_8))));
-        Assert.assertEquals("MONTHLY", res);
+        Assertions.assertEquals("MONTHLY", res);
     }
 
     @Test
     public void testParseRoleUser() {
         String res = InputParser.parseRole(new Scanner(new ByteArrayInputStream("1".getBytes(StandardCharsets.UTF_8))));
-        Assert.assertEquals("USER", res);
+        Assertions.assertEquals("USER", res);
     }
 
     @Test
     public void testParseRoleAdmin() {
         String res = InputParser.parseRole(new Scanner(new ByteArrayInputStream("2".getBytes(StandardCharsets.UTF_8))));
-        Assert.assertEquals("ADMIN", res);
+        Assertions.assertEquals("ADMIN", res);
     }
 }
