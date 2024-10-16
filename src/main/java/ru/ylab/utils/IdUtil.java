@@ -1,7 +1,5 @@
 package ru.ylab.utils;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Class for generating entity ids.
  *
@@ -12,12 +10,12 @@ public class IdUtil {
     /**
      * User id generator.
      */
-    private static final AtomicLong userIdSequence = new AtomicLong(1);
+    private static Long userIdSequence = 0L;
 
     /**
      * Habit id generator.
      */
-    private static final AtomicLong habitIdSequence = new AtomicLong(1);
+    private static Long habitIdSequence = 0L;
 
     /**
      * Generates next user id.
@@ -25,7 +23,7 @@ public class IdUtil {
      * @return user id
      */
     public static long generateUserId() {
-        return userIdSequence.getAndIncrement();
+        return ++userIdSequence;
     }
 
     /**
@@ -34,6 +32,6 @@ public class IdUtil {
      * @return habit id
      */
     public static long generateHabitId() {
-        return habitIdSequence.getAndIncrement();
+        return ++habitIdSequence;
     }
 }
