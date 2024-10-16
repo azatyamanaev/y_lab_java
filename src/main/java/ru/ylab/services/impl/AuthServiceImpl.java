@@ -20,6 +20,11 @@ import ru.ylab.utils.RegexMatcher;
 public class AuthServiceImpl implements AuthService {
 
     /**
+     * Scanner for reading user input.
+     */
+    private final Scanner scanner;
+
+    /**
      * Instance of an {@link UserService}.
      */
     private final UserService userService;
@@ -27,14 +32,16 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Creates new AuthServiceImpl.
      *
+     * @param scanner     scanner for reading user input
      * @param userService UserService instance
      */
-    public AuthServiceImpl(UserService userService) {
+    public AuthServiceImpl(Scanner scanner, UserService userService) {
+        this.scanner = scanner;
         this.userService = userService;
     }
 
     @Override
-    public void signIn(Scanner scanner) {
+    public void signIn() {
         SignInForm form = new SignInForm();
         System.out.print("Enter email: ");
         String email = scanner.next();
@@ -67,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(Scanner scanner) {
+    public void signUp() {
         UserForm form = new UserForm();
 
         System.out.print("Enter email: ");

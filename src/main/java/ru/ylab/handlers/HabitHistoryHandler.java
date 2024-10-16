@@ -26,25 +26,27 @@ public class HabitHistoryHandler extends AbstractHandler {
     /**
      * Creates new HabitHistoryHandler
      *
+     * @param scanner             scanner for reading user input
      * @param habitService        HabitService instance
      * @param habitHistoryService HabitHistoryService instance
      */
-    public HabitHistoryHandler(HabitService habitService, HabitHistoryService habitHistoryService) {
+    public HabitHistoryHandler(Scanner scanner, HabitService habitService, HabitHistoryService habitHistoryService) {
+        super(scanner);
         this.habitService = habitService;
         this.habitHistoryService = habitHistoryService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                habitService.getHabits(scanner);
+                habitService.getHabits();
                 break;
             case "2":
-                habitHistoryService.markHabitCompleted(scanner);
+                habitHistoryService.markHabitCompleted();
                 break;
             case "3":
-                habitHistoryService.viewHabitHistory(scanner);
+                habitHistoryService.viewHabitHistory();
                 break;
             case "4":
                 App.redirect(Page.AUTHORIZED_USER_PAGE);

@@ -20,23 +20,25 @@ public class UsersHandler extends AbstractHandler {
     /**
      * Creates new UsersHandler
      *
+     * @param scanner     scanner for reading user input
      * @param userService UserService instance
      */
-    public UsersHandler(UserService userService) {
+    public UsersHandler(Scanner scanner, UserService userService) {
+        super(scanner);
         this.userService = userService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                userService.getUsers(scanner);
+                userService.getUsers();
                 break;
             case "2":
-                userService.createByAdmin(scanner);
+                userService.createByAdmin();
                 break;
             case "3":
-                userService.deleteByAdmin(scanner);
+                userService.deleteByAdmin();
                 break;
             case "4":
                 App.redirect(Page.ADMIN_PANEL_PAGE);

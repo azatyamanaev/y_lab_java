@@ -20,20 +20,22 @@ public class AdminPanelHandler extends AbstractHandler {
     /**
      * Creates new AdminPanelHandler
      *
+     * @param scanner      scanner for reading user input
      * @param habitService HabitService instance
      */
-    public AdminPanelHandler(HabitService habitService) {
+    public AdminPanelHandler(Scanner scanner, HabitService habitService) {
+        super(scanner);
         this.habitService = habitService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
                 App.redirect(Page.USERS_PAGE);
                 break;
             case "2":
-                habitService.getHabits(scanner);
+                habitService.getHabits();
                 break;
             case "3":
                 App.logout();

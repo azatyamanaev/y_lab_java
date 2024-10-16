@@ -22,6 +22,11 @@ import ru.ylab.utils.InputParser;
 public class HabitServiceImpl implements HabitService {
 
     /**
+     * Scanner for reading user input.
+     */
+    private final Scanner scanner;
+
+    /**
      * Instance of a {@link HabitRepository}
      */
     private final HabitRepository habitRepository;
@@ -34,16 +39,18 @@ public class HabitServiceImpl implements HabitService {
     /**
      * Creates new HabitServiceImpl.
      *
+     * @param scanner                scanner for reading user input
      * @param habitRepository        HabitRepository instance
      * @param habitHistoryRepository HabitHistoryRepository instance
      */
-    public HabitServiceImpl(HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
+    public HabitServiceImpl(Scanner scanner, HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
+        this.scanner = scanner;
         this.habitRepository = habitRepository;
         this.habitHistoryRepository = habitHistoryRepository;
     }
 
     @Override
-    public void getHabits(Scanner scanner) {
+    public void getHabits() {
         System.out.println("Do you want to use filters?(y/n)");
         String in = scanner.next();
 
@@ -56,13 +63,13 @@ public class HabitServiceImpl implements HabitService {
         User user = App.getCurrentUser();
         if (user.getRole().equals(User.Role.ADMIN)) {
             if ("y".equals(in)) {
-                habits = habitRepository.search(getHabitFilters(scanner));
+                habits = habitRepository.search(getHabitFilters());
             } else {
                 habits = habitRepository.getAll();
             }
         } else {
             if ("y".equals(in)) {
-                habits = habitRepository.searchForUser(user.getId(), getHabitFilters(scanner));
+                habits = habitRepository.searchForUser(user.getId(), getHabitFilters());
             } else {
                 habits = habitRepository.getAllForUser(user.getId());
             }
@@ -75,7 +82,7 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void create(Scanner scanner) {
+    public void create() {
         HabitForm form = new HabitForm();
         System.out.print("Enter name: ");
         form.setName(scanner.next());
@@ -102,7 +109,7 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void update(Scanner scanner) {
+    public void update() {
         System.out.println("Enter name of the habit: ");
 
         Habit habit = habitRepository.getByName(scanner.next());
@@ -136,7 +143,7 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void deleteByName(Scanner scanner) {
+    public void deleteByName() {
         System.out.print("Enter habit name: ");
 
         String name = scanner.next();
@@ -158,10 +165,9 @@ public class HabitServiceImpl implements HabitService {
     /**
      * Forms instance of {@link HabitSearchForm} according to user input.
      *
-     * @param scanner scanner for reading user input
      * @return created instance of a HabitSearchForm
      */
-    private HabitSearchForm getHabitFilters(Scanner scanner) {
+    private HabitSearchForm getHabitFilters() {
         HabitSearchForm form = new HabitSearchForm();
         System.out.print("Enter name: ");
         form.setName(scanner.next());

@@ -20,20 +20,22 @@ public class AuthHandler extends AbstractHandler {
     /**
      * Creates new AuthHandler
      *
+     * @param scanner     scanner for reading user input
      * @param authService AuthService instance
      */
-    public AuthHandler(AuthService authService) {
+    public AuthHandler(Scanner scanner, AuthService authService) {
+        super(scanner);
         this.authService = authService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                authService.signIn(scanner);
+                authService.signIn();
                 break;
             case "2":
-                authService.signUp(scanner);
+                authService.signUp();
                 break;
             case "3":
                 App.shutdown();

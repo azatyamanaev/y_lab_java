@@ -20,20 +20,22 @@ public class UserProfileHandler extends AbstractHandler {
     /**
      * Creates new UserProfileHandler
      *
+     * @param scanner     scanner for reading user input
      * @param userService UserService instance
      */
-    public UserProfileHandler(UserService userService) {
+    public UserProfileHandler(Scanner scanner, UserService userService) {
+        super(scanner);
         this.userService = userService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                userService.update(scanner);
+                userService.update();
                 break;
             case "2":
-                userService.delete(scanner);
+                userService.delete();
                 break;
             case "3":
                 App.redirect(Page.AUTHORIZED_USER_PAGE);

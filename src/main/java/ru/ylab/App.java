@@ -56,7 +56,7 @@ public class App {
 
         while (running) {
             handler.drawPage(currentUser, page.getOptions());
-            handler.handleInput(scanner);
+            handler.handleInput();
             System.out.print("\n\n");
         }
     }

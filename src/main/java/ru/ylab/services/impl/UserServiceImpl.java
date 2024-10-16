@@ -22,6 +22,11 @@ import ru.ylab.utils.RegexMatcher;
 public class UserServiceImpl implements UserService {
 
     /**
+     * Scanner for reading user input.
+     */
+    private final Scanner scanner;
+
+    /**
      * Instance of an {@link UserRepository}.
      */
     private final UserRepository userRepository;
@@ -29,9 +34,11 @@ public class UserServiceImpl implements UserService {
     /**
      * Creates new UserServiceImpl.
      *
+     * @param scanner        scanner for reading user input
      * @param userRepository UserRepository instance
      */
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(Scanner scanner, UserRepository userRepository) {
+        this.scanner = scanner;
         this.userRepository = userRepository;
     }
 
@@ -51,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void getUsers(Scanner scanner) {
+    public void getUsers() {
         System.out.println("Do you want to use filters?(y/n)");
         String in = scanner.next();
 
@@ -62,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
         List<User> users;
         if ("y".equals(in)) {
-            users = userRepository.search(getUserFilters(scanner));
+            users = userRepository.search(getUserFilters());
         } else {
             users = userRepository.getAll();
         }
@@ -74,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createByAdmin(Scanner scanner) {
+    public void createByAdmin() {
         UserForm form = new UserForm();
         System.out.print("Enter email: ");
         String email = scanner.next();
@@ -111,7 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteByAdmin(Scanner scanner) {
+    public void deleteByAdmin() {
         System.out.print("Enter email of user to delete: ");
         String email = scanner.next();
         while (!RegexMatcher.matchEmail(email)) {
@@ -129,7 +136,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(Scanner scanner) {
+    public void update() {
         UserForm form = new UserForm();
         System.out.print("Enter email: ");
         form.setEmail(scanner.next());
@@ -150,8 +157,8 @@ public class UserServiceImpl implements UserService {
         InputParser.parseCKey(scanner);
     }
 
-   @Override
-    public void delete(Scanner scanner) {
+    @Override
+    public void delete() {
         System.out.println("Are you sure you want to delete your account?(y/n)");
         String in = scanner.next();
 
@@ -169,10 +176,9 @@ public class UserServiceImpl implements UserService {
     /**
      * Forms instance of {@link UserSearchForm} according to user input.
      *
-     * @param scanner scanner for reading user input
      * @return created instance of a UserSearchForm
      */
-    private UserSearchForm getUserFilters(Scanner scanner) {
+    private UserSearchForm getUserFilters() {
         UserSearchForm form = new UserSearchForm();
         System.out.print("Enter name: ");
         form.setName(scanner.next());

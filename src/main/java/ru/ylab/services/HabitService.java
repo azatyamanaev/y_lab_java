@@ -1,7 +1,5 @@
 package ru.ylab.services;
 
-import java.util.Scanner;
-
 /**
  * Interface describing logic for working with habits.
  *
@@ -11,29 +9,21 @@ public interface HabitService {
 
     /**
      * Gets user habits with filtering depending on user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void getHabits(Scanner scanner);
+    void getHabits();
 
     /**
      * Creates habit according to user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void create(Scanner scanner);
+    void create();
 
     /**
      * Updates habit according to user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void update(Scanner scanner);
+    void update();
 
     /**
      * Deletes habit by name according to user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void deleteByName(Scanner scanner);
+    void deleteByName();
 }

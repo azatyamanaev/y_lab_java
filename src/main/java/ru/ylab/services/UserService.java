@@ -1,7 +1,5 @@
 package ru.ylab.services;
 
-import java.util.Scanner;
-
 import ru.ylab.models.User;
 
 /**
@@ -36,37 +34,27 @@ public interface UserService {
 
     /**
      * Gets users with filtering depending on user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void getUsers(Scanner scanner);
+    void getUsers();
 
     /**
      * Creates user according to user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void createByAdmin(Scanner scanner);
+    void createByAdmin();
 
     /**
      * Deletes user according to user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void deleteByAdmin(Scanner scanner);
+    void deleteByAdmin();
 
     /**
      * Edits user data according to user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void update(Scanner scanner);
+    void update();
 
     /**
      * Deletes user account or not depending on user input.
      * If user choose to delete account, redirects to auth page.
-     *
-     * @param scanner scanner for reading user input
      */
-    void delete(Scanner scanner);
+    void delete();
 }

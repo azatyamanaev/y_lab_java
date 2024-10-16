@@ -12,6 +12,20 @@ import ru.ylab.models.User;
 public abstract class AbstractHandler {
 
     /**
+     * Scanner for reading user input.
+     */
+    protected final Scanner scanner;
+
+    /**
+     * Creates new AbstractHandler
+     *
+     * @param scanner scanner for reading user input
+     */
+    public AbstractHandler(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    /**
      * Draws page in console.
      *
      * @param user    current user
@@ -30,8 +44,6 @@ public abstract class AbstractHandler {
 
     /**
      * Handles user input according to options field of enum {@link Page}.
-     *
-     * @param scanner scanner for reading user input
      */
-    public abstract void handleInput(Scanner scanner);
+    public abstract void handleInput();
 }

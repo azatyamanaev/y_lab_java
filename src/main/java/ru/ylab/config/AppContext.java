@@ -2,6 +2,7 @@ package ru.ylab.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import lombok.Getter;
 import ru.ylab.handlers.AdminPanelHandler;
@@ -38,6 +39,11 @@ import ru.ylab.services.impl.UserServiceImpl;
  */
 @Getter
 public class AppContext {
+
+    /**
+     * Scanner for reading user input.
+     */
+    protected final Scanner scanner;
 
     /**
      * Map for storing Handler implementations for each page.
@@ -85,25 +91,26 @@ public class AppContext {
     private final AuthService authService;
 
     public AppContext() {
+        this.scanner = new Scanner(System.in);
         this.storage = new Storage();
         this.userRepository = new UserRepositoryImpl(storage);
         this.habitRepository = new HabitRepositoryImpl(storage);
         this.habitHistoryRepository = new HabitHistoryRepositoryImpl(storage);
-        this.userService = new UserServiceImpl(userRepository);
-        this.habitService = new HabitServiceImpl(habitRepository, habitHistoryRepository);
-        this.authService = new AuthServiceImpl(userService);
-        this.habitHistoryService = new HabitHistoryServiceImpl(habitRepository, habitHistoryRepository);
+        this.userService = new UserServiceImpl(scanner, userRepository);
+        this.habitService = new HabitServiceImpl(scanner, habitRepository, habitHistoryRepository);
+        this.authService = new AuthServiceImpl(scanner, userService);
+        this.habitHistoryService = new HabitHistoryServiceImpl(scanner, habitRepository, habitHistoryRepository);
 
         this.handlers = new HashMap<>();
-        handlers.put(Page.AUTH_PAGE, new AuthHandler(authService));
-        handlers.put(Page.AUTHORIZED_USER_PAGE, new AuthorizedUserHandler());
-        handlers.put(Page.USER_PROFILE_PAGE, new UserProfileHandler(userService));
-        handlers.put(Page.HABITS_PAGE, new HabitsHandler());
-        handlers.put(Page.MANAGE_HABITS_PAGE, new ManageHabitsHandler(habitService));
-        handlers.put(Page.HABIT_HISTORY_PAGE, new HabitHistoryHandler(habitService, habitHistoryService));
-        handlers.put(Page.HABIT_STATISTICS_PAGE, new HabitStatisticsHandler(habitHistoryService));
-        handlers.put(Page.ADMIN_PANEL_PAGE, new AdminPanelHandler(habitService));
-        handlers.put(Page.USERS_PAGE, new UsersHandler(userService));
+        handlers.put(Page.AUTH_PAGE, new AuthHandler(scanner, authService));
+        handlers.put(Page.AUTHORIZED_USER_PAGE, new AuthorizedUserHandler(scanner));
+        handlers.put(Page.USER_PROFILE_PAGE, new UserProfileHandler(scanner, userService));
+        handlers.put(Page.HABITS_PAGE, new HabitsHandler(scanner));
+        handlers.put(Page.MANAGE_HABITS_PAGE, new ManageHabitsHandler(scanner, habitService));
+        handlers.put(Page.HABIT_HISTORY_PAGE, new HabitHistoryHandler(scanner, habitService, habitHistoryService));
+        handlers.put(Page.HABIT_STATISTICS_PAGE, new HabitStatisticsHandler(scanner, habitHistoryService));
+        handlers.put(Page.ADMIN_PANEL_PAGE, new AdminPanelHandler(scanner, habitService));
+        handlers.put(Page.USERS_PAGE, new UsersHandler(scanner, userService));
     }
 
     /**

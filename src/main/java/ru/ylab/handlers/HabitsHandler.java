@@ -11,8 +11,17 @@ import ru.ylab.App;
  */
 public class HabitsHandler extends AbstractHandler {
 
+    /**
+     * Creates new AbstractHandler
+     *
+     * @param scanner scanner for reading user input
+     */
+    public HabitsHandler(Scanner scanner) {
+        super(scanner);
+    }
+
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
                 App.redirect(Page.MANAGE_HABITS_PAGE);

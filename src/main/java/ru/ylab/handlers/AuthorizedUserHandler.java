@@ -11,8 +11,17 @@ import ru.ylab.App;
  */
 public class AuthorizedUserHandler extends AbstractHandler {
 
+    /**
+     * Creates new AbstractHandler
+     *
+     * @param scanner scanner for reading user input
+     */
+    public AuthorizedUserHandler(Scanner scanner) {
+        super(scanner);
+    }
+
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
                 App.redirect(Page.USER_PROFILE_PAGE);

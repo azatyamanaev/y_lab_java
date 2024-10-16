@@ -1,7 +1,5 @@
 package ru.ylab.services;
 
-import java.util.Scanner;
-
 /**
  * Interface describing logic for working with habit history.
  *
@@ -11,17 +9,13 @@ public interface HabitHistoryService {
 
     /**
      * Mark habit as completed on day from user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void markHabitCompleted(Scanner scanner);
+    void markHabitCompleted();
 
     /**
      * View days on which habit was completed for user.
-     *
-     * @param scanner scanner for reading user input
      */
-    void viewHabitHistory(Scanner scanner);
+    void viewHabitHistory();
 
     /**
      * Prints current habit completion streak for user.
@@ -30,10 +24,8 @@ public interface HabitHistoryService {
 
     /**
      * Prints habit completion percent for user for the period.
-     *
-     * @param scanner scanner for reading user input
      */
-    void habitCompletionPercent(Scanner scanner);
+    void habitCompletionPercent();
 
     /**
      * Prints habit completion report for user

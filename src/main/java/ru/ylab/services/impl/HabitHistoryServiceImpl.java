@@ -23,6 +23,11 @@ import ru.ylab.utils.InputParser;
 public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     /**
+     * Scanner for reading user input.
+     */
+    private final Scanner scanner;
+
+    /**
      * Instance of a {@link HabitRepository}
      */
     private final HabitRepository habitRepository;
@@ -35,16 +40,18 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     /**
      * Creates new HabitHistoryServiceImpl.
      *
+     * @param scanner                scanner for reading user input
      * @param habitRepository        HabitRepository instance
      * @param habitHistoryRepository HabitHistoryRepository instance
      */
-    public HabitHistoryServiceImpl(HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
+    public HabitHistoryServiceImpl(Scanner scanner, HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
+        this.scanner = scanner;
         this.habitRepository = habitRepository;
         this.habitHistoryRepository = habitHistoryRepository;
     }
 
     @Override
-    public void markHabitCompleted(Scanner scanner) {
+    public void markHabitCompleted() {
         System.out.print("Enter habit name: ");
         String name = scanner.next();
         Habit habit = habitRepository.getByName(name);
@@ -71,7 +78,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     }
 
     @Override
-    public void viewHabitHistory(Scanner scanner) {
+    public void viewHabitHistory() {
         System.out.print("Enter habit name: ");
         String name = scanner.next();
         Habit habit = habitRepository.getByName(name);
@@ -106,7 +113,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     }
 
     @Override
-    public void habitCompletionPercent(Scanner scanner) {
+    public void habitCompletionPercent() {
         System.out.print("Enter date from: ");
         LocalDate from = InputParser.parseDate(scanner);
 

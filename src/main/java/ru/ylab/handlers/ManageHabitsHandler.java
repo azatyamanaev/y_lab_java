@@ -20,26 +20,28 @@ public class ManageHabitsHandler extends AbstractHandler {
     /**
      * Creates new ManageHabitsHandler
      *
+     * @param scanner      scanner for reading user input
      * @param habitService HabitService instance
      */
-    public ManageHabitsHandler(HabitService habitService) {
+    public ManageHabitsHandler(Scanner scanner, HabitService habitService) {
+        super(scanner);
         this.habitService = habitService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                habitService.getHabits(scanner);
+                habitService.getHabits();
                 break;
             case "2":
-                habitService.create(scanner);
+                habitService.create();
                 break;
             case "3":
-                habitService.update(scanner);
+                habitService.update();
                 break;
             case "4":
-                habitService.deleteByName(scanner);
+                habitService.deleteByName();
                 break;
             case "5":
                 App.redirect(Page.AUTHORIZED_USER_PAGE);

@@ -20,20 +20,22 @@ public class HabitStatisticsHandler extends AbstractHandler {
     /**
      * Creates new HabitStatisticsHandler
      *
+     * @param scanner             scanner for reading user input
      * @param habitHistoryService HabitHistoryService instance
      */
-    public HabitStatisticsHandler(HabitHistoryService habitHistoryService) {
+    public HabitStatisticsHandler(Scanner scanner, HabitHistoryService habitHistoryService) {
+        super(scanner);
         this.habitHistoryService = habitHistoryService;
     }
 
     @Override
-    public void handleInput(Scanner scanner) {
+    public void handleInput() {
         switch (scanner.next()) {
             case "1":
                 habitHistoryService.habitCompletionStreak();
                 break;
             case "2":
-                habitHistoryService.habitCompletionPercent(scanner);
+                habitHistoryService.habitCompletionPercent();
                 break;
             case "3":
                 habitHistoryService.habitCompletionReport();

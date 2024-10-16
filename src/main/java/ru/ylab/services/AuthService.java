@@ -1,7 +1,5 @@
 package ru.ylab.services;
 
-import java.util.Scanner;
-
 /**
  * Interface describing authorization logic.
  *
@@ -11,15 +9,11 @@ public interface AuthService {
 
     /**
      * Handles user sign in depending on user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void signIn(Scanner scanner);
+    void signIn();
 
     /**
      * Handles user sign up depending on user input.
-     *
-     * @param scanner scanner for reading user input
      */
-    void signUp(Scanner scanner);
+    void signUp();
 }
