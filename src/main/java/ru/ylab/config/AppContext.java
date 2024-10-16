@@ -91,7 +91,7 @@ public class AppContext {
         this.habitHistoryRepository = new HabitHistoryRepositoryImpl(storage);
         this.userService = new UserServiceImpl(userRepository);
         this.habitService = new HabitServiceImpl(habitRepository, habitHistoryRepository);
-        this.authService = new AuthServiceImpl(userRepository);
+        this.authService = new AuthServiceImpl(userService);
         this.habitHistoryService = new HabitHistoryServiceImpl(habitRepository, habitHistoryRepository);
 
         this.handlers = new HashMap<>();

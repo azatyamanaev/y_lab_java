@@ -7,8 +7,8 @@ import ru.ylab.handlers.Page;
 import ru.ylab.forms.SignInForm;
 import ru.ylab.forms.UserForm;
 import ru.ylab.models.User;
-import ru.ylab.repositories.UserRepository;
 import ru.ylab.services.AuthService;
+import ru.ylab.services.UserService;
 import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.RegexMatcher;
 
@@ -20,17 +20,17 @@ import ru.ylab.utils.RegexMatcher;
 public class AuthServiceImpl implements AuthService {
 
     /**
-     * Instance of an {@link UserRepository}.
+     * Instance of an {@link UserService}.
      */
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * Creates new AuthServiceImpl.
      *
-     * @param userRepository UserRepository instance
+     * @param userService UserService instance
      */
-    public AuthServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthServiceImpl(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         System.out.print("Enter password: ");
         form.setPassword(scanner.next());
 
-        User user = userRepository.getByEmail(form.getEmail());
+        User user = userService.getByEmail(form.getEmail());
         if (user != null && !user.getPassword().equals(form.getPassword())) {
             user = null;
         }
@@ -86,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
         form.setPassword(scanner.next());
 
         User user;
-        if (userRepository.existsByEmail(form.getEmail())) {
+        if (userService.existsByEmail(form.getEmail())) {
             user = null;
         } else {
             user = new User(
@@ -95,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
                     form.getEmail(),
                     form.getPassword(),
                     User.Role.USER);
-            userRepository.save(user);
+            userService.save(user);
         }
 
         if (user != null) {
