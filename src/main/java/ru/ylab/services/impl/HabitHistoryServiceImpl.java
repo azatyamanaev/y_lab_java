@@ -57,7 +57,6 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
         Habit habit = habitRepository.getByName(name);
         if (habit == null) {
             System.out.println("Habit with name " + name + " not found.");
-            InputParser.parseCKey(scanner);
             return;
         }
 
@@ -74,60 +73,79 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
         history.getDays().add(date);
         habitHistoryRepository.save(history);
         System.out.println("Habit completion recorded.");
-        InputParser.parseCKey(scanner);
     }
 
     @Override
-    public void viewHabitHistory() {
+    public String viewHabitHistory() {
+        StringBuilder response = new StringBuilder();
+
         System.out.print("Enter habit name: ");
         String name = scanner.next();
         Habit habit = habitRepository.getByName(name);
         if (habit == null) {
-            System.out.println("Habit with name " + name + " not found.");
-            return;
-        }
-
-        System.out.print("Enter date from(format yyyy-MM-dd): ");
-        LocalDate after = InputParser.parseDate(scanner);
-
-        System.out.print("Enter date until(format yyyy-MM-dd): ");
-        LocalDate before = InputParser.parseDate(scanner);
-
-        HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null) {
-            System.out.println("Habit does not have history.");
+            response.append("Habit with name ").append(name).append(" not found.");
         } else {
-            System.out.println("After " + after + " before " + before + " habit " + name + " was completed on days:");
-            history.getDays().stream()
-                   .filter(x -> x.isAfter(after) && x.isBefore(before))
-                   .forEach(System.out::println);
+            System.out.print("Enter date from(format yyyy-MM-dd): ");
+            LocalDate after = InputParser.parseDate(scanner);
+
+            System.out.print("Enter date until(format yyyy-MM-dd): ");
+            LocalDate before = InputParser.parseDate(scanner);
+
+            HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
+
+            if (history == null) {
+                response.append("Habit does not have history.");
+            } else {
+                response.append("After ")
+                        .append(after)
+                        .append(" before ")
+                        .append(before)
+                        .append(" habit ")
+                        .append(name)
+                        .append(" was completed on days:\n");
+
+                history.getDays().stream()
+                       .filter(x -> x.isAfter(after) && x.isBefore(before))
+                       .forEach(x -> response.append(x).append("\n"));
+            }
         }
-        InputParser.parseCKey(scanner);
+
+        return response.toString();
     }
 
     @Override
-    public void habitCompletionStreak() {
-        System.out.println("Current completion streak for habits:");
+    public String habitCompletionStreak() {
+        StringBuilder response = new StringBuilder("Current completion streak for habits:\n");
         habitRepository.getAllForUser(App.getCurrentUser().getId())
-                       .forEach(x -> System.out.println("Habit: name - " + x.getName() + ", streak - " + countStreak(x)));
+                       .forEach(x -> response.append("Habit: name - ")
+                                             .append(x.getName())
+                                             .append(", streak - ")
+                                             .append(countStreak(x))
+                                             .append("\n"));
+        return response.toString();
     }
 
     @Override
-    public void habitCompletionPercent() {
+    public String habitCompletionPercent() {
         System.out.print("Enter date from: ");
         LocalDate from = InputParser.parseDate(scanner);
 
         System.out.print("Enter date to: ");
         LocalDate to = InputParser.parseDate(scanner);
 
-        System.out.println("Current habit completion percent:");
+        StringBuilder response = new StringBuilder("Current habit completion percent:\n");
         habitRepository.getAllForUser(App.getCurrentUser().getId())
-                       .forEach(x -> System.out.println("Habit: name - " + x.getName() + ", completion - " + completionPercent(x, from, to)));
+                       .forEach(x -> response.append("Habit: name - ")
+                                             .append(x.getName())
+                                             .append(", completion - ")
+                                             .append(completionPercent(x, from, to))
+                                             .append("\n"));
+        return response.toString();
     }
 
     @Override
-    public void habitCompletionReport() {
-        System.out.println("Current habit completion: ");
+    public String habitCompletionReport() {
+        StringBuilder response = new StringBuilder("Current habit completion:\n");
         habitRepository.getAllForUser(App.getCurrentUser().getId())
                        .forEach(x -> {
                            HabitHistory history = habitHistoryRepository.getByHabitId(x.getId());
@@ -136,9 +154,15 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
                                history.getDays().stream()
                                       .sorted(Comparator.naturalOrder())
                                       .forEach(date -> builder.append(date).append(" "));
-                               System.out.println("Habit: name - " + x.getName() + ", completed on - " + builder);
+
+                               response.append("Habit: name - ")
+                                       .append(x.getName())
+                                       .append(", completed on - ")
+                                       .append(builder)
+                                       .append("\n");
                            }
                        });
+        return response.toString();
     }
 
     /**

@@ -3,6 +3,7 @@ package ru.ylab.handlers;
 import java.util.Scanner;
 
 import ru.ylab.models.User;
+import ru.ylab.utils.InputParser;
 
 /**
  * Class for rendering page and handling user inputs.
@@ -17,12 +18,18 @@ public abstract class AbstractHandler {
     protected final Scanner scanner;
 
     /**
+     * Response from services to show in console.
+     */
+    protected String response;
+
+    /**
      * Creates new AbstractHandler
      *
      * @param scanner scanner for reading user input
      */
     public AbstractHandler(Scanner scanner) {
         this.scanner = scanner;
+        this.response = "";
     }
 
     /**
@@ -46,4 +53,11 @@ public abstract class AbstractHandler {
      * Handles user input according to options field of enum {@link Page}.
      */
     public abstract void handleInput();
+
+    /**
+     * Pauses application before user enters specified string.
+     */
+    public void waitForInput() {
+        InputParser.parseCKey(scanner);
+    }
 }

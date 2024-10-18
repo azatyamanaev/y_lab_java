@@ -33,9 +33,11 @@ public class UserProfileHandler extends AbstractHandler {
         switch (scanner.next()) {
             case "1":
                 userService.update();
+                waitForInput();
                 break;
             case "2":
                 userService.delete();
+                waitForInput();
                 break;
             case "3":
                 App.redirect(Page.AUTHORIZED_USER_PAGE);
@@ -48,6 +50,7 @@ public class UserProfileHandler extends AbstractHandler {
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }

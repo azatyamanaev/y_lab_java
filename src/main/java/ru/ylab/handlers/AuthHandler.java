@@ -33,15 +33,18 @@ public class AuthHandler extends AbstractHandler {
         switch (scanner.next()) {
             case "1":
                 authService.signIn();
+                waitForInput();
                 break;
             case "2":
                 authService.signUp();
+                waitForInput();
                 break;
             case "3":
                 App.shutdown();
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }

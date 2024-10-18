@@ -32,13 +32,17 @@ public class UsersHandler extends AbstractHandler {
     public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                userService.getUsers();
+                response = userService.getUsers();
+                System.out.println(response);
+                waitForInput();
                 break;
             case "2":
                 userService.createByAdmin();
+                waitForInput();
                 break;
             case "3":
                 userService.deleteByAdmin();
+                waitForInput();
                 break;
             case "4":
                 App.redirect(Page.ADMIN_PANEL_PAGE);
@@ -51,6 +55,7 @@ public class UsersHandler extends AbstractHandler {
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }

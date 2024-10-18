@@ -14,21 +14,29 @@ public interface HabitHistoryService {
 
     /**
      * View days on which habit was completed for user.
+     *
+     * @return habit history in string format
      */
-    void viewHabitHistory();
+    String viewHabitHistory();
 
     /**
      * Prints current habit completion streak for user.
+     *
+     * @return habit completion streak in string format
      */
-    void habitCompletionStreak();
+    String habitCompletionStreak();
 
     /**
      * Prints habit completion percent for user for the period.
+     *
+     * @return habit completion percent in string format
      */
-    void habitCompletionPercent();
+    String habitCompletionPercent();
 
     /**
      * Prints habit completion report for user
+     *
+     * @return habit completion report in string format
      */
-    void habitCompletionReport();
+    String habitCompletionReport();
 }

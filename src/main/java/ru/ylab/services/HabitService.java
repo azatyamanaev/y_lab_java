@@ -9,8 +9,10 @@ public interface HabitService {
 
     /**
      * Gets user habits with filtering depending on user input.
+     *
+     * @return list of habits in string format
      */
-    void getHabits();
+    String getHabits();
 
     /**
      * Creates habit according to user input.

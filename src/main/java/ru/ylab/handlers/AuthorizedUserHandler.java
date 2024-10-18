@@ -37,6 +37,7 @@ public class AuthorizedUserHandler extends AbstractHandler {
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }

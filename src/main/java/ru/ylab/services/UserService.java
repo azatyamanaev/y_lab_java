@@ -34,8 +34,10 @@ public interface UserService {
 
     /**
      * Gets users with filtering depending on user input.
+     *
+     * @return list of users in string format
      */
-    void getUsers();
+    String getUsers();
 
     /**
      * Creates user according to user input.

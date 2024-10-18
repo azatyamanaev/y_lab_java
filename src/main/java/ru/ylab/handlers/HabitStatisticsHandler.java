@@ -32,13 +32,19 @@ public class HabitStatisticsHandler extends AbstractHandler {
     public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                habitHistoryService.habitCompletionStreak();
+                response = habitHistoryService.habitCompletionStreak();
+                System.out.println(response);
+                waitForInput();
                 break;
             case "2":
-                habitHistoryService.habitCompletionPercent();
+                response = habitHistoryService.habitCompletionPercent();
+                System.out.println(response);
+                waitForInput();
                 break;
             case "3":
-                habitHistoryService.habitCompletionReport();
+                response = habitHistoryService.habitCompletionReport();
+                System.out.println(response);
+                waitForInput();
                 break;
             case "4":
                 App.redirect(Page.AUTHORIZED_USER_PAGE);
@@ -51,6 +57,7 @@ public class HabitStatisticsHandler extends AbstractHandler {
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }

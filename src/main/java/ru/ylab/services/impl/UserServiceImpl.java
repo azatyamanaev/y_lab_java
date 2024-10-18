@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void getUsers() {
+    public String getUsers() {
         System.out.println("Do you want to use filters?(y/n)");
         String in = scanner.next();
 
@@ -74,10 +74,12 @@ public class UserServiceImpl implements UserService {
             users = userRepository.getAll();
         }
 
+        StringBuilder response = new StringBuilder();
+
         for (User user : users) {
-            System.out.println(user);
+            response.append(user).append("\n");
         }
-        InputParser.parseCKey(scanner);
+        return response.toString();
     }
 
     @Override
@@ -114,7 +116,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         System.out.println("User created.");
-        InputParser.parseCKey(scanner);
     }
 
     @Override
@@ -132,7 +133,6 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteByEmail(email);
             System.out.println("User deleted.");
         }
-        InputParser.parseCKey(scanner);
     }
 
     @Override
@@ -154,7 +154,6 @@ public class UserServiceImpl implements UserService {
 
         App.setCurrentUser(user);
         System.out.println("Account updated");
-        InputParser.parseCKey(scanner);
     }
 
     @Override
@@ -170,6 +169,7 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteByEmail(App.getCurrentUser().getEmail());
             App.setCurrentUser(null);
             App.redirect(Page.AUTH_PAGE);
+            System.out.println("Account deleted");
         }
     }
 

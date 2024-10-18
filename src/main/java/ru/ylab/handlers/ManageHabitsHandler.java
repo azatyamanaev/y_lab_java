@@ -32,16 +32,21 @@ public class ManageHabitsHandler extends AbstractHandler {
     public void handleInput() {
         switch (scanner.next()) {
             case "1":
-                habitService.getHabits();
+                response = habitService.getHabits();
+                System.out.println(response);
+                waitForInput();
                 break;
             case "2":
                 habitService.create();
+                waitForInput();
                 break;
             case "3":
                 habitService.update();
+                waitForInput();
                 break;
             case "4":
                 habitService.deleteByName();
+                waitForInput();
                 break;
             case "5":
                 App.redirect(Page.AUTHORIZED_USER_PAGE);
@@ -54,6 +59,7 @@ public class ManageHabitsHandler extends AbstractHandler {
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }

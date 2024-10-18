@@ -50,7 +50,7 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void getHabits() {
+    public String getHabits() {
         System.out.println("Do you want to use filters?(y/n)");
         String in = scanner.next();
 
@@ -75,10 +75,12 @@ public class HabitServiceImpl implements HabitService {
             }
         }
 
+        StringBuilder response = new StringBuilder();
+
         for (Habit habit : habits) {
-            System.out.println(habit);
+            response.append(habit).append("\n");
         }
-        InputParser.parseCKey(scanner);
+        return response.toString();
     }
 
     @Override
@@ -105,7 +107,6 @@ public class HabitServiceImpl implements HabitService {
                 App.getCurrentUser().getId());
         habitRepository.save(habit);
         System.out.println("Habit created.");
-        InputParser.parseCKey(scanner);
     }
 
     @Override
@@ -139,7 +140,6 @@ public class HabitServiceImpl implements HabitService {
         habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
         habitRepository.update(habit);
         System.out.println("Habit updated.");
-        InputParser.parseCKey(scanner);
     }
 
     @Override
@@ -159,7 +159,6 @@ public class HabitServiceImpl implements HabitService {
                 System.out.println("Something went wrong.");
             }
         }
-        InputParser.parseCKey(scanner);
     }
 
     /**

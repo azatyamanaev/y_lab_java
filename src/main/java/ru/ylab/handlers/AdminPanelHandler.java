@@ -35,7 +35,9 @@ public class AdminPanelHandler extends AbstractHandler {
                 App.redirect(Page.USERS_PAGE);
                 break;
             case "2":
-                habitService.getHabits();
+                response = habitService.getHabits();
+                System.out.println(response);
+                waitForInput();
                 break;
             case "3":
                 App.logout();
@@ -45,6 +47,7 @@ public class AdminPanelHandler extends AbstractHandler {
                 break;
             default:
                 System.out.println("Invalid input. Try again.");
+                waitForInput();
         }
     }
 }
