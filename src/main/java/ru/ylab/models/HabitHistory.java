@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
  * @author azatyamanaev
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class HabitHistory {
 
@@ -37,4 +35,10 @@ public class HabitHistory {
      * Days when user completed habit.
      */
     private Set<LocalDate> days = new HashSet<>();
+
+    public HabitHistory(Long userId, Long habitId, LocalDate completedOn) {
+        this.userId = userId;
+        this.habitId = habitId;
+        this.completedOn = completedOn;
+    }
 }

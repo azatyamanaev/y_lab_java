@@ -192,12 +192,13 @@ public class HabitRepositoryImpl implements HabitRepository {
             Connection connection = connectionPool.getConnection();
             connection.setAutoCommit(false);
             PreparedStatement statement = connection.prepareStatement("UPDATE entity.habits set name = ?, description = ?, frequency = ?, " +
-                    "created = ? WHERE user_id = ?");
+                    "created = ? WHERE user_id = ? and id = ?");
             statement.setString(1, habit.getName());
             statement.setString(2, habit.getDescription());
             statement.setString(3, String.valueOf(habit.getFrequency()));
             statement.setDate(4, Date.valueOf(habit.getCreated()));
             statement.setLong(5, habit.getUserId());
+            statement.setLong(6, habit.getId());
             statement.executeUpdate();
             connection.commit();
 
