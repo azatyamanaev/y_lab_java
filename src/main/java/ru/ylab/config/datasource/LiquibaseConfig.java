@@ -2,7 +2,6 @@ package ru.ylab.config.datasource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -44,8 +43,6 @@ public class LiquibaseConfig {
     public Liquibase liquibase(ConnectionPool connectionPool) {
         try {
             Connection connection = connectionPool.getConnection();
-            createDefaultSchemas(connection);
-
             Database database = DatabaseFactory.getInstance()
                                                .findCorrectDatabaseImplementation(new JdbcConnection(connection));
             database.setDefaultSchemaName(settings.getDefaultSchema());
@@ -55,13 +52,5 @@ public class LiquibaseConfig {
             System.out.println("Error when configuring liquibase " + e.getMessage());
             throw new RuntimeException(e);
         }
-    }
-
-    private void createDefaultSchemas(Connection connection) throws SQLException {
-        connection.setAutoCommit(false);
-        Statement statement = connection.createStatement();
-        statement.executeUpdate("CREATE SCHEMA IF NOT EXISTS " + settings.getChangelogSchema());
-        statement.executeUpdate("CREATE SCHEMA IF NOT EXISTS " + settings.getDefaultSchema());
-        connection.commit();
     }
 }

@@ -1,0 +1,18 @@
+version: '1.0.0'
+
+services:
+  postgres_db:
+    image: bitnami/postgresql:17
+    container_name: postgres_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "498d4840-8c47-460d"
+      POSTGRES_DB: "habits_app_db"
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
