@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
@@ -22,6 +23,7 @@ import ru.ylab.utils.StringUtil;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class HabitRepositoryImpl implements HabitRepository {
 
     /**
@@ -54,6 +56,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while getting habit {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habit;
@@ -84,6 +87,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while getting habits {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habits;
@@ -118,6 +122,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while searching habits {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habits;
@@ -139,6 +144,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while getting habits for user {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habits;
@@ -174,6 +180,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while searching habits for user {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habits;
@@ -197,6 +204,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while saving habit {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habit;
@@ -221,6 +229,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while updating habit {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return habit;
@@ -243,6 +252,7 @@ public class HabitRepositoryImpl implements HabitRepository {
                 connectionPool.releaseConnection(connection);
                 return result == 1;
             } catch (SQLException e) {
+                log.error("Error while deleting habit {}", e.getMessage());
                 throw new RuntimeException(e);
             }
         } else {

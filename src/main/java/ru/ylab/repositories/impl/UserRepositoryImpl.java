@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
@@ -21,6 +22,7 @@ import ru.ylab.utils.StringUtil;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
     /**
@@ -53,6 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while getting user {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return user;
@@ -83,6 +86,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while getting users {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return users;
@@ -117,6 +121,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while searching users {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return users;
@@ -138,6 +143,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while saving user {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return user;
@@ -159,6 +165,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while updating user {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return user;
@@ -182,6 +189,7 @@ public class UserRepositoryImpl implements UserRepository {
                 statement.close();
                 connectionPool.releaseConnection(connection);
             } catch (SQLException e) {
+                log.error("Error while deleting user {}", e.getMessage());
                 throw new RuntimeException(e);
             }
             return result == 1;

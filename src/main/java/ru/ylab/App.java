@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.config.AppContext;
 import ru.ylab.handlers.AbstractHandler;
 import ru.ylab.handlers.Page;
@@ -14,6 +15,7 @@ import ru.ylab.models.User;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class App {
 
     /**
@@ -88,7 +90,7 @@ public class App {
         try {
             CONTEXT.getConnectionPool().shutdown();
         } catch (SQLException e) {
-            System.out.println("Error during shutdown");
+            log.error("Error during shutdown {}", e.getMessage());
             throw new RuntimeException(e);
         }
         running = false;

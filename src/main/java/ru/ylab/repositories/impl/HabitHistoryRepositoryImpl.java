@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
@@ -16,6 +17,7 @@ import ru.ylab.services.datasource.ConnectionPool;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
 
     /**
@@ -47,6 +49,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while saving habit history {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return history;
@@ -73,6 +76,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while getting habit history {}", e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -93,6 +97,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             statement.close();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
+            log.error("Error while deleting habit history {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return result > 0;

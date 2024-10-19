@@ -2,6 +2,7 @@ package ru.ylab.services.datasource.impl;
 
 import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.services.datasource.LiquibaseService;
 
 /**
@@ -9,6 +10,7 @@ import ru.ylab.services.datasource.LiquibaseService;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class LiquibaseServiceImpl implements LiquibaseService {
 
     /**
@@ -30,7 +32,7 @@ public class LiquibaseServiceImpl implements LiquibaseService {
         try {
             liquibase.update();
         } catch (LiquibaseException e) {
-            System.out.println("Error when migrating database " + e.getMessage());
+            log.error("Error when migrating database {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

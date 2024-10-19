@@ -9,6 +9,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.settings.LiquibaseSettings;
 
@@ -17,6 +18,7 @@ import ru.ylab.settings.LiquibaseSettings;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class LiquibaseConfig {
 
     /**
@@ -49,7 +51,7 @@ public class LiquibaseConfig {
             database.setLiquibaseSchemaName(settings.getChangelogSchema());
             return new Liquibase(settings.getLocation(), new ClassLoaderResourceAccessor(), database);
         } catch (SQLException | LiquibaseException e) {
-            System.out.println("Error when configuring liquibase " + e.getMessage());
+            log.error("Error when configuring liquibase {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

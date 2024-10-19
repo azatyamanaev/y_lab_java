@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.settings.DbSettings;
 
@@ -14,6 +15,7 @@ import ru.ylab.settings.DbSettings;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class BasicConnectionPool implements ConnectionPool {
 
     /**
@@ -74,7 +76,7 @@ public class BasicConnectionPool implements ConnectionPool {
                 connectionPool.add(createConnection(settings.getUrl(), settings.getUsername(), settings.getPassword()));
             }
         } catch (SQLException e) {
-            System.out.println("Error when creating connection " + e.getMessage());
+            log.error("Error when creating connection {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
