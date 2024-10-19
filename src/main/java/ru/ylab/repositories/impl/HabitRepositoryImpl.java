@@ -94,7 +94,8 @@ public class HabitRepositoryImpl implements HabitRepository {
         List<Habit> habits = new ArrayList<>();
         try {
             Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE name LIKE ? and frequency = ? and created >= ? and created <= ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits " +
+                    "WHERE name LIKE ? and frequency = ? and created >= ? and created <= ?");
             statement.setString(1, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
             statement.setString(2, form.getFrequency() != null ? form.getFrequency() : "*");
             statement.setDate(3, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
@@ -140,7 +141,8 @@ public class HabitRepositoryImpl implements HabitRepository {
         List<Habit> habits = new ArrayList<>();
         try {
             Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE user_id = ? and name LIKE ? and frequency = ? and created >= ? and created <= ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits " +
+                    "WHERE user_id = ? and name LIKE ? and frequency = ? and created >= ? and created <= ?");
             statement.setLong(1, userId);
             statement.setString(2, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
             statement.setString(3, form.getFrequency() != null ? form.getFrequency() : "*");
@@ -166,7 +168,8 @@ public class HabitRepositoryImpl implements HabitRepository {
         try {
             Connection connection = connectionPool.getConnection();
             connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.habits(name, descripiton, frequency, created, user_id) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.habits(name, description, frequency, " +
+                    "created, user_id) VALUES (?, ?, ?, ?, ?)");
             statement.setString(1, habit.getName());
             statement.setString(2, habit.getDescription());
             statement.setString(3, String.valueOf(habit.getFrequency()));
@@ -188,7 +191,8 @@ public class HabitRepositoryImpl implements HabitRepository {
         try {
             Connection connection = connectionPool.getConnection();
             connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("UPDATE entity.habits set name = ?, description = ?, frequency = ?, created = ? WHERE user_id = ?");
+            PreparedStatement statement = connection.prepareStatement("UPDATE entity.habits set name = ?, description = ?, frequency = ?, " +
+                    "created = ? WHERE user_id = ?");
             statement.setString(1, habit.getName());
             statement.setString(2, habit.getDescription());
             statement.setString(3, String.valueOf(habit.getFrequency()));
