@@ -61,6 +61,7 @@ public class App {
             handler.handleInput();
             System.out.print("\n\n");
         }
+        log.info("App stopped");
     }
 
     /**
@@ -87,6 +88,7 @@ public class App {
      * @throws SQLException if error occurs during connection closure
      */
     public static void shutdown() {
+        log.info("Shutting down");
         try {
             CONTEXT.getConnectionPool().shutdown();
         } catch (SQLException e) {

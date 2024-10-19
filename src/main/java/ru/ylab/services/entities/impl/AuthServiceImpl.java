@@ -2,6 +2,7 @@ package ru.ylab.services.entities.impl;
 
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.App;
 import ru.ylab.handlers.Page;
 import ru.ylab.forms.SignInForm;
@@ -17,6 +18,7 @@ import ru.ylab.utils.RegexMatcher;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     /**
@@ -61,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         if (user != null) {
-            System.out.println("You are signed in!");
+            log.info("User {} signed in!", user.getEmail());
             App.setCurrentUser(user);
             if (user.getRole().equals(User.Role.USER)) {
                 App.redirect(Page.AUTHORIZED_USER_PAGE);
@@ -69,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
                 App.redirect(Page.ADMIN_PANEL_PAGE);
             }
         } else {
-            System.out.println("Incorrect email or password. Try again.");
+            log.warn("Incorrect email or password.");
         }
     }
 
@@ -106,11 +108,11 @@ public class AuthServiceImpl implements AuthService {
         }
 
         if (user != null) {
-            System.out.println("You are signed up!");
+            log.info("User {} signed up!", user.getEmail());
             App.setCurrentUser(user);
             App.redirect(Page.AUTHORIZED_USER_PAGE);
         } else {
-            System.out.println("User with email " + email + " already exists. Try again.");
+            log.warn("User with email {} already exists.", email);
         }
     }
 }

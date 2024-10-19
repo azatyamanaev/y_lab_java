@@ -3,6 +3,7 @@ package ru.ylab.services.entities.impl;
 import java.util.List;
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.App;
 import ru.ylab.forms.HabitForm;
 import ru.ylab.forms.HabitSearchForm;
@@ -19,6 +20,7 @@ import ru.ylab.utils.InputParser;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class HabitServiceImpl implements HabitService {
 
     /**
@@ -89,7 +91,7 @@ public class HabitServiceImpl implements HabitService {
         System.out.print("Enter name: ");
         form.setName(scanner.next());
         if (habitRepository.existsByName(form.getName())) {
-            System.out.println("Habit with name " + form.getName() + " already exists. Try again.");
+            log.warn("Habit with name {} already exists.", form.getName());
             return;
         }
 
@@ -106,7 +108,7 @@ public class HabitServiceImpl implements HabitService {
                 Habit.Frequency.valueOf(form.getFrequency()),
                 App.getCurrentUser().getId());
         habitRepository.save(habit);
-        System.out.println("Habit created.");
+        log.info("Habit created.");
     }
 
     @Override
@@ -115,7 +117,7 @@ public class HabitServiceImpl implements HabitService {
 
         Habit habit = habitRepository.getByName(scanner.next());
         if (habit == null) {
-            System.out.println("Habit not found.");
+            log.warn("Habit not found.");
             return;
         }
 
@@ -131,7 +133,7 @@ public class HabitServiceImpl implements HabitService {
         form.setFrequency(InputParser.parseFrequency(scanner));
 
         if (habitRepository.existsByName(form.getName())) {
-            System.out.println("Habit with name " + form.getName() + " already exists. Try again.");
+            log.warn("Habit with name {} already exists.", form.getName());
             return;
         }
 
@@ -139,7 +141,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setDescription(form.getDescription());
         habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
         habitRepository.update(habit);
-        System.out.println("Habit updated.");
+        log.info("Habit updated.");
     }
 
     @Override
@@ -149,13 +151,13 @@ public class HabitServiceImpl implements HabitService {
         String name = scanner.next();
         Habit habit = habitRepository.getByName(name);
         if (habit == null) {
-            System.out.println("Habit with name " + name + " not found.");
+            log.info("Habit with name {} not found.", name);
         } else {
             boolean res = habitRepository.delete(App.getCurrentUser().getId(), habit);
             if (res) {
-                System.out.println("Habit deleted.");
+                log.info("Habit deleted.");
             } else {
-                System.out.println("Something went wrong.");
+                log.warn("Something went wrong.");
             }
         }
     }

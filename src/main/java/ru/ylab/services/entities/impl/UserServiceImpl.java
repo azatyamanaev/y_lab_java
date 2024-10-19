@@ -3,6 +3,7 @@ package ru.ylab.services.entities.impl;
 import java.util.List;
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.App;
 import ru.ylab.handlers.Page;
 import ru.ylab.forms.UserForm;
@@ -19,6 +20,7 @@ import ru.ylab.utils.RegexMatcher;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     /**
@@ -93,7 +95,7 @@ public class UserServiceImpl implements UserService {
             email = scanner.next();
         }
         if (userRepository.existsByEmail(email)) {
-            System.out.println("User with email " + email + " already exists.");
+            log.warn("User with email {} already exists.", email);
             return;
         }
         form.setEmail(email);
@@ -115,7 +117,7 @@ public class UserServiceImpl implements UserService {
                 User.Role.valueOf(role));
 
         userRepository.save(user);
-        System.out.println("User created.");
+        log.info("User created.");
     }
 
     @Override
@@ -128,10 +130,10 @@ public class UserServiceImpl implements UserService {
             email = scanner.next();
         }
         if (!userRepository.existsByEmail(email)) {
-            System.out.println("User with email " + email + " not found.");
+            log.warn("User with email {} not found.", email);
         } else {
             userRepository.deleteByEmail(email);
-            System.out.println("User deleted.");
+            log.info("User deleted.");
         }
     }
 
@@ -153,7 +155,7 @@ public class UserServiceImpl implements UserService {
         userRepository.update(user);
 
         App.setCurrentUser(user);
-        System.out.println("Account updated");
+        log.info("Account updated");
     }
 
     @Override
@@ -169,7 +171,7 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteByEmail(App.getCurrentUser().getEmail());
             App.setCurrentUser(null);
             App.redirect(Page.AUTH_PAGE);
-            System.out.println("Account deleted");
+            log.info("Account deleted");
         }
     }
 

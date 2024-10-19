@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.App;
 import ru.ylab.models.Habit;
@@ -19,6 +20,7 @@ import ru.ylab.utils.InputParser;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     /**
@@ -55,7 +57,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
         String name = scanner.next();
         Habit habit = habitRepository.getByName(name);
         if (habit == null) {
-            System.out.println("Habit with name " + name + " not found.");
+            log.warn("Habit with name {} not found.", name);
             return;
         }
 
@@ -70,7 +72,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
         }
         history.setCompletedOn(date);
         habitHistoryRepository.save(history);
-        System.out.println("Habit completion recorded.");
+        log.info("Habit completion recorded.");
     }
 
     @Override
