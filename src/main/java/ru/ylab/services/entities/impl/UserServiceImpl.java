@@ -1,4 +1,4 @@
-package ru.ylab.services.impl;
+package ru.ylab.services.entities.impl;
 
 import java.util.List;
 import java.util.Scanner;
@@ -9,7 +9,7 @@ import ru.ylab.forms.UserForm;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
-import ru.ylab.services.UserService;
+import ru.ylab.services.entities.UserService;
 import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.InputParser;
 import ru.ylab.utils.RegexMatcher;

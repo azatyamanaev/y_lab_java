@@ -1,4 +1,4 @@
-package ru.ylab.services.impl;
+package ru.ylab.services.entities.impl;
 
 import java.util.List;
 import java.util.Scanner;
@@ -10,7 +10,7 @@ import ru.ylab.models.Habit;
 import ru.ylab.models.User;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.services.HabitService;
+import ru.ylab.services.entities.HabitService;
 import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.InputParser;
 
@@ -153,7 +153,6 @@ public class HabitServiceImpl implements HabitService {
         } else {
             boolean res = habitRepository.delete(App.getCurrentUser().getId(), habit);
             if (res) {
-                habitHistoryRepository.deleteByHabitId(habit.getId());
                 System.out.println("Habit deleted.");
             } else {
                 System.out.println("Something went wrong.");

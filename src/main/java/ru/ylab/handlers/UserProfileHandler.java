@@ -3,7 +3,7 @@ package ru.ylab.handlers;
 import java.util.Scanner;
 
 import ru.ylab.App;
-import ru.ylab.services.UserService;
+import ru.ylab.services.entities.UserService;
 
 /**
  * Class for handling user inputs for {@link Page#USER_PROFILE_PAGE} page.

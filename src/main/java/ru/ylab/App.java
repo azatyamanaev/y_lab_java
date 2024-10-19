@@ -1,12 +1,10 @@
 package ru.ylab;
 
-import java.util.Scanner;
-
 import lombok.Getter;
 import lombok.Setter;
 import ru.ylab.config.AppContext;
-import ru.ylab.handlers.Page;
 import ru.ylab.handlers.AbstractHandler;
+import ru.ylab.handlers.Page;
 import ru.ylab.models.User;
 
 /**
@@ -50,7 +48,7 @@ public class App {
      * Handles main process of an application.
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        CONTEXT.getLiquibaseService().migrate();
         page = Page.AUTH_PAGE;
         handler = CONTEXT.getHandlers().get(Page.AUTH_PAGE);
 

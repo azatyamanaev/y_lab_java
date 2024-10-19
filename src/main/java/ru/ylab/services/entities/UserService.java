@@ -1,4 +1,4 @@
-package ru.ylab.services;
+package ru.ylab.services.entities;
 
 import ru.ylab.models.User;
 

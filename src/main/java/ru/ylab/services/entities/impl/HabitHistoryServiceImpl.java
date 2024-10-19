@@ -1,9 +1,8 @@
-package ru.ylab.services.impl;
+package ru.ylab.services.entities.impl;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Scanner;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,7 @@ import ru.ylab.models.Habit;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.services.HabitHistoryService;
+import ru.ylab.services.entities.HabitHistoryService;
 import ru.ylab.utils.InputParser;
 
 /**
@@ -65,12 +64,11 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
 
         HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
         if (history == null) {
-            history = new HabitHistory(
-                    App.getCurrentUser().getId(),
-                    habit.getId(),
-                    new HashSet<>());
+            history = new HabitHistory();
+            history.setUserId(App.getCurrentUser().getId());
+            history.setHabitId(habit.getId());
         }
-        history.getDays().add(date);
+        history.setCompletedOn(date);
         habitHistoryRepository.save(history);
         System.out.println("Habit completion recorded.");
     }

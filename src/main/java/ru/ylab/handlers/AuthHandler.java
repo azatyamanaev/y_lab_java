@@ -3,7 +3,7 @@ package ru.ylab.handlers;
 import java.util.Scanner;
 
 import ru.ylab.App;
-import ru.ylab.services.AuthService;
+import ru.ylab.services.entities.AuthService;
 
 /**
  * Class for handling user inputs for {@link Page#AUTH_PAGE} page.

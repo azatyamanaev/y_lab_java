@@ -1,4 +1,4 @@
-package ru.ylab.services.impl;
+package ru.ylab.services.entities.impl;
 
 import java.util.Scanner;
 
@@ -7,8 +7,8 @@ import ru.ylab.handlers.Page;
 import ru.ylab.forms.SignInForm;
 import ru.ylab.forms.UserForm;
 import ru.ylab.models.User;
-import ru.ylab.services.AuthService;
-import ru.ylab.services.UserService;
+import ru.ylab.services.entities.AuthService;
+import ru.ylab.services.entities.UserService;
 import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.RegexMatcher;
 

@@ -1,16 +1,21 @@
 package ru.ylab.repositories.impl;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.repositories.Storage;
+import ru.ylab.services.datasource.ConnectionPool;
+import ru.ylab.utils.StringUtil;
 
 /**
  * Class implementing {@link HabitRepository}.
@@ -20,24 +25,38 @@ import ru.ylab.repositories.Storage;
 public class HabitRepositoryImpl implements HabitRepository {
 
     /**
-     * Instance of a {@link Storage}
+     * Instance of a {@link ConnectionPool}.
      */
-    private final Storage storage;
+    private final ConnectionPool connectionPool;
 
     /**
      * Creates new HabitRepositoryImpl.
      *
-     * @param storage Storage instance
+     * @param connectionPool ConnectionPool instance
      */
-    public HabitRepositoryImpl(Storage storage) {
-        this.storage = storage;
+    public HabitRepositoryImpl(ConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
     }
 
     @Override
     public Optional<Habit> findByName(String name) {
-        return storage.getHabits().values().stream()
-                      .filter(x -> x.getName().equals(name))
-                      .findAny();
+        Optional<Habit> habit = Optional.empty();
+        try {
+            Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE name = ?");
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                habit = Optional.of(unwrap(resultSet));
+            }
+
+            resultSet.close();
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return habit;
     }
 
     @Override
@@ -52,77 +71,179 @@ public class HabitRepositoryImpl implements HabitRepository {
 
     @Override
     public List<Habit> getAll() {
-        return new ArrayList<>(storage.getHabits().values());
+        List<Habit> habits = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM entity.habits");
+            while (resultSet.next()) {
+                habits.add(unwrap(resultSet));
+            }
+
+            resultSet.close();
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return habits;
     }
 
     @Override
     public List<Habit> search(@NotNull HabitSearchForm form) {
-        return storage.getHabits().values().stream()
-                      .filter(getPredicates(form))
-                      .collect(Collectors.toList());
+        List<Habit> habits = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE name LIKE ? and frequency = ? and created >= ? and created <= ?");
+            statement.setString(1, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
+            statement.setString(2, form.getFrequency() != null ? form.getFrequency() : "*");
+            statement.setDate(3, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
+            statement.setDate(4, form.getTo() != null ? Date.valueOf(form.getTo()) : new Date(System.currentTimeMillis()));
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                habits.add(unwrap(resultSet));
+            }
+
+            resultSet.close();
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return habits;
     }
 
     @Override
     public List<Habit> getAllForUser(@NotNull Long userId) {
-        return storage.getHabits().values().stream()
-                      .filter(x -> x.getUserId().equals(userId))
-                      .collect(Collectors.toList());
+        List<Habit> habits = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE user_id = ?");
+            statement.setLong(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                habits.add(unwrap(resultSet));
+            }
+
+            resultSet.close();
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return habits;
     }
 
     @Override
     public List<Habit> searchForUser(@NotNull Long userId, @NotNull HabitSearchForm form) {
-        return storage.getHabits().values().stream()
-                      .filter(x -> x.getUserId().equals(userId))
-                      .filter(getPredicates(form))
-                      .collect(Collectors.toList());
+        List<Habit> habits = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE user_id = ? and name LIKE ? and frequency = ? and created >= ? and created <= ?");
+            statement.setLong(1, userId);
+            statement.setString(2, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
+            statement.setString(3, form.getFrequency() != null ? form.getFrequency() : "*");
+            statement.setDate(4, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
+            statement.setDate(5, form.getTo() != null ? Date.valueOf(form.getTo()) : new Date(System.currentTimeMillis()));
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                habits.add(unwrap(resultSet));
+            }
+
+            resultSet.close();
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return habits;
     }
 
    @Override
     public Habit save(Habit habit) {
-        storage.getHabits().put(habit.getId(), habit);
+        try {
+            Connection connection = connectionPool.getConnection();
+            connection.setAutoCommit(false);
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.habits(name, descripiton, frequency, created, user_id) VALUES (?, ?, ?, ?, ?, ?)");
+            statement.setString(1, habit.getName());
+            statement.setString(2, habit.getDescription());
+            statement.setString(3, String.valueOf(habit.getFrequency()));
+            statement.setDate(4, Date.valueOf(habit.getCreated()));
+            statement.setLong(5, habit.getUserId());
+            statement.executeUpdate();
+            connection.commit();
+
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return habit;
     }
 
     @Override
     public Habit update(Habit habit) {
-        storage.getHabits().put(habit.getId(), habit);
+        try {
+            Connection connection = connectionPool.getConnection();
+            connection.setAutoCommit(false);
+            PreparedStatement statement = connection.prepareStatement("UPDATE entity.habits set name = ?, description = ?, frequency = ?, created = ? WHERE user_id = ?");
+            statement.setString(1, habit.getName());
+            statement.setString(2, habit.getDescription());
+            statement.setString(3, String.valueOf(habit.getFrequency()));
+            statement.setDate(4, Date.valueOf(habit.getCreated()));
+            statement.setLong(5, habit.getUserId());
+            statement.executeUpdate();
+            connection.commit();
+
+            statement.close();
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return habit;
     }
 
     @Override
     public boolean delete(Long userId, @NotNull Habit habit) {
+        int result;
         if (habit.getUserId().equals(userId)) {
-            return storage.getHabits().remove(habit.getId()) != null;
+            try {
+                Connection connection = connectionPool.getConnection();
+                connection.setAutoCommit(false);
+                PreparedStatement statement = connection.prepareStatement("DELETE FROM entity.habits WHERE user_id = ? and id = ?");
+                statement.setLong(1, userId);
+                statement.setLong(2, habit.getId());
+                result = statement.executeUpdate();
+                connection.commit();
+
+                statement.close();
+                connectionPool.releaseConnection(connection);
+                return result == 1;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             return false;
         }
     }
 
     /**
-     * Forms predicate according to passed HabitSearchForm.
+     * Forms habit from current row in result set.
      *
-     * @param form form to create predicate from
-     * @return created instance of a Predicate
+     * @param rs result set
+     * @return created habit
+     * @throws SQLException if error occurs when accessing result set columns
      */
-    private Predicate<Habit> getPredicates(@NotNull HabitSearchForm form) {
-        Predicate<Habit> predicate = (x) -> true;
-
-        if (form.getName() != null && !form.getName().isBlank()) {
-            predicate = predicate.and(x -> x.getName().startsWith(form.getName()));
-        }
-
-        if (form.getFrequency() != null) {
-            predicate = predicate.and(x -> x.getFrequency().equals(Habit.Frequency.valueOf(form.getFrequency())));
-        }
-
-        if (form.getFrom() != null) {
-            predicate = predicate.and(x -> x.getCreated().isAfter(form.getFrom().minusDays(1)));
-        }
-
-        if (form.getTo() != null) {
-            predicate = predicate.and(x -> x.getCreated().isBefore(form.getTo().plusDays(1)));
-        }
-
-        return predicate;
+    private Habit unwrap(ResultSet rs) throws SQLException {
+        Habit habit = new Habit();
+        habit.setId(rs.getLong("id"));
+        habit.setName(rs.getString("name"));
+        habit.setDescription(rs.getString("description"));
+        habit.setFrequency(Habit.Frequency.valueOf(rs.getString("frequency")));
+        habit.setCreated(rs.getDate("created").toLocalDate());
+        habit.setUserId(rs.getLong("user_id"));
+        return habit;
     }
 }

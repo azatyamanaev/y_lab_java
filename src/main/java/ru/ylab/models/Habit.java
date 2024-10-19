@@ -3,6 +3,7 @@ package ru.ylab.models;
 import java.time.LocalDate;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Class representing habit.
@@ -10,6 +11,7 @@ import lombok.Data;
  * @author azatyamanaev
  */
 @Data
+@NoArgsConstructor
 public class Habit {
 
     /**
