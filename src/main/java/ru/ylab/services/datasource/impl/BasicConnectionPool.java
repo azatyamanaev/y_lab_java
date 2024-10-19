@@ -139,7 +139,10 @@ public class BasicConnectionPool implements ConnectionPool {
 
     @Override
     public void shutdown() throws SQLException {
-        usedConnections.forEach(this::releaseConnection);
+        for (Connection used : usedConnections) {
+            used.close();
+        }
+        usedConnections.clear();
         for (Connection c : connectionPool) {
             c.close();
         }

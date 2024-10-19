@@ -37,7 +37,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
         try {
             Connection connection = connectionPool.getConnection();
             connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.habit_history(user_id, habit_id, completed_on)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.habit_history(user_id, habit_id, completed_on) VALUES (?, ?, ?)");
             statement.setLong(1, history.getUserId());
             statement.setLong(2, history.getHabitId());
             statement.setDate(3, Date.valueOf(history.getCompletedOn()));

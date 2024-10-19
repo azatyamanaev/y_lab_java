@@ -1,5 +1,7 @@
 package ru.ylab;
 
+import java.sql.SQLException;
+
 import lombok.Getter;
 import lombok.Setter;
 import ru.ylab.config.AppContext;
@@ -79,8 +81,16 @@ public class App {
 
     /**
      * Stops the application.
+     *
+     * @throws SQLException if error occurs during connection closure
      */
     public static void shutdown() {
+        try {
+            CONTEXT.getConnectionPool().shutdown();
+        } catch (SQLException e) {
+            System.out.println("Error during shutdown");
+            throw new RuntimeException(e);
+        }
         running = false;
     }
 }
