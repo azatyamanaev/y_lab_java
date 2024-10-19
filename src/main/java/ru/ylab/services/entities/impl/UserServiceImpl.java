@@ -5,9 +5,9 @@ import java.util.Scanner;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.ylab.App;
-import ru.ylab.handlers.Page;
 import ru.ylab.forms.UserForm;
 import ru.ylab.forms.UserSearchForm;
+import ru.ylab.handlers.Page;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
 import ru.ylab.services.entities.UserService;
