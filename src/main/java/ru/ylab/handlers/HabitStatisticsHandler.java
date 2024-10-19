@@ -3,7 +3,7 @@ package ru.ylab.handlers;
 import java.util.Scanner;
 
 import ru.ylab.App;
-import ru.ylab.services.HabitHistoryService;
+import ru.ylab.services.entities.HabitHistoryService;
 
 /**
  * Class for handling user inputs for {@link Page#HABIT_STATISTICS_PAGE} page.

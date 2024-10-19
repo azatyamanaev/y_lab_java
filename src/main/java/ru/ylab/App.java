@@ -1,12 +1,13 @@
 package ru.ylab;
 
-import java.util.Scanner;
+import java.sql.SQLException;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ru.ylab.config.AppContext;
-import ru.ylab.handlers.Page;
 import ru.ylab.handlers.AbstractHandler;
+import ru.ylab.handlers.Page;
 import ru.ylab.models.User;
 
 /**
@@ -14,6 +15,7 @@ import ru.ylab.models.User;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class App {
 
     /**
@@ -50,7 +52,7 @@ public class App {
      * Handles main process of an application.
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        CONTEXT.getLiquibaseService().migrate();
         page = Page.AUTH_PAGE;
         handler = CONTEXT.getHandlers().get(Page.AUTH_PAGE);
 
@@ -59,6 +61,7 @@ public class App {
             handler.handleInput();
             System.out.print("\n\n");
         }
+        log.info("App stopped");
     }
 
     /**
@@ -81,8 +84,17 @@ public class App {
 
     /**
      * Stops the application.
+     *
+     * @throws SQLException if error occurs during connection closure
      */
     public static void shutdown() {
+        log.info("Shutting down");
+        try {
+            CONTEXT.getConnectionPool().shutdown();
+        } catch (SQLException e) {
+            log.error("Error during shutdown {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
         running = false;
     }
 }

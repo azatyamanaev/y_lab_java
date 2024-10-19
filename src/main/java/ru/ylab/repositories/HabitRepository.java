@@ -87,7 +87,7 @@ public interface HabitRepository {
     Habit update(Habit habit);
 
     /**
-     * Deletes habit from storage.
+     * Deletes habit and habit history from storage.
      *
      * @param userId id of a user who created habit
      * @param habit  habit data

@@ -1,4 +1,4 @@
-package ru.ylab.services;
+package ru.ylab.services.entities;
 
 /**
  * Interface describing logic for working with habit history.

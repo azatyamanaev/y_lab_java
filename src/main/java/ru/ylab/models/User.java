@@ -2,6 +2,7 @@ package ru.ylab.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Class representing user.
@@ -10,6 +11,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     /**

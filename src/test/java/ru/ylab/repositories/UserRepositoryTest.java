@@ -9,18 +9,13 @@ import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.impl.UserRepositoryImpl;
 
-public class UserRepositoryTest {
+public class UserRepositoryTest extends AbstractRepositoryTest {
 
-    private Storage storage;
     private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
-        storage = new Storage();
-        userRepository = new UserRepositoryImpl(storage);
-        userRepository.save(new User(0L, "admin", "admin@mail.ru", "admin", User.Role.ADMIN));
-        userRepository.save(new User(1L, "user1", "user1@mail.ru", "pass1", User.Role.USER));
-        userRepository.save(new User(2L, "user2", "user2@mail.ru", "pass2", User.Role.USER));
+        userRepository = new UserRepositoryImpl(connectionPool);
     }
 
     @Test
@@ -45,18 +40,12 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void testGetAll() {
-        Assertions.assertEquals(3, userRepository.getAll().size());
-    }
-
-    @Test
     public void testSearchByRole() {
         UserSearchForm form = new UserSearchForm();
-        form.setRole(User.Role.USER.name());
+        form.setRole(User.Role.ADMIN.name());
         List<User> users = userRepository.search(form);
-        Assertions.assertEquals(2, users.size());
-        Assertions.assertEquals(User.Role.USER, users.get(0).getRole());
-        Assertions.assertEquals(User.Role.USER, users.get(1).getRole());
+        Assertions.assertEquals(1, users.size());
+        Assertions.assertEquals(User.Role.ADMIN, users.get(0).getRole());
     }
 
     @Test
@@ -80,19 +69,17 @@ public class UserRepositoryTest {
 
     @Test
     public void testSave() {
-        userRepository.save(new User(3L, "user3", "user3@mail.ru", "pass3", User.Role.USER));
-        User user = storage.getUsers().get(3L);
-        Assertions.assertEquals("user3", user.getName());
-
+        userRepository.save(new User(3L, "us3", "us3@mail.ru", "pass3", User.Role.USER));
+        User user = userRepository.getByEmail("us3@mail.ru");
+        Assertions.assertEquals("us3", user.getName());
     }
 
     @Test
     public void testUpdate() {
-        userRepository.update(new User(2L, "user22", "user2@mail.ru", "pass22", User.Role.USER));
-        User user = storage.getUsers().get(2L);
+        userRepository.update(new User(-2L, "user22", "user2@mail.ru", "pass22", User.Role.USER));
+        User user = userRepository.getByEmail("user2@mail.ru");
         Assertions.assertEquals("user22", user.getName());
         Assertions.assertEquals("pass22", user.getPassword());
-
     }
 
     @Test

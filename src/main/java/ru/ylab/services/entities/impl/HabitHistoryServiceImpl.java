@@ -1,18 +1,18 @@
-package ru.ylab.services.impl;
+package ru.ylab.services.entities.impl;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.App;
 import ru.ylab.models.Habit;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.services.HabitHistoryService;
+import ru.ylab.services.entities.HabitHistoryService;
 import ru.ylab.utils.InputParser;
 
 /**
@@ -20,6 +20,7 @@ import ru.ylab.utils.InputParser;
  *
  * @author azatyamanaev
  */
+@Slf4j
 public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     /**
@@ -56,7 +57,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
         String name = scanner.next();
         Habit habit = habitRepository.getByName(name);
         if (habit == null) {
-            System.out.println("Habit with name " + name + " not found.");
+            log.warn("Habit with name {} not found.", name);
             return;
         }
 
@@ -65,14 +66,13 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
 
         HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
         if (history == null) {
-            history = new HabitHistory(
-                    App.getCurrentUser().getId(),
-                    habit.getId(),
-                    new HashSet<>());
+            history = new HabitHistory();
+            history.setUserId(App.getCurrentUser().getId());
+            history.setHabitId(habit.getId());
         }
-        history.getDays().add(date);
+        history.setCompletedOn(date);
         habitHistoryRepository.save(history);
-        System.out.println("Habit completion recorded.");
+        log.info("Habit completion recorded.");
     }
 
     @Override

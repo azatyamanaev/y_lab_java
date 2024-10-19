@@ -2,14 +2,20 @@ package ru.ylab.models;
 
 import java.time.LocalDate;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Class representing habit.
  *
  * @author azatyamanaev
  */
+@Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Habit {
 
     /**
