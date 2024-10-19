@@ -95,11 +95,19 @@ public class HabitRepositoryImpl implements HabitRepository {
         try {
             Connection connection = connectionPool.getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits " +
-                    "WHERE name LIKE ? and frequency = ? and created >= ? and created <= ?");
-            statement.setString(1, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
-            statement.setString(2, form.getFrequency() != null ? form.getFrequency() : "*");
-            statement.setDate(3, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
-            statement.setDate(4, form.getTo() != null ? Date.valueOf(form.getTo()) : new Date(System.currentTimeMillis()));
+                    "WHERE (name LIKE ? or coalesce(?, '') = '') " +
+                    "and (frequency = ? or coalesce(?, '') = '') and created >= ? and created <= ?");
+
+            String name = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            statement.setString(1, name);
+            statement.setString(2, name);
+
+            String frequency = form.getFrequency() != null ? form.getFrequency() : null;
+            statement.setString(3, frequency);
+            statement.setString(4, frequency);
+
+            statement.setDate(5, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
+            statement.setDate(6, form.getTo() != null ? Date.valueOf(form.getTo()) : new Date(System.currentTimeMillis()));
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -142,12 +150,20 @@ public class HabitRepositoryImpl implements HabitRepository {
         try {
             Connection connection = connectionPool.getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits " +
-                    "WHERE user_id = ? and name LIKE ? and frequency = ? and created >= ? and created <= ?");
+                    "WHERE user_id = ? and (name LIKE ? or coalesce(?, '') = '') " +
+                    "and (frequency = ? or coalesce(?, '') = '') and created >= ? and created <= ?");
             statement.setLong(1, userId);
-            statement.setString(2, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
-            statement.setString(3, form.getFrequency() != null ? form.getFrequency() : "*");
-            statement.setDate(4, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
-            statement.setDate(5, form.getTo() != null ? Date.valueOf(form.getTo()) : new Date(System.currentTimeMillis()));
+
+            String value = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            statement.setString(2, value);
+            statement.setString(3, value);
+
+            value = form.getFrequency() != null ? form.getFrequency() : null;
+            statement.setString(4, value);
+            statement.setString(5, value);
+
+            statement.setDate(6, form.getFrom() != null ? Date.valueOf(form.getFrom()) : new Date(0L));
+            statement.setDate(7, form.getTo() != null ? Date.valueOf(form.getTo()) : new Date(System.currentTimeMillis()));
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {

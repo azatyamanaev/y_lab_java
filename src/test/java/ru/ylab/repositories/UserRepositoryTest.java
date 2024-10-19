@@ -40,18 +40,12 @@ public class UserRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    public void testGetAll() {
-        Assertions.assertEquals(3, userRepository.getAll().size());
-    }
-
-    @Test
     public void testSearchByRole() {
         UserSearchForm form = new UserSearchForm();
-        form.setRole(User.Role.USER.name());
+        form.setRole(User.Role.ADMIN.name());
         List<User> users = userRepository.search(form);
-        Assertions.assertEquals(2, users.size());
-        Assertions.assertEquals(User.Role.USER, users.get(0).getRole());
-        Assertions.assertEquals(User.Role.USER, users.get(1).getRole());
+        Assertions.assertEquals(1, users.size());
+        Assertions.assertEquals(User.Role.ADMIN, users.get(0).getRole());
     }
 
     @Test

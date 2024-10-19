@@ -93,10 +93,21 @@ public class UserRepositoryImpl implements UserRepository {
         List<User> users = new ArrayList<>();
         try {
             Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.users WHERE name LIKE ? and email LIKE ? and role = ?");
-            statement.setString(1, !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : "*");
-            statement.setString(2, !StringUtil.isEmpty(form.getEmail()) ? "%" + form.getEmail() + "%" : "*");
-            statement.setString(3, !StringUtil.isEmpty(form.getRole()) ? form.getRole() : "*");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.users WHERE " +
+                    "(name LIKE ? or coalesce(?, '') = '') and (email LIKE ? or coalesce(?, '') = '') " +
+                    "and (role = ? or coalesce(?, '') = '')");
+            String value =  !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            statement.setString(1, value);
+            statement.setString(2, value);
+
+            value = !StringUtil.isEmpty(form.getEmail()) ? "%" + form.getEmail() + "%" : null;
+            statement.setString(3, value);
+            statement.setString(4, value);
+
+            value = !StringUtil.isEmpty(form.getRole()) ? form.getRole() : null;
+            statement.setString(5, value);
+            statement.setString(6, value);
+
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 users.add(unwrap(resultSet));

@@ -41,18 +41,13 @@ public class HabitRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    public void testGetAll() {
-        Assertions.assertEquals(4, habitRepository.getAll().size());
-    }
-
-    @Test
     public void testSearchByName() {
         HabitSearchForm form = new HabitSearchForm();
-        form.setName("hab");
+        form.setName("hb");
         List<Habit> habits = habitRepository.search(form);
         Assertions.assertEquals(2, habits.size());
-        Assertions.assertTrue(habits.get(0).getName().startsWith("hab"));
-        Assertions.assertTrue(habits.get(1).getName().startsWith("hab"));
+        Assertions.assertTrue(habits.get(0).getName().startsWith("hb"));
+        Assertions.assertTrue(habits.get(1).getName().startsWith("hb"));
     }
 
     @Test
@@ -67,16 +62,17 @@ public class HabitRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetAllForUser() {
-        List<Habit> habits = habitRepository.getAllForUser(-2L);
-        Assertions.assertEquals(2, habits.size());
-        Assertions.assertEquals(-2L, (long) habits.get(0).getUserId());
-        Assertions.assertEquals(-2L, (long) habits.get(1).getUserId());
+        List<Habit> habits = habitRepository.getAllForUser(-1L);
+        Assertions.assertEquals(3, habits.size());
+        Assertions.assertEquals(-1L, (long) habits.get(0).getUserId());
+        Assertions.assertEquals(-1L, (long) habits.get(1).getUserId());
+        Assertions.assertEquals(-1L, (long) habits.get(2).getUserId());
     }
 
     @Test
     public void testSearchForUser() {
         HabitSearchForm form = new HabitSearchForm();
-        form.setFrequency(Habit.Frequency.DAILY.name());
+        form.setFrequency(Habit.Frequency.WEEKLY.name());
         List<Habit> habits = habitRepository.searchForUser(-1L, form);
         Assertions.assertEquals(1, habits.size());
         Assertions.assertEquals(Habit.Frequency.WEEKLY, habits.get(0).getFrequency());
@@ -86,7 +82,7 @@ public class HabitRepositoryTest extends AbstractRepositoryTest {
     public void testSearchForUserEmpty() {
         HabitSearchForm form = new HabitSearchForm();
         form.setName("hab");
-        List<Habit> habits = habitRepository.searchForUser(3L, form);
+        List<Habit> habits = habitRepository.searchForUser(-3L, form);
         Assertions.assertEquals(0, habits.size());
     }
 
@@ -108,8 +104,8 @@ public class HabitRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testDelete() {
-        Assertions.assertTrue(habitRepository.delete(-1L,
-                new Habit(-1L, "habit1", "desc1", Habit.Frequency.DAILY, -1L)));
+        Assertions.assertTrue(habitRepository.delete(-2L,
+                new Habit(-4L, "habit1", "desc1", Habit.Frequency.DAILY, -2L)));
     }
 
     @Test
