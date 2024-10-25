@@ -11,10 +11,11 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import ru.ylab.config.datasource.CPDataSource;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
-import ru.ylab.services.datasource.ConnectionPool;
+import ru.ylab.utils.SqlConstants;
 import ru.ylab.utils.StringUtil;
 
 /**
@@ -26,25 +27,25 @@ import ru.ylab.utils.StringUtil;
 public class UserRepositoryImpl implements UserRepository {
 
     /**
-     * Instance of a {@link ConnectionPool}.
+     * Instance of a {@link CPDataSource}.
      */
-    private final ConnectionPool connectionPool;
+    private final CPDataSource dataSource;
 
     /**
      * Creates new UserRepositoryImpl.
      *
-     * @param connectionPool ConnectionPool instance
+     * @param dataSource CPDataSource instance
      */
-    public UserRepositoryImpl(ConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
+    public UserRepositoryImpl(CPDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
         Optional<User> user = Optional.empty();
-        try {
-            Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.users WHERE email = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_USERS_BY_EMAIL)){
+
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -52,8 +53,6 @@ public class UserRepositoryImpl implements UserRepository {
             }
 
             resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while getting user {}", e.getMessage());
             throw new RuntimeException(e);
@@ -74,17 +73,13 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-        try {
-            Connection connection = connectionPool.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM entity.users");
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(SqlConstants.SELECT_ALL_FROM_USERS)) {
+
             while (resultSet.next()) {
                 users.add(unwrap(resultSet));
             }
-
-            resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while getting users {}", e.getMessage());
             throw new RuntimeException(e);
@@ -95,11 +90,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> search(@NotNull UserSearchForm form) {
         List<User> users = new ArrayList<>();
-        try {
-            Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.users WHERE " +
-                    "(name LIKE ? or coalesce(?, '') = '') and (email LIKE ? or coalesce(?, '') = '') " +
-                    "and (role = ? or coalesce(?, '') = '')");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SEARCH_USERS)) {
+
             String value =  !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
             statement.setString(1, value);
             statement.setString(2, value);
@@ -118,8 +111,6 @@ public class UserRepositoryImpl implements UserRepository {
             }
 
             resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while searching users {}", e.getMessage());
             throw new RuntimeException(e);
@@ -129,19 +120,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        try {
-            Connection connection = connectionPool.getConnection();
-            connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.users(name, email, password, role) VALUES (?, ?, ?, ?)");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.INSERT_INTO_USERS)) {
+
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
             statement.setString(4, user.getRole().toString());
             statement.executeUpdate();
             connection.commit();
-
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while saving user {}", e.getMessage());
             throw new RuntimeException(e);
@@ -151,19 +138,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User update(User user) {
-        try {
-            Connection connection = connectionPool.getConnection();
-            connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("UPDATE entity.users SET name = ?, email = ?, password = ? WHERE id = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.UPDATE_USERS)) {
+
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
             statement.setLong(4, user.getId());
             statement.executeUpdate();
             connection.commit();
-
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while updating user {}", e.getMessage());
             throw new RuntimeException(e);
@@ -178,16 +161,12 @@ public class UserRepositoryImpl implements UserRepository {
         if (user == null) {
             return false;
         } else {
-            try {
-                Connection connection = connectionPool.getConnection();
-                connection.setAutoCommit(false);
-                PreparedStatement statement = connection.prepareStatement("DELETE FROM entity.users WHERE email = ?");
+            try (Connection connection = dataSource.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(SqlConstants.DELETE_FROM_USERS_BY_EMAIL)) {
+
                 statement.setString(1, email);
                 result = statement.executeUpdate();
                 connection.commit();
-
-                statement.close();
-                connectionPool.releaseConnection(connection);
             } catch (SQLException e) {
                 log.error("Error while deleting user {}", e.getMessage());
                 throw new RuntimeException(e);

@@ -47,9 +47,9 @@ public class LiquibaseConfig {
             Connection connection = connectionPool.getConnection();
             Database database = DatabaseFactory.getInstance()
                                                .findCorrectDatabaseImplementation(new JdbcConnection(connection));
-            database.setDefaultSchemaName(settings.getDefaultSchema());
-            database.setLiquibaseSchemaName(settings.getChangelogSchema());
-            return new Liquibase(settings.getLocation(), new ClassLoaderResourceAccessor(), database);
+            database.setDefaultSchemaName(settings.defaultSchema());
+            database.setLiquibaseSchemaName(settings.changelogSchema());
+            return new Liquibase(settings.location(), new ClassLoaderResourceAccessor(), database);
         } catch (SQLException | LiquibaseException e) {
             log.error("Error when configuring liquibase {}", e.getMessage());
             throw new RuntimeException(e);

@@ -1,33 +1,11 @@
 package ru.ylab.settings;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * Class containing settings for connecting ot database.
  *
+ * @param url Database url.
+ * @param username Database username.
+ * @param password Database password.
  * @author azatyamanaev
  */
-@Builder
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DbSettings {
-
-    /**
-     * Database url.
-     */
-    private String url;
-
-    /**
-     * Database username.
-     */
-    private String username;
-
-    /**
-     * Database password.
-     */
-    private String password;
-}
+public record DbSettings(String url, String username, String password) { }

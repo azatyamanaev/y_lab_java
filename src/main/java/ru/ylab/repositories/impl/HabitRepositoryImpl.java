@@ -12,10 +12,11 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import ru.ylab.config.datasource.CPDataSource;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.services.datasource.ConnectionPool;
+import ru.ylab.utils.SqlConstants;
 import ru.ylab.utils.StringUtil;
 
 /**
@@ -27,25 +28,25 @@ import ru.ylab.utils.StringUtil;
 public class HabitRepositoryImpl implements HabitRepository {
 
     /**
-     * Instance of a {@link ConnectionPool}.
+     * Instance of a {@link CPDataSource}.
      */
-    private final ConnectionPool connectionPool;
+    private final CPDataSource dataSource;
 
     /**
      * Creates new HabitRepositoryImpl.
      *
-     * @param connectionPool ConnectionPool instance
+     * @param dataSource CPDataSource instance
      */
-    public HabitRepositoryImpl(ConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
+    public HabitRepositoryImpl(CPDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public Optional<Habit> findByName(String name) {
         Optional<Habit> habit = Optional.empty();
-        try {
-            Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE name = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_HABITS_BY_NAME)) {
+
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -53,8 +54,6 @@ public class HabitRepositoryImpl implements HabitRepository {
             }
 
             resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while getting habit {}", e.getMessage());
             throw new RuntimeException(e);
@@ -75,17 +74,13 @@ public class HabitRepositoryImpl implements HabitRepository {
     @Override
     public List<Habit> getAll() {
         List<Habit> habits = new ArrayList<>();
-        try {
-            Connection connection = connectionPool.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM entity.habits");
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(SqlConstants.SELECT_ALL_FROM_HABITS)) {
+
             while (resultSet.next()) {
                 habits.add(unwrap(resultSet));
             }
-
-            resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while getting habits {}", e.getMessage());
             throw new RuntimeException(e);
@@ -96,11 +91,8 @@ public class HabitRepositoryImpl implements HabitRepository {
     @Override
     public List<Habit> search(@NotNull HabitSearchForm form) {
         List<Habit> habits = new ArrayList<>();
-        try {
-            Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits " +
-                    "WHERE (name LIKE ? or coalesce(?, '') = '') " +
-                    "and (frequency = ? or coalesce(?, '') = '') and created >= ? and created <= ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SEARCH_HABITS)) {
 
             String name = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
             statement.setString(1, name);
@@ -119,8 +111,6 @@ public class HabitRepositoryImpl implements HabitRepository {
             }
 
             resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while searching habits {}", e.getMessage());
             throw new RuntimeException(e);
@@ -131,9 +121,10 @@ public class HabitRepositoryImpl implements HabitRepository {
     @Override
     public List<Habit> getAllForUser(@NotNull Long userId) {
         List<Habit> habits = new ArrayList<>();
-        try {
-            Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits WHERE user_id = ?");
+        log.info("Using try with resources");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_ALL_HABITS_FOR_USER)) {
+
             statement.setLong(1, userId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -141,8 +132,6 @@ public class HabitRepositoryImpl implements HabitRepository {
             }
 
             resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while getting habits for user {}", e.getMessage());
             throw new RuntimeException(e);
@@ -153,11 +142,9 @@ public class HabitRepositoryImpl implements HabitRepository {
     @Override
     public List<Habit> searchForUser(@NotNull Long userId, @NotNull HabitSearchForm form) {
         List<Habit> habits = new ArrayList<>();
-        try {
-            Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM entity.habits " +
-                    "WHERE user_id = ? and (name LIKE ? or coalesce(?, '') = '') " +
-                    "and (frequency = ? or coalesce(?, '') = '') and created >= ? and created <= ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SEARCH_HABITS_FOR_USER)) {
+
             statement.setLong(1, userId);
 
             String value = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
@@ -177,8 +164,6 @@ public class HabitRepositoryImpl implements HabitRepository {
             }
 
             resultSet.close();
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while searching habits for user {}", e.getMessage());
             throw new RuntimeException(e);
@@ -188,11 +173,9 @@ public class HabitRepositoryImpl implements HabitRepository {
 
    @Override
     public Habit save(Habit habit) {
-        try {
-            Connection connection = connectionPool.getConnection();
-            connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO entity.habits(name, description, frequency, " +
-                    "created, user_id) VALUES (?, ?, ?, ?, ?)");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.INSERT_INTO_HABITS)) {
+
             statement.setString(1, habit.getName());
             statement.setString(2, habit.getDescription());
             statement.setString(3, String.valueOf(habit.getFrequency()));
@@ -200,9 +183,6 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setLong(5, habit.getUserId());
             statement.executeUpdate();
             connection.commit();
-
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while saving habit {}", e.getMessage());
             throw new RuntimeException(e);
@@ -212,11 +192,9 @@ public class HabitRepositoryImpl implements HabitRepository {
 
     @Override
     public Habit update(Habit habit) {
-        try {
-            Connection connection = connectionPool.getConnection();
-            connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("UPDATE entity.habits set name = ?, description = ?, frequency = ?, " +
-                    "created = ? WHERE user_id = ? and id = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.UPDATE_HABITS)) {
+
             statement.setString(1, habit.getName());
             statement.setString(2, habit.getDescription());
             statement.setString(3, String.valueOf(habit.getFrequency()));
@@ -225,9 +203,6 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setLong(6, habit.getId());
             statement.executeUpdate();
             connection.commit();
-
-            statement.close();
-            connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             log.error("Error while updating habit {}", e.getMessage());
             throw new RuntimeException(e);
@@ -239,17 +214,14 @@ public class HabitRepositoryImpl implements HabitRepository {
     public boolean delete(Long userId, @NotNull Habit habit) {
         int result;
         if (habit.getUserId().equals(userId)) {
-            try {
-                Connection connection = connectionPool.getConnection();
-                connection.setAutoCommit(false);
-                PreparedStatement statement = connection.prepareStatement("DELETE FROM entity.habits WHERE user_id = ? and id = ?");
+            try (Connection connection = dataSource.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(SqlConstants.DELETE_FROM_HABITS)) {
+
                 statement.setLong(1, userId);
                 statement.setLong(2, habit.getId());
                 result = statement.executeUpdate();
                 connection.commit();
 
-                statement.close();
-                connectionPool.releaseConnection(connection);
                 return result == 1;
             } catch (SQLException e) {
                 log.error("Error while deleting habit {}", e.getMessage());

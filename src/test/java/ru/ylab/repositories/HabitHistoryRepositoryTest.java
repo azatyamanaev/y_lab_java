@@ -14,7 +14,7 @@ public class HabitHistoryRepositoryTest extends AbstractRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        historyRepository = new HabitHistoryRepositoryImpl(connectionPool);
+        historyRepository = new HabitHistoryRepositoryImpl(dataSource);
     }
 
     @Test

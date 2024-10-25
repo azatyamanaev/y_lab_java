@@ -1,13 +1,15 @@
 package ru.ylab.forms;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Class containing data for creating and updating users.
  *
  * @author azatyamanaev
  */
-@Data
+@Getter
+@Setter
 public class UserForm {
 
     /**

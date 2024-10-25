@@ -29,11 +29,10 @@ public class ConfigParser {
             Properties properties = new Properties();
             properties.load(new FileReader(CONFIG_FILE_PATH));
 
-            DbSettings settings = new DbSettings();
-            settings.setUrl(properties.getProperty("datasource.url"));
-            settings.setUsername(properties.getProperty("datasource.username"));
-            settings.setPassword(properties.getProperty("datasource.password"));
-            return settings;
+            return new DbSettings(
+                    properties.getProperty("datasource.url"),
+                    properties.getProperty("datasource.username"),
+                    properties.getProperty("datasource.password"));
         } catch (IOException e) {
             System.out.println("Error when parsing config file.");
             throw new RuntimeException(e);
@@ -50,12 +49,10 @@ public class ConfigParser {
             Properties properties = new Properties();
             properties.load(new FileReader(CONFIG_FILE_PATH));
 
-            LiquibaseSettings settings = new LiquibaseSettings();
-            settings.setLocation(properties.getProperty("liquibase.changelog.path"));
-            settings.setChangelogSchema(properties.getProperty("liquibase.changelog.schema"));
-            settings.setDefaultSchema(properties.getProperty("liquibase.default.schema"));
-
-            return settings;
+            return new LiquibaseSettings(
+                    properties.getProperty("liquibase.changelog.path"),
+                    properties.getProperty("liquibase.changelog.schema"),
+                    properties.getProperty("liquibase.default.schema"));
         } catch (IOException e) {
             System.out.println("Error when parsing config file.");
             throw new RuntimeException(e);

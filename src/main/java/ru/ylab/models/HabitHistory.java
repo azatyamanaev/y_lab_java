@@ -4,15 +4,17 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Class storing habit completion history.
  *
  * @author azatyamanaev
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class HabitHistory {
 

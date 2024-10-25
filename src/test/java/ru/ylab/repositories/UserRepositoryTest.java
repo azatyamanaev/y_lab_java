@@ -15,7 +15,7 @@ public class UserRepositoryTest extends AbstractRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        userRepository = new UserRepositoryImpl(connectionPool);
+        userRepository = new UserRepositoryImpl(dataSource);
     }
 
     @Test

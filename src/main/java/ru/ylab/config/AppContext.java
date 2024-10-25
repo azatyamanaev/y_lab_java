@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import lombok.Getter;
+import ru.ylab.config.datasource.BasicCPDataSource;
+import ru.ylab.config.datasource.CPDataSource;
 import ru.ylab.config.datasource.LiquibaseConfig;
 import ru.ylab.handlers.AbstractHandler;
 import ru.ylab.handlers.AdminPanelHandler;
@@ -63,6 +65,11 @@ public class AppContext {
     private final ConnectionPool connectionPool;
 
     /**
+     * Instance of a {@link CPDataSource}.
+     */
+    private final CPDataSource dataSource;
+
+    /**
      * Instance of a {@link LiquibaseConfig}.
      */
     private final LiquibaseConfig liquibaseConfig;
@@ -113,10 +120,13 @@ public class AppContext {
 
         this.scanner = new Scanner(System.in);
         this.connectionPool = new BasicConnectionPool(dbSettings);
+        this.dataSource = new BasicCPDataSource(connectionPool);
+        this.dataSource.setAutoCommit(false);
+
         this.liquibaseConfig = new LiquibaseConfig(liquibaseSettings);
-        this.userRepository = new UserRepositoryImpl(connectionPool);
-        this.habitRepository = new HabitRepositoryImpl(connectionPool);
-        this.habitHistoryRepository = new HabitHistoryRepositoryImpl(connectionPool);
+        this.userRepository = new UserRepositoryImpl(dataSource);
+        this.habitRepository = new HabitRepositoryImpl(dataSource);
+        this.habitHistoryRepository = new HabitHistoryRepositoryImpl(dataSource);
         this.liquibaseService = new LiquibaseServiceImpl(liquibaseConfig.liquibase(connectionPool));
         this.userService = new UserServiceImpl(scanner, userRepository);
         this.habitService = new HabitServiceImpl(scanner, habitRepository, habitHistoryRepository);

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.ylab.config.datasource.ProxyConnection;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.settings.DbSettings;
 
@@ -21,12 +22,12 @@ public class BasicConnectionPool implements ConnectionPool {
     /**
      * Initial size of a connection pool.
      */
-    private static final int INITIAL_POOL_SIZE = 10;
+    private static final int INITIAL_POOL_SIZE = 5;
 
     /**
      * Max total connections in connection pool and used connections.
      */
-    private static final int MAX_POOL_SIZE = 100;
+    private static final int MAX_POOL_SIZE = 50;
 
     /**
      * Timeout to wait for connection before it is considered invalid.
@@ -65,15 +66,15 @@ public class BasicConnectionPool implements ConnectionPool {
      * @param settings settings for connecting to database
      */
     public BasicConnectionPool(DbSettings settings) {
-        this.url = settings.getUrl();
-        this.username = settings.getUsername();
-        this.password = settings.getPassword();
+        this.url = settings.url();
+        this.username = settings.username();
+        this.password = settings.password();
         this.usedConnections = new ArrayList<>();
 
         this.connectionPool = new ArrayList<>(INITIAL_POOL_SIZE);
         try {
             for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
-                connectionPool.add(createConnection(settings.getUrl(), settings.getUsername(), settings.getPassword()));
+                connectionPool.add(createConnection(settings.url(), settings.username(), settings.password()));
             }
         } catch (SQLException e) {
             log.error("Error when creating connection {}", e.getMessage());
@@ -91,12 +92,13 @@ public class BasicConnectionPool implements ConnectionPool {
      * @throws SQLException if a database access error occurs or the url is null
      */
     private Connection createConnection(String url, String username, String password) throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+        return new ProxyConnection(DriverManager.getConnection(url, username, password), this);
     }
 
     @Override
     public Connection getConnection() throws SQLException, RuntimeException {
         if (connectionPool.isEmpty()) {
+            log.info("Connection pool is empty");
             if (usedConnections.size() < MAX_POOL_SIZE) {
                 connectionPool.add(createConnection(url, username, password));
             } else {
@@ -141,13 +143,17 @@ public class BasicConnectionPool implements ConnectionPool {
 
     @Override
     public void shutdown() throws SQLException {
+        int count = 0;
         for (Connection used : usedConnections) {
-            used.close();
+            ((ProxyConnection) used).closeReal();
+            count++;
         }
         usedConnections.clear();
         for (Connection c : connectionPool) {
-            c.close();
+            ((ProxyConnection) c).closeReal();
+            count++;
         }
         connectionPool.clear();
+        log.info("Connection pool shut down. Closed {} connections", count);
     }
 }

@@ -9,6 +9,8 @@ import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
+import ru.ylab.config.datasource.BasicCPDataSource;
+import ru.ylab.config.datasource.CPDataSource;
 import ru.ylab.config.datasource.LiquibaseConfig;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.services.datasource.impl.BasicConnectionPool;
@@ -22,7 +24,8 @@ public abstract class AbstractRepositoryTest {
     protected static final String USERNAME = "liquibase";
     protected static final String PASSWORD = "password";
     protected static PostgreSQLContainer<?> postgres;
-    protected static ConnectionPool connectionPool;
+    private static ConnectionPool connectionPool;
+    protected static CPDataSource dataSource;
     protected static Liquibase liquibase;
 
     @BeforeAll
@@ -34,27 +37,25 @@ public abstract class AbstractRepositoryTest {
                 .withInitScript("db/init.sql");
         postgres.start();
 
-        connectionPool = new BasicConnectionPool(DbSettings.builder()
-                                                           .url(postgres.getJdbcUrl())
-                                                           .username(postgres.getUsername())
-                                                           .password(postgres.getPassword())
-                                                           .build());
+        connectionPool = new BasicConnectionPool(new DbSettings(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()));
         LiquibaseConfig config = new LiquibaseConfig(ConfigParser.parseLiquibaseSettings());
         liquibase = config.liquibase(connectionPool);
         liquibase.update();
+        dataSource = new BasicCPDataSource(connectionPool);
+        dataSource.setAutoCommit(false);
         insertTestData();
     }
 
     @AfterAll
-    public static void afterAll() throws SQLException{
+    public static void afterAll() throws SQLException {
+        dataSource = null;
         connectionPool.shutdown();
         postgres.stop();
     }
 
 
     private static void insertTestData() throws SQLException {
-        Connection connection = connectionPool.getConnection();
-        connection.setAutoCommit(false);
+        Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
         statement.executeUpdate("delete from entity.habit_history;");
         statement.executeUpdate("delete from entity.habits;");
@@ -80,6 +81,6 @@ public abstract class AbstractRepositoryTest {
         connection.commit();
 
         statement.close();
-        connection.close();
+        connectionPool.releaseConnection(connection);
     }
 }

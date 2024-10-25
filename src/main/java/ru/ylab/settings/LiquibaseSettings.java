@@ -1,27 +1,11 @@
 package ru.ylab.settings;
 
-import lombok.Data;
-
 /**
  * Class containing Liquibase settings.
  *
+ * @param location Path to changelog.xml file.
+ * @param changelogSchema Default schema for liquibase.
+ * @param defaultSchema Default schema for entities.
  * @author azatyamanaev
  */
-@Data
-public class LiquibaseSettings {
-
-    /**
-     * Path to changelog.xml file.
-     */
-    private String location;
-
-    /**
-     * Default schema for liquibase.
-     */
-    private String changelogSchema;
-
-    /**
-     * Default schema for entities.
-     */
-    private String defaultSchema;
-}
+public record LiquibaseSettings(String location, String changelogSchema, String defaultSchema) { }
