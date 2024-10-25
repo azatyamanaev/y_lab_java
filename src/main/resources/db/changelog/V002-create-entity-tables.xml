@@ -1,0 +1,63 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-users-table" author="azatyamanaev">
+        <createTable tableName="users" ifNotExists="true" schemaName="entity">
+            <column name="id" type="bigint" defaultValueSequenceNext="users_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-habits-table" author="azatyamanaev">
+        <createTable tableName="habits" ifNotExists="true" schemaName="entity">
+            <column name="id" type="bigint" defaultValueSequenceNext="habits_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="frequency" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="date" defaultValue="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_user_id" references="users(id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-habit-history-table" author="azatyamanaev">
+        <createTable tableName="habit_history" ifNotExists="true" schemaName="entity">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_history_user_id" references="users(id)" deleteCascade="true"/>
+            </column>
+            <column name="habit_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_history_habit_id" references="habits(id)" deleteCascade="true"/>
+            </column>
+            <column name="completed_on" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

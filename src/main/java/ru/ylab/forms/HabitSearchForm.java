@@ -2,14 +2,16 @@ package ru.ylab.forms;
 
 import java.time.LocalDate;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Class containing filters for searching habits.
  *
  * @author azatyamanaev
  */
-@Data
+@Getter
+@Setter
 public class HabitSearchForm {
 
     /**
