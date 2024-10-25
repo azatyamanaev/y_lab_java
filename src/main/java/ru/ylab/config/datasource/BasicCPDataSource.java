@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import ru.ylab.services.datasource.ConnectionPool;
 
 /**
- * Class implementing {@link CPDataSource}
+ * Class implementing {@link CPDataSource}.
  *
  * @author azatyamanaev
  */

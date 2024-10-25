@@ -39,7 +39,7 @@ public class ProxyConnection implements Connection {
     private final ConnectionPool connectionPool;
 
     /**
-     * Creates new ConnectionWrapper.
+     * Creates new ProxyConnection.
      *
      * @param connectionPool ConnectionPool instance
      * @param target Connection instance
@@ -49,7 +49,7 @@ public class ProxyConnection implements Connection {
         this.connectionPool = connectionPool;
     }
 
-    // Override close method to return to pool instead of closing connection
+    // Override close method to return to pool instead of closing connection.
     @Override
     public void close() {
         this.connectionPool.releaseConnection(this);
@@ -64,6 +64,7 @@ public class ProxyConnection implements Connection {
         this.target.close();
     }
 
+    // Use Connection methods though target field.
     @Override
     public Statement createStatement() throws SQLException {
         return target.createStatement();
