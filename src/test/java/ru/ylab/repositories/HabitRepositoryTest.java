@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.ylab.forms.HabitSearchForm;
+import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.impl.HabitRepositoryImpl;
 

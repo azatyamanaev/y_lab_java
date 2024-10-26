@@ -3,17 +3,14 @@ package ru.ylab.services.entities.impl;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.Scanner;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.App;
 import ru.ylab.models.Habit;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.entities.HabitHistoryService;
-import ru.ylab.utils.InputParser;
 
 /**
  * Service implementing {@link HabitHistoryService}.
@@ -22,11 +19,6 @@ import ru.ylab.utils.InputParser;
  */
 @Slf4j
 public class HabitHistoryServiceImpl implements HabitHistoryService {
-
-    /**
-     * Scanner for reading user input.
-     */
-    private final Scanner scanner;
 
     /**
      * Instance of a {@link HabitRepository}
@@ -41,82 +33,42 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     /**
      * Creates new HabitHistoryServiceImpl.
      *
-     * @param scanner                scanner for reading user input
      * @param habitRepository        HabitRepository instance
      * @param habitHistoryRepository HabitHistoryRepository instance
      */
-    public HabitHistoryServiceImpl(Scanner scanner, HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
-        this.scanner = scanner;
+    public HabitHistoryServiceImpl(HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
         this.habitRepository = habitRepository;
         this.habitHistoryRepository = habitHistoryRepository;
     }
 
     @Override
-    public void markHabitCompleted() {
-        System.out.print("Enter habit name: ");
-        String name = scanner.next();
-        Habit habit = habitRepository.getByName(name);
+    public void markHabitCompleted(Long userId, String name, LocalDate completedOn) {
+        Habit habit = habitRepository.getByName("name");
         if (habit == null) {
-            log.warn("Habit with name {} not found.", name);
+            log.warn("Habit with name {} not found.", "name");
             return;
         }
-
-        System.out.print("Enter habit completion date: ");
-        LocalDate date = InputParser.parseDate(scanner);
 
         HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
         if (history == null) {
             history = new HabitHistory();
-            history.setUserId(App.getCurrentUser().getId());
+            history.setUserId(userId);
             history.setHabitId(habit.getId());
         }
-        history.setCompletedOn(date);
+        history.setCompletedOn(completedOn);
         habitHistoryRepository.save(history);
         log.info("Habit completion recorded.");
     }
 
     @Override
-    public String viewHabitHistory() {
-        StringBuilder response = new StringBuilder();
-
-        System.out.print("Enter habit name: ");
-        String name = scanner.next();
-        Habit habit = habitRepository.getByName(name);
-        if (habit == null) {
-            response.append("Habit with name ").append(name).append(" not found.");
-        } else {
-            System.out.print("Enter date from(format yyyy-MM-dd): ");
-            LocalDate after = InputParser.parseDate(scanner);
-
-            System.out.print("Enter date until(format yyyy-MM-dd): ");
-            LocalDate before = InputParser.parseDate(scanner);
-
-            HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
-
-            if (history == null) {
-                response.append("Habit does not have history.");
-            } else {
-                response.append("After ")
-                        .append(after)
-                        .append(" before ")
-                        .append(before)
-                        .append(" habit ")
-                        .append(name)
-                        .append(" was completed on days:\n");
-
-                history.getDays().stream()
-                       .filter(x -> x.isAfter(after) && x.isBefore(before))
-                       .forEach(x -> response.append(x).append("\n"));
-            }
-        }
-
-        return response.toString();
+    public HabitHistory getHabitHistory(Long userId, String name) {
+        return habitHistoryRepository.getByHabitId(habitRepository.getByName(name).getId());
     }
 
     @Override
-    public String habitCompletionStreak() {
+    public String habitCompletionStreak(Long userId) {
         StringBuilder response = new StringBuilder("Current completion streak for habits:\n");
-        habitRepository.getAllForUser(App.getCurrentUser().getId())
+        habitRepository.getAllForUser(userId)
                        .forEach(x -> response.append("Habit: name - ")
                                              .append(x.getName())
                                              .append(", streak - ")
@@ -126,27 +78,14 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     }
 
     @Override
-    public String habitCompletionPercent() {
-        System.out.print("Enter date from: ");
-        LocalDate from = InputParser.parseDate(scanner);
-
-        System.out.print("Enter date to: ");
-        LocalDate to = InputParser.parseDate(scanner);
-
-        StringBuilder response = new StringBuilder("Current habit completion percent:\n");
-        habitRepository.getAllForUser(App.getCurrentUser().getId())
-                       .forEach(x -> response.append("Habit: name - ")
-                                             .append(x.getName())
-                                             .append(", completion - ")
-                                             .append(completionPercent(x, from, to))
-                                             .append("\n"));
-        return response.toString();
+    public String habitCompletionPercent(Long userId) {
+        return "Habit completion percent";
     }
 
     @Override
-    public String habitCompletionReport() {
+    public String habitCompletionReport(Long userId) {
         StringBuilder response = new StringBuilder("Current habit completion:\n");
-        habitRepository.getAllForUser(App.getCurrentUser().getId())
+        habitRepository.getAllForUser(userId)
                        .forEach(x -> {
                            HabitHistory history = habitHistoryRepository.getByHabitId(x.getId());
                            if (history != null) {

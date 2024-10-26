@@ -1,17 +1,52 @@
-version: '1.0.0'
-
 services:
-  postgres_db:
+  postgres-db:
+    container_name: postgres-db
     image: bitnami/postgresql:17
-    container_name: postgres_db
-    restart: always
+    restart: unless-stopped
     ports:
       - "5433:5432"
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: pg_isready -h localhost -U postgres
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - ./db-data/:/var/lib/postgresql/data
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres-db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 600M
+    networks:
+      - ylab
 
+  tomcat:
+    container_name: tomcat
+    image: ylab-app
+    build:
+      context: ./docker/tomcat
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1.2G
+    networks:
+      - ylab
+
+volumes:
+  db-data:
+
+networks:
+  ylab:
 

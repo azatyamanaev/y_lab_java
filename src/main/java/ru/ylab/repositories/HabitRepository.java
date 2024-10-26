@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.forms.HabitSearchForm;
+import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 
 /**

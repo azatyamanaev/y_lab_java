@@ -10,6 +10,14 @@ import ru.ylab.models.User;
 public interface UserService {
 
     /**
+     * Gets user by id.
+     *
+     * @param id user id
+     * @return user or null
+     */
+    User get(Long id);
+
+    /**
      * Gets user by email.
      *
      * @param email user email
@@ -29,11 +37,12 @@ public interface UserService {
      * Saves user to storage.
      *
      * @param user user data
+     * @return saved user
      */
     User save(User user);
 
     /**
-     * Gets users with filtering depending on user input.
+     * Gets users with filtering.
      *
      * @return list of users in string format
      */

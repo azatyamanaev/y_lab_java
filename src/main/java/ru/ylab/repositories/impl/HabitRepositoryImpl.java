@@ -12,11 +12,11 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.config.datasource.CPDataSource;
-import ru.ylab.forms.HabitSearchForm;
+import ru.ylab.services.datasource.CPDataSource;
+import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.utils.SqlConstants;
+import ru.ylab.utils.constants.SqlConstants;
 import ru.ylab.utils.StringUtil;
 
 /**
@@ -50,7 +50,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                habit = Optional.of(unwrap(resultSet));
+                    habit = Optional.of(unwrap(resultSet));
             }
 
             resultSet.close();

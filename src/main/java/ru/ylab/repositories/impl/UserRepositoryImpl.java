@@ -11,11 +11,11 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.config.datasource.CPDataSource;
-import ru.ylab.forms.UserSearchForm;
+import ru.ylab.services.datasource.CPDataSource;
+import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
-import ru.ylab.utils.SqlConstants;
+import ru.ylab.utils.constants.SqlConstants;
 import ru.ylab.utils.StringUtil;
 
 /**
@@ -38,6 +38,26 @@ public class UserRepositoryImpl implements UserRepository {
      */
     public UserRepositoryImpl(CPDataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    @Override
+    public User get(Long id) {
+        User user = null;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_USERS_BY_ID)){
+
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                user = Optional.of(unwrap(resultSet)).orElse(null);
+            }
+
+            resultSet.close();
+        } catch (SQLException e) {
+            log.error("Error while getting user {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return user;
     }
 
     @Override

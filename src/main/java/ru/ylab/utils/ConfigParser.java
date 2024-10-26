@@ -17,7 +17,7 @@ public class ConfigParser {
     /**
      * Path to application config path relative to project root.
      */
-    private static final String CONFIG_FILE_PATH = "./src/main/resources/application.properties";
+    private static final String CONFIG_FILE_PATH = "/usr/local/tomcat/webapps/habits-app/WEB-INF/classes/application.properties";
 
     /**
      * Parses DbSettings instance from config file.

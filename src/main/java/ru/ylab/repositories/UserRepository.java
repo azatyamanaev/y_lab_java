@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.forms.UserSearchForm;
+import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;
 
 /**
@@ -13,6 +13,14 @@ import ru.ylab.models.User;
  * @author azatyamanaev
  */
 public interface UserRepository {
+
+    /**
+     * Gets user by id.
+     *
+     * @param id user id
+     * @return user or null
+     */
+    User get(Long id);
 
     /**
      * Finds user by name.

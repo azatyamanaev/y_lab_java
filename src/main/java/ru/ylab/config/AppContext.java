@@ -1,45 +1,13 @@
 package ru.ylab.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
-import ru.ylab.config.datasource.BasicCPDataSource;
-import ru.ylab.config.datasource.CPDataSource;
-import ru.ylab.config.datasource.LiquibaseConfig;
-import ru.ylab.handlers.AbstractHandler;
-import ru.ylab.handlers.AdminPanelHandler;
-import ru.ylab.handlers.AuthHandler;
-import ru.ylab.handlers.AuthorizedUserHandler;
-import ru.ylab.handlers.HabitHistoryHandler;
-import ru.ylab.handlers.HabitStatisticsHandler;
-import ru.ylab.handlers.HabitsHandler;
-import ru.ylab.handlers.ManageHabitsHandler;
-import ru.ylab.handlers.Page;
-import ru.ylab.handlers.UserProfileHandler;
-import ru.ylab.handlers.UsersHandler;
-import ru.ylab.repositories.HabitHistoryRepository;
-import ru.ylab.repositories.HabitRepository;
-import ru.ylab.repositories.UserRepository;
-import ru.ylab.repositories.impl.HabitHistoryRepositoryImpl;
-import ru.ylab.repositories.impl.HabitRepositoryImpl;
-import ru.ylab.repositories.impl.UserRepositoryImpl;
-import ru.ylab.services.datasource.ConnectionPool;
-import ru.ylab.services.datasource.LiquibaseService;
-import ru.ylab.services.datasource.impl.BasicConnectionPool;
-import ru.ylab.services.datasource.impl.LiquibaseServiceImpl;
-import ru.ylab.services.entities.AuthService;
-import ru.ylab.services.entities.HabitHistoryService;
-import ru.ylab.services.entities.HabitService;
-import ru.ylab.services.entities.UserService;
-import ru.ylab.services.entities.impl.AuthServiceImpl;
-import ru.ylab.services.entities.impl.HabitHistoryServiceImpl;
-import ru.ylab.services.entities.impl.HabitServiceImpl;
-import ru.ylab.services.entities.impl.UserServiceImpl;
-import ru.ylab.settings.DbSettings;
-import ru.ylab.settings.LiquibaseSettings;
-import ru.ylab.utils.ConfigParser;
+import ru.ylab.config.datasource.DataSourceConfig;
+import ru.ylab.dto.mappers.HabitMapper;
+import ru.ylab.dto.mappers.HabitMapperImpl;
 
 /**
  * Class representing application context.
@@ -50,99 +18,53 @@ import ru.ylab.utils.ConfigParser;
 public class AppContext {
 
     /**
-     * Scanner for reading user input.
+     * Instance of a {@link DataSourceConfig}.
      */
-    protected final Scanner scanner;
+    private final DataSourceConfig dataSourceConfig;
 
     /**
-     * Map for storing Handler implementations for each page.
+     * Instance of a {@link RepositoriesConfig}.
      */
-    private final Map<Page, AbstractHandler> handlers;
+    private final RepositoriesConfig repositoriesConfig;
 
     /**
-     * Instance of a {@link ConnectionPool}.
+     * Instance of a {@link ServicesConfig}.
      */
-    private final ConnectionPool connectionPool;
+    private final ServicesConfig servicesConfig;
 
     /**
-     * Instance of a {@link CPDataSource}.
+     * Instance of an {@link ObjectMapper}.
      */
-    private final CPDataSource dataSource;
+    private final ObjectMapper mapper;
 
     /**
-     * Instance of a {@link LiquibaseConfig}.
+     * Instance of a {@link HabitMapper}.
      */
-    private final LiquibaseConfig liquibaseConfig;
+    private final HabitMapper habitMapper;
 
     /**
-     * Instance of an {@link UserRepository}.
+     * Creates new AppContext.
      */
-    private final UserRepository userRepository;
-
-    /**
-     * Instance of an {@link HabitRepository}.
-     */
-    private final HabitRepository habitRepository;
-
-    /**
-     * Instance of an {@link HabitHistoryRepository}.
-     */
-    private final HabitHistoryRepository habitHistoryRepository;
-
-    /**
-     * Instance of an {@link LiquibaseService}.
-     */
-    private final LiquibaseService liquibaseService;
-
-    /**
-     * Instance of an {@link UserService}.
-     */
-    private final UserService userService;
-
-    /**
-     * Instance of an {@link HabitService}.
-     */
-    private final HabitService habitService;
-
-    /**
-     * Instance of an {@link HabitHistoryService}.
-     */
-    private final HabitHistoryService habitHistoryService;
-
-    /**
-     * Instance of an {@link AuthService}.
-     */
-    private final AuthService authService;
-
     public AppContext() {
-        DbSettings dbSettings = ConfigParser.parseDbSettings();
-        LiquibaseSettings liquibaseSettings = ConfigParser.parseLiquibaseSettings();
+        this.dataSourceConfig = new DataSourceConfig();
+        this.repositoriesConfig = new RepositoriesConfig(dataSourceConfig);
+        this.servicesConfig = new ServicesConfig(dataSourceConfig, repositoriesConfig);
 
-        this.scanner = new Scanner(System.in);
-        this.connectionPool = new BasicConnectionPool(dbSettings);
-        this.dataSource = new BasicCPDataSource(connectionPool);
-        this.dataSource.setAutoCommit(false);
+        this.mapper = mapper();
+        this.habitMapper = new HabitMapperImpl();
+    }
 
-        this.liquibaseConfig = new LiquibaseConfig(liquibaseSettings);
-        this.userRepository = new UserRepositoryImpl(dataSource);
-        this.habitRepository = new HabitRepositoryImpl(dataSource);
-        this.habitHistoryRepository = new HabitHistoryRepositoryImpl(dataSource);
-        this.liquibaseService = new LiquibaseServiceImpl(liquibaseConfig.liquibase(connectionPool));
-        this.userService = new UserServiceImpl(scanner, userRepository);
-        this.habitService = new HabitServiceImpl(scanner, habitRepository, habitHistoryRepository);
-        this.authService = new AuthServiceImpl(scanner, userService);
-        this.habitHistoryService = new HabitHistoryServiceImpl(scanner, habitRepository, habitHistoryRepository);
-
-        this.handlers = new HashMap<>();
-        handlers.put(Page.AUTH_PAGE, new AuthHandler(scanner, authService));
-        handlers.put(Page.AUTHORIZED_USER_PAGE, new AuthorizedUserHandler(scanner));
-        handlers.put(Page.USER_PROFILE_PAGE, new UserProfileHandler(scanner, userService));
-        handlers.put(Page.HABITS_PAGE, new HabitsHandler(scanner));
-        handlers.put(Page.MANAGE_HABITS_PAGE, new ManageHabitsHandler(scanner, habitService));
-        handlers.put(Page.HABIT_HISTORY_PAGE, new HabitHistoryHandler(scanner, habitService, habitHistoryService));
-        handlers.put(Page.HABIT_STATISTICS_PAGE, new HabitStatisticsHandler(scanner, habitHistoryService));
-        handlers.put(Page.ADMIN_PANEL_PAGE, new AdminPanelHandler(scanner, habitService));
-        handlers.put(Page.USERS_PAGE, new UsersHandler(scanner, userService));
+    /**
+     * ObjectMapper config.
+     *
+     * @return instance of an ObjectMapper
+     */
+    public ObjectMapper mapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return objectMapper;
     }
 
     /**

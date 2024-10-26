@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.ylab.config.datasource.ProxyConnection;
+import ru.ylab.services.datasource.ProxyConnection;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.settings.DbSettings;
 
@@ -66,6 +66,12 @@ public class BasicConnectionPool implements ConnectionPool {
      * @param settings settings for connecting to database
      */
     public BasicConnectionPool(DbSettings settings) {
+        try {
+            DriverManager.registerDriver(new org.postgresql.Driver());
+        } catch (SQLException e) {
+            log.error("Error while registering postgresql driver");
+            throw new RuntimeException(e);
+        }
         this.url = settings.url();
         this.username = settings.username();
         this.password = settings.password();

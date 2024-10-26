@@ -1,5 +1,9 @@
 package ru.ylab.services.entities;
 
+import java.time.LocalDate;
+
+import ru.ylab.models.HabitHistory;
+
 /**
  * Interface describing logic for working with habit history.
  *
@@ -8,35 +12,44 @@ package ru.ylab.services.entities;
 public interface HabitHistoryService {
 
     /**
-     * Mark habit as completed on day from user input.
+     * Mark habit as completed.
+     *
+     * @param userId user id
+     * @param name habit name
+     * @param completedOn completed on day
      */
-    void markHabitCompleted();
+    void markHabitCompleted(Long userId, String name, LocalDate completedOn);
 
     /**
-     * View days on which habit was completed for user.
+     * Gets days on which habit was completed for user.
      *
-     * @return habit history in string format
+     * @param userId user id
+     * @param name habit name
+     * @return habit history
      */
-    String viewHabitHistory();
+    HabitHistory getHabitHistory(Long userId, String name);
 
     /**
      * Prints current habit completion streak for user.
      *
+     * @param userId user id
      * @return habit completion streak in string format
      */
-    String habitCompletionStreak();
+    String habitCompletionStreak(Long userId);
 
     /**
      * Prints habit completion percent for user for the period.
      *
+     * @param userId user id
      * @return habit completion percent in string format
      */
-    String habitCompletionPercent();
+    String habitCompletionPercent(Long userId);
 
     /**
-     * Prints habit completion report for user
+     * Prints habit completion report for user.
      *
+     * @param userId user id
      * @return habit completion report in string format
      */
-    String habitCompletionReport();
+    String habitCompletionReport(Long userId);
 }
