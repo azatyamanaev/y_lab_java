@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import lombok.Getter;
-import ru.ylab.config.datasource.BasicCPDataSource;
-import ru.ylab.config.datasource.CPDataSource;
+import ru.ylab.services.datasource.impl.BasicCPDataSource;
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.config.datasource.LiquibaseConfig;
 import ru.ylab.handlers.AbstractHandler;
 import ru.ylab.handlers.AdminPanelHandler;

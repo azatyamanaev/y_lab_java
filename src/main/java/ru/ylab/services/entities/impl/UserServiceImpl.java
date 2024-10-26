@@ -11,7 +11,6 @@ import ru.ylab.handlers.Page;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
 import ru.ylab.services.entities.UserService;
-import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.InputParser;
 import ru.ylab.utils.RegexMatcher;
 
@@ -109,12 +108,11 @@ public class UserServiceImpl implements UserService {
         System.out.print("Enter role(1 - USER, 2 - ADMIN): ");
         String role = InputParser.parseRole(scanner);
 
-        User user = new User(
-                IdUtil.generateUserId(),
-                form.getName(),
-                form.getEmail(),
-                form.getPassword(),
-                User.Role.valueOf(role));
+        User user = new User();
+        user.setEmail(form.getEmail());
+        user.setName(form.getName());
+        user.setPassword(form.getPassword());
+        user.setRole(User.Role.valueOf(role));
 
         userRepository.save(user);
         log.info("User created.");

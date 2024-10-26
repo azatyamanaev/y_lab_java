@@ -12,7 +12,6 @@ import ru.ylab.models.User;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.entities.HabitService;
-import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.InputParser;
 
 /**
@@ -101,12 +100,11 @@ public class HabitServiceImpl implements HabitService {
         System.out.print("Enter frequency(1 - daily, 2 - weekly, 3 - monthly): ");
         form.setFrequency(InputParser.parseFrequency(scanner));
 
-        Habit habit = new Habit(
-                IdUtil.generateHabitId(),
-                form.getName(),
-                form.getDescription(),
-                Habit.Frequency.valueOf(form.getFrequency()),
-                App.getCurrentUser().getId());
+        Habit habit = new Habit();
+        habit.setName(form.getName());
+        habit.setDescription(form.getDescription());
+        habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
+        habit.setUserId(App.getCurrentUser().getId());
         habitRepository.save(habit);
         log.info("Habit created.");
     }

@@ -1,4 +1,4 @@
-package ru.ylab.config.datasource;
+package ru.ylab.services.datasource;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -18,8 +18,6 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-
-import ru.ylab.services.datasource.ConnectionPool;
 
 /**
  * Class representing proxy connection.

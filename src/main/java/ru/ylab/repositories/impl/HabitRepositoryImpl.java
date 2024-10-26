@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.config.datasource.CPDataSource;
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.forms.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;

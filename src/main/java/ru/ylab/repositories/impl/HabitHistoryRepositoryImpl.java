@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.config.datasource.CPDataSource;
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.utils.SqlConstants;

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.config.datasource.CPDataSource;
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.forms.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;

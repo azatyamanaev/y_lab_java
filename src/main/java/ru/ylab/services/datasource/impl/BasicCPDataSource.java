@@ -1,8 +1,9 @@
-package ru.ylab.config.datasource;
+package ru.ylab.services.datasource.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.services.datasource.ConnectionPool;
 
 /**

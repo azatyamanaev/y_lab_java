@@ -10,7 +10,6 @@ import ru.ylab.handlers.Page;
 import ru.ylab.models.User;
 import ru.ylab.services.entities.AuthService;
 import ru.ylab.services.entities.UserService;
-import ru.ylab.utils.IdUtil;
 import ru.ylab.utils.RegexMatcher;
 
 /**
@@ -98,12 +97,11 @@ public class AuthServiceImpl implements AuthService {
         if (userService.existsByEmail(form.getEmail())) {
             user = null;
         } else {
-            user = new User(
-                    IdUtil.generateUserId(),
-                    form.getName(),
-                    form.getEmail(),
-                    form.getPassword(),
-                    User.Role.USER);
+            user = new User();
+            user.setEmail(form.getEmail());
+            user.setName(form.getName());
+            user.setPassword(form.getPassword());
+            user.setRole(User.Role.USER);
             userService.save(user);
         }
 

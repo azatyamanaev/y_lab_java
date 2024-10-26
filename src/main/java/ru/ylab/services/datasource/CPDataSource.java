@@ -1,4 +1,4 @@
-package ru.ylab.config.datasource;
+package ru.ylab.services.datasource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
