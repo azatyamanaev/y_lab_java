@@ -55,8 +55,8 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
 
     @Override
     public HabitHistory getByHabitId(@NotNull Long habitId) {
-        HabitHistory history = new HabitHistory();
-        history.setHabitId(habitId);
+        HabitHistory history = null;
+
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(SqlConstants.SELECT_FROM_HABIT_HISTORY_BY_HABIT_ID)) {
@@ -64,6 +64,8 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             statement.setLong(1, habitId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                history = new HabitHistory();
+                history.setHabitId(habitId);
                 history.setUserId(resultSet.getLong("user_id"));
                 history.getDays().add(resultSet.getDate("completed_on").toLocalDate());
             }

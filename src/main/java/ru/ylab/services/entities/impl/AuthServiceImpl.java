@@ -103,6 +103,7 @@ public class AuthServiceImpl implements AuthService {
             user.setPassword(form.getPassword());
             user.setRole(User.Role.USER);
             userService.save(user);
+            user = userService.getByEmail(form.getEmail());
         }
 
         if (user != null) {

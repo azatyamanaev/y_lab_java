@@ -1,5 +1,6 @@
 package ru.ylab.services.entities.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -105,6 +106,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setDescription(form.getDescription());
         habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
         habit.setUserId(App.getCurrentUser().getId());
+        habit.setCreated(LocalDate.now());
         habitRepository.save(habit);
         log.info("Habit created.");
     }
