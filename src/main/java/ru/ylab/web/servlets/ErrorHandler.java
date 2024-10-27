@@ -52,11 +52,19 @@ public class ErrorHandler extends HttpServlet implements HttpRequestHandler {
                 status = httpException.getStatus();
             } else {
                 error.setMessage(exception.getMessage());
-                status = 500;
+                status = resp.getStatus();
             }
         } else {
-            error.setMessage("Internal server error");
-            status = 500;
+            status = resp.getStatus();
+            switch (status) {
+                case HttpServletResponse.SC_NOT_FOUND:
+                    error.setMessage("Resource not found");
+                    break;
+                default:
+                    error.setMessage("Internal server error");
+
+            }
+
         }
 
         log.error("Error with status {} and message {}", status, error.getMessage());

@@ -62,8 +62,6 @@ public class AuthFilter implements Filter {
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf(WebConstants.APP_CONTEXT_PATH) + WebConstants.APP_CONTEXT_PATH.length());
 
-        log.info("Checking authorization header");
-
         HttpServletResponse response = (HttpServletResponse) resp;
         String authorization = request.getHeader("Authorization");
         if (StringUtil.isEmpty(authorization)) {

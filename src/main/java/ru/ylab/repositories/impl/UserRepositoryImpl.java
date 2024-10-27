@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
+import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.exception.HttpException;
@@ -25,6 +26,7 @@ import ru.ylab.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
+@LogQuery
 public class UserRepositoryImpl implements UserRepository {
 
     /**

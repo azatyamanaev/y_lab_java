@@ -1,5 +1,6 @@
 package ru.ylab.exception;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,5 +31,6 @@ public class Error {
     /**
      * Error details.
      */
-    private List<ErrorDetail> details;
+    @Builder.Default
+    private List<ErrorDetail> details = new ArrayList<>();
 }

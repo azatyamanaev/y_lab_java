@@ -21,10 +21,10 @@ public class HabitSearchFormValidator implements Validator<HabitSearchForm> {
 
         HttpException exception = HttpException.validationError();
 
-        if (data.getName() != null && !data.getName().isBlank()) {
+        if (data.getName() != null && data.getName().isBlank()) {
             exception.addDetail(ErrorConstants.EMPTY_PARAM, "name");
         }
-        if (data.getFrequency() != null && !data.getFrequency().isBlank()) {
+        if (data.getFrequency() != null && data.getFrequency().isBlank()) {
             exception.addDetail(ErrorConstants.EMPTY_PARAM, "frequency");
         } else if (data.getFrequency() != null
                 && !List.of(Habit.Frequency.DAILY.name(), Habit.Frequency.WEEKLY.name(), Habit.Frequency.MONTHLY.name())

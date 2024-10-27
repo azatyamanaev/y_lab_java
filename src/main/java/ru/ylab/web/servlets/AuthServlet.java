@@ -18,6 +18,7 @@ import ru.ylab.services.auth.AuthService;
 import ru.ylab.services.auth.JwtService;
 import ru.ylab.utils.constants.WebConstants;
 
+import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.AUTH_URL;
 import static ru.ylab.utils.constants.WebConstants.REFRESH_TOKEN_URL;
 import static ru.ylab.utils.constants.WebConstants.SIGN_IN_URL;
@@ -61,7 +62,7 @@ public class AuthServlet extends HttpServlet implements HttpRequestHandler {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         String response = "";
         if (uri.equals(AUTH_URL + REFRESH_TOKEN_URL)) {
             String refresh = req.getParameter("token");
@@ -73,7 +74,7 @@ public class AuthServlet extends HttpServlet implements HttpRequestHandler {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         String response = "";
         SignInResult signInResult;
 

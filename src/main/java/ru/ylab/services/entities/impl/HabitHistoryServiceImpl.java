@@ -102,7 +102,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
      */
     private int countStreak(@NotNull Habit habit) {
         HabitHistoryProjection history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null) {
+        if (history == null || history.getDays() == null) {
             return 0;
         }
 
@@ -138,7 +138,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
      */
     private String completionPercent(@NotNull Habit habit, LocalDate from, LocalDate to) {
         HabitHistoryProjection history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null) {
+        if (history == null || history.getDays() == null) {
             return "0%";
         }
 

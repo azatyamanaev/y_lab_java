@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import ru.ylab.aspects.LogRequest;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
@@ -21,6 +22,7 @@ import ru.ylab.models.User;
 import ru.ylab.services.entities.HabitService;
 import ru.ylab.utils.constants.WebConstants;
 
+import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.HABITS_URL;
 import static ru.ylab.utils.constants.WebConstants.ONE_URL;
 import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
@@ -31,6 +33,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
+@LogRequest
 @Slf4j
 @WebServlet(name = WebConstants.HABITS_SERVLET_NAME,
         urlPatterns = {USER_URL + HABITS_URL,
@@ -65,10 +68,9 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         String response;
         List<HabitDto> dtos;
-        log.info("GET {}", uri);
 
         User current = (User) req.getAttribute("currentUser");
         switch (uri) {
@@ -98,7 +100,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
             User user = (User) req.getAttribute("currentUser");
             HabitForm form = mapper.readValue(req.getReader(), HabitForm.class);
@@ -110,7 +112,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
             Long id = Long.valueOf(req.getParameter("id"));
             User user = (User) req.getAttribute("currentUser");
@@ -123,7 +125,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         log.info("GET {}", uri);
         if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
             Long id = Long.valueOf(req.getParameter("id"));

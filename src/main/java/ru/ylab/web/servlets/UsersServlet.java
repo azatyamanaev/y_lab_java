@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.ylab.aspects.LogRequest;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.mappers.UserMapper;
@@ -25,6 +26,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
+@LogRequest
 @WebServlet(name = WebConstants.USERS_SERVLET_NAME,
         urlPatterns = {USER_URL + SELF_URL})
 public class UsersServlet extends HttpServlet implements HttpRequestHandler {

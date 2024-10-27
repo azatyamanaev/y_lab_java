@@ -1,7 +1,5 @@
 package ru.ylab.exception;
 
-import java.util.ArrayList;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +37,9 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException addDetail(String type, String target) {
         if (error == null) {
-            error = new Error(ErrorConstants.VALIDATION_ERROR, new ArrayList<>());
+            error = Error.builder()
+                    .message(ErrorConstants.VALIDATION_ERROR)
+                         .build();
         }
         error.getDetails().add(new ErrorDetail(type, target));
         return this;

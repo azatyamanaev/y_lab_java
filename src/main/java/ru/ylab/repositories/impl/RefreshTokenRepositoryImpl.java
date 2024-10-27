@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Optional;
 
+import ru.ylab.aspects.LogQuery;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.RefreshToken;
 import ru.ylab.repositories.RefreshTokenRepository;
@@ -19,6 +20,7 @@ import ru.ylab.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
+@LogQuery
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     /**

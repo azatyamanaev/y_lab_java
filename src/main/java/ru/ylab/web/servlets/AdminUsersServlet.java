@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.ylab.aspects.LogRequest;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.UserForm;
 import ru.ylab.dto.in.UserSearchForm;
@@ -18,6 +19,7 @@ import ru.ylab.dto.out.UserDto;
 import ru.ylab.services.entities.UserService;
 import ru.ylab.utils.constants.WebConstants;
 
+import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
 import static ru.ylab.utils.constants.WebConstants.ONE_URL;
 import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
@@ -28,6 +30,7 @@ import static ru.ylab.utils.constants.WebConstants.USERS_URL;
  *
  * @author azatyamanaev
  */
+@LogRequest
 @WebServlet(name = WebConstants.ADMIN_USERS_SERVLET_NAME,
         urlPatterns = {ADMIN_URL + USERS_URL,
                 ADMIN_URL + USERS_URL + ONE_URL,
@@ -61,7 +64,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         String response;
         List<UserDto> dtos;
         switch (uri) {
@@ -91,7 +94,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         if (uri.equals(ADMIN_URL + USERS_URL + ONE_URL)) {
             UserForm form = mapper.readValue(req.getReader(), UserForm.class);
             userService.createByAdmin(form);
@@ -102,7 +105,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         if (uri.equals(ADMIN_URL + USERS_URL + ONE_URL)) {
             Long id = Long.valueOf(req.getParameter("id"));
             userService.delete(id);

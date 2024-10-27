@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.ylab.aspects.LogRequest;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.mappers.HabitMapper;
@@ -19,6 +20,7 @@ import ru.ylab.dto.out.HabitDto;
 import ru.ylab.services.entities.HabitService;
 import ru.ylab.utils.constants.WebConstants;
 
+import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
 import static ru.ylab.utils.constants.WebConstants.HABITS_URL;
 import static ru.ylab.utils.constants.WebConstants.ONE_URL;
@@ -29,6 +31,7 @@ import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
  *
  * @author azatyamanaev
  */
+@LogRequest
 @WebServlet(name = WebConstants.ADMIN_HABITS_SERVLET_NAME,
         urlPatterns = {ADMIN_URL + HABITS_URL,
                 ADMIN_URL + HABITS_URL + ONE_URL,
@@ -62,7 +65,7 @@ public class AdminHabitsServlet extends HttpServlet implements HttpRequestHandle
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         String response;
         List<HabitDto> habits = new ArrayList<>();
 

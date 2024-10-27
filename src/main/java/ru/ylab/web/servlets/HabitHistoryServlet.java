@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.ylab.aspects.LogRequest;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.HabitPercentageForm;
 import ru.ylab.dto.mappers.HabitMapper;
@@ -21,6 +22,7 @@ import ru.ylab.models.User;
 import ru.ylab.services.entities.HabitHistoryService;
 import ru.ylab.utils.constants.WebConstants;
 
+import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.HABIT_HISTORY_URL;
 import static ru.ylab.utils.constants.WebConstants.HABIT_PERCENTAGE_URL;
 import static ru.ylab.utils.constants.WebConstants.HABIT_REPORT_URL;
@@ -33,6 +35,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
+@LogRequest
 @WebServlet(name = WebConstants.HABIT_HISTORY_SERVLET_NAME,
         urlPatterns = {USER_URL + HABIT_HISTORY_URL + ONE_URL,
                 USER_URL + HABIT_HISTORY_URL + HABIT_STREAK_URL,
@@ -68,7 +71,7 @@ public class HabitHistoryServlet extends HttpServlet implements HttpRequestHandl
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req);
+        String uri = parseReqUri(req.getRequestURI());
         String response;
         User user = (User) req.getAttribute("currentUser");
         switch (uri) {

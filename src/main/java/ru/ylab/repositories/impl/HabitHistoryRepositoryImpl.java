@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 
 import org.jetbrains.annotations.NotNull;
+import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.HabitHistory;
@@ -21,6 +22,7 @@ import ru.ylab.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
+@LogQuery
 public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
 
     /**
