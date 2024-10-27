@@ -18,6 +18,7 @@ public class ConfigParser {
      * Path to application config path relative to project root.
      */
     private static final String CONFIG_FILE_PATH = "/usr/local/tomcat/webapps/habits-app/WEB-INF/classes/application.properties";
+    private static final String CONFIG_LOCAL_PATH = "./src/main/resources/application.properties";
 
     /**
      * Parses DbSettings instance from config file.
@@ -27,7 +28,12 @@ public class ConfigParser {
     public static DbSettings parseDbSettings() {
         try {
             Properties properties = new Properties();
-            properties.load(new FileReader(CONFIG_FILE_PATH));
+            String currentDir = System.getProperty("user.dir");
+            if (currentDir.contains("y_lab_java")) {
+                properties.load(new FileReader(CONFIG_LOCAL_PATH));
+            } else if (currentDir.contains("tomcat")){
+                properties.load(new FileReader(CONFIG_FILE_PATH));
+            }
 
             return new DbSettings(
                     properties.getProperty("datasource.url"),
@@ -47,7 +53,12 @@ public class ConfigParser {
     public static LiquibaseSettings parseLiquibaseSettings() {
         try {
             Properties properties = new Properties();
-            properties.load(new FileReader(CONFIG_FILE_PATH));
+            String currentDir = System.getProperty("user.dir");
+            if (currentDir.contains("y_lab_java")) {
+                properties.load(new FileReader(CONFIG_LOCAL_PATH));
+            } else if (currentDir.contains("tomcat")){
+                properties.load(new FileReader(CONFIG_FILE_PATH));
+            }
 
             return new LiquibaseSettings(
                     properties.getProperty("liquibase.changelog.path"),
