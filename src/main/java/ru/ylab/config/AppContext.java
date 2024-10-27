@@ -1,13 +1,7 @@
 package ru.ylab.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import ru.ylab.config.datasource.DataSourceConfig;
-import ru.ylab.dto.mappers.HabitMapper;
-import ru.ylab.dto.mappers.HabitMapperImpl;
 
 /**
  * Class representing application context.
@@ -28,19 +22,19 @@ public class AppContext {
     private final RepositoriesConfig repositoriesConfig;
 
     /**
+     * Instance of a {@link ValidatorsConfig}.
+     */
+    private final ValidatorsConfig validatorsConfig;
+
+    /**
      * Instance of a {@link ServicesConfig}.
      */
     private final ServicesConfig servicesConfig;
 
     /**
-     * Instance of an {@link ObjectMapper}.
+     * Instance of a {@link MappersConfig}.
      */
-    private final ObjectMapper mapper;
-
-    /**
-     * Instance of a {@link HabitMapper}.
-     */
-    private final HabitMapper habitMapper;
+    private final MappersConfig mappersConfig;
 
     /**
      * Creates new AppContext.
@@ -48,23 +42,9 @@ public class AppContext {
     public AppContext() {
         this.dataSourceConfig = new DataSourceConfig();
         this.repositoriesConfig = new RepositoriesConfig(dataSourceConfig);
-        this.servicesConfig = new ServicesConfig(dataSourceConfig, repositoriesConfig);
-
-        this.mapper = mapper();
-        this.habitMapper = new HabitMapperImpl();
-    }
-
-    /**
-     * ObjectMapper config.
-     *
-     * @return instance of an ObjectMapper
-     */
-    public ObjectMapper mapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        return objectMapper;
+        this.validatorsConfig = new ValidatorsConfig(repositoriesConfig);
+        this.servicesConfig = new ServicesConfig(dataSourceConfig, repositoriesConfig, validatorsConfig);
+        this.mappersConfig = new MappersConfig();
     }
 
     /**

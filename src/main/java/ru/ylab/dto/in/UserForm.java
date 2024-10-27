@@ -4,26 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Class containing data for creating and updating users.
+ * Class extending {@link SignUpForm} and adding role field.
  *
  * @author azatyamanaev
  */
 @Getter
 @Setter
-public class UserForm {
+public class UserForm extends SignUpForm {
 
     /**
-     * User name.
+     * User role.
      */
-    private String name;
-
-    /**
-     * User email.
-     */
-    private String email;
-
-    /**
-     * User password.
-     */
-    private String password;
+    private String role;
 }

@@ -1,7 +1,7 @@
 package ru.ylab.services.auth;
 
 import ru.ylab.dto.in.SignInForm;
-import ru.ylab.dto.in.UserForm;
+import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.out.SignInResult;
 
 /**
@@ -25,5 +25,5 @@ public interface AuthService {
      * @param form user data
      * @return access and refresh tokens
      */
-    SignInResult signUp(UserForm form);
+    SignInResult signUp(SignUpForm form);
 }

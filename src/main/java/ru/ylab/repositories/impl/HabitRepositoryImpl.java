@@ -10,21 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.dto.in.HabitSearchForm;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;
-import ru.ylab.utils.constants.SqlConstants;
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.utils.StringUtil;
+import ru.ylab.utils.constants.ErrorConstants;
+import ru.ylab.utils.constants.SqlConstants;
 
 /**
  * Class implementing {@link HabitRepository}.
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class HabitRepositoryImpl implements HabitRepository {
 
     /**
@@ -42,33 +42,22 @@ public class HabitRepositoryImpl implements HabitRepository {
     }
 
     @Override
-    public Optional<Habit> findByName(String name) {
+    public Optional<Habit> find(Long id) {
         Optional<Habit> habit = Optional.empty();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_HABITS_BY_NAME)) {
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_HABITS_BY_ID)) {
 
-            statement.setString(1, name);
+            statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                    habit = Optional.of(unwrap(resultSet));
+                habit = Optional.of(unwrap(resultSet));
             }
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while getting habit {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habit;
-    }
-
-    @Override
-    public Habit getByName(String name) {
-        return findByName(name).orElse(null);
-    }
-
-    @Override
-    public boolean existsByName(String name) {
-        return findByName(name).isPresent();
     }
 
     @Override
@@ -82,8 +71,7 @@ public class HabitRepositoryImpl implements HabitRepository {
                 habits.add(unwrap(resultSet));
             }
         } catch (SQLException e) {
-            log.error("Error while getting habits {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -112,8 +100,7 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while searching habits {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -121,7 +108,6 @@ public class HabitRepositoryImpl implements HabitRepository {
     @Override
     public List<Habit> getAllForUser(@NotNull Long userId) {
         List<Habit> habits = new ArrayList<>();
-        log.info("Using try with resources");
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_ALL_HABITS_FOR_USER)) {
 
@@ -133,8 +119,7 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while getting habits for user {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -165,14 +150,14 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while searching habits for user {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
 
-   @Override
-    public Habit save(Habit habit) {
+    @Override
+    public boolean save(Habit habit) {
+        int result;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.INSERT_INTO_HABITS)) {
 
@@ -181,17 +166,17 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setString(3, String.valueOf(habit.getFrequency()));
             statement.setDate(4, Date.valueOf(habit.getCreated()));
             statement.setLong(5, habit.getUserId());
-            statement.executeUpdate();
+            result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while saving habit {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "habit");
         }
-        return habit;
+        return result == 1;
     }
 
     @Override
-    public Habit update(Habit habit) {
+    public boolean update(Habit habit) {
+        int result;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.UPDATE_HABITS)) {
 
@@ -201,34 +186,28 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setDate(4, Date.valueOf(habit.getCreated()));
             statement.setLong(5, habit.getUserId());
             statement.setLong(6, habit.getId());
-            statement.executeUpdate();
+            result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while updating habit {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.UPDATE_ERROR, "habit");
         }
-        return habit;
+        return result == 1;
     }
 
     @Override
-    public boolean delete(Long userId, @NotNull Habit habit) {
+    public boolean delete(Long userId, Long habitId) {
         int result;
-        if (habit.getUserId().equals(userId)) {
-            try (Connection connection = dataSource.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(SqlConstants.DELETE_FROM_HABITS)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.DELETE_FROM_HABITS)) {
 
-                statement.setLong(1, userId);
-                statement.setLong(2, habit.getId());
-                result = statement.executeUpdate();
-                connection.commit();
+            statement.setLong(1, userId);
+            statement.setLong(2, habitId);
+            result = statement.executeUpdate();
+            connection.commit();
 
-                return result == 1;
-            } catch (SQLException e) {
-                log.error("Error while deleting habit {}", e.getMessage());
-                throw new RuntimeException(e);
-            }
-        } else {
-            return false;
+            return result == 1;
+        } catch (SQLException e) {
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.DELETE_ERROR, "habit");
         }
     }
 

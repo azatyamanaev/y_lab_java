@@ -4,6 +4,7 @@ import java.util.List;
 
 import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
 
 /**
@@ -12,6 +13,30 @@ import ru.ylab.models.Habit;
  * @author azatyamanaev
  */
 public interface HabitService {
+
+    /**
+     * Gets habit by id.
+     *
+     * @param id habit id
+     * @return habit
+     * @throws HttpException if habit does not exist
+     */
+    Habit get(Long id);
+
+    /**
+     * Gets all habits.
+     *
+     * @return list of habits
+     */
+    List<Habit> getAll();
+
+    /**
+     * Search habits with filters.
+     *
+     * @param form filters to apply
+     * @return list of found habits
+     */
+    List<Habit> search(HabitSearchForm form);
 
     /**
      * Gets all habits for user.
@@ -35,25 +60,23 @@ public interface HabitService {
      *
      * @param userId user id
      * @param form habit data
-     * @return created habit
      */
-    Habit create(Long userId, HabitForm form);
+    void create(Long userId, HabitForm form);
 
     /**
      * Updates habit.
      *
-     * @param name habit name
+     * @param userId habit author id
+     * @param habitId habit id
      * @param form habit data
-     * @return updated habit
      */
-    Habit update(String name, HabitForm form);
+    void update(Long userId, Long habitId, HabitForm form);
 
     /**
-     * Deletes habit by name.
+     * Deletes habit by id.
      *
      * @param userId habit author id
-     * @param name habit name
-     * @return whether deletion is successful
+     * @param habitId habit id
      */
-    boolean deleteByName(Long userId, String name);
+    void delete(Long userId, Long habitId);
 }

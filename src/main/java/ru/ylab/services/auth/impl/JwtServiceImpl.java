@@ -13,22 +13,22 @@ import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.ylab.dto.out.SignInResult;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.RefreshToken;
 import ru.ylab.models.User;
 import ru.ylab.repositories.RefreshTokenRepository;
 import ru.ylab.services.auth.JWToken;
 import ru.ylab.services.auth.JwtService;
 import ru.ylab.services.entities.UserService;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Class implementing {@link JwtService}.
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class JwtServiceImpl implements JwtService {
 
     /**
@@ -100,19 +100,12 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateAccess(String refresh) {
-        RefreshToken refreshToken = tokenRepository.getByToken(refresh);
-        if (refreshToken == null) {
-            log.error("Refresh token {} not found", refresh);
-            return null;
-        } else {
-            User user = userService.get(refreshToken.getUserId());
-            if (user == null) {
-                log.error("User {} not found", refresh);
-                return null;
-            } else {
-                return generateAccess(user.getEmail(), user.getRole());
-            }
-        }
+        RefreshToken refreshToken =
+                tokenRepository.findByToken(refresh)
+                               .orElseThrow(() -> HttpException.badRequest()
+                                                               .addDetail(ErrorConstants.NOT_FOUND, "refresh token"));
+        User user = userService.get(refreshToken.getUserId());
+        return generateAccess(user.getEmail(), user.getRole());
     }
 
     public String generateAccess(String username, User.Role role) {

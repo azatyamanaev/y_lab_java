@@ -15,11 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import ru.ylab.config.AppContext;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 import ru.ylab.services.auth.JWToken;
 import ru.ylab.services.auth.JwtService;
 import ru.ylab.services.entities.UserService;
 import ru.ylab.utils.StringUtil;
+import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.WebConstants;
 
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
@@ -65,29 +67,28 @@ public class AuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) resp;
         String authorization = request.getHeader("Authorization");
         if (StringUtil.isEmpty(authorization)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            throw HttpException.unauthorized();
         } else {
             JWToken token = jwtService.parse(authorization);
             if (!token.getExpires().isAfter(Instant.now())) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                throw HttpException.badRequest().addDetail(ErrorConstants.TOKEN_EXPIRED, "access token");
             } else {
                 User.Role role = token.getRole();
 
                 if (uri.startsWith(ADMIN_URL) && role.equals(User.Role.USER) ||
-                uri.startsWith(USER_URL) && role.equals(User.Role.ADMIN)) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                }
-
-                User user = userService.getByEmail(token.getUsername());
-                if (user == null) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        uri.startsWith(USER_URL) && role.equals(User.Role.ADMIN)) {
+                    throw HttpException.forbidden();
                 } else {
-                    request.setAttribute("currentUser", user);
-                    log.info("User {} authorized", token.getUsername());
-                    chain.doFilter(req, resp);
+                    User user = userService.getByEmail(token.getUsername());
+                    if (user == null) {
+                        throw HttpException.badRequest().addDetail(ErrorConstants.NOT_FOUND, "user");
+                    } else {
+                        request.setAttribute("currentUser", user);
+                        log.info("User {} authorized", token.getUsername());
+                        chain.doFilter(req, resp);
+                    }
                 }
             }
         }
     }
-
 }

@@ -18,7 +18,7 @@ import ru.ylab.services.entities.impl.HabitServiceImpl;
 import ru.ylab.services.entities.impl.UserServiceImpl;
 
 /**
- * Repositories configuration class
+ * Repositories configuration class.
  *
  * @author azatyamanaev
  */
@@ -65,17 +65,22 @@ public class ServicesConfig {
      *
      * @param dataSourceConfig datasource
      * @param repositoriesConfig repositories
+     * @param validatorsConfig validators
      */
-    public ServicesConfig(DataSourceConfig dataSourceConfig, RepositoriesConfig repositoriesConfig) {
+    public ServicesConfig(DataSourceConfig dataSourceConfig, RepositoriesConfig repositoriesConfig,
+                          ValidatorsConfig validatorsConfig) {
         this.liquibaseService = new LiquibaseServiceImpl(dataSourceConfig.getLiquibaseConfig()
                                                                          .liquibase(dataSourceConfig.getConnectionPool()));
         this.passwordService = new PasswordServiceImpl();
-        this.userService = new UserServiceImpl(repositoriesConfig.getUserRepository());
+        this.userService = new UserServiceImpl(repositoriesConfig.getUserRepository(), passwordService,
+                validatorsConfig.getUserFormValidator(), validatorsConfig.getUserSearchFormValidator());
         this.habitService = new HabitServiceImpl(repositoriesConfig.getHabitRepository(),
-                repositoriesConfig.getHabitHistoryRepository());
-        this.habitHistoryService = new HabitHistoryServiceImpl(repositoriesConfig.getHabitRepository(),
-                repositoriesConfig.getHabitHistoryRepository());
+                repositoriesConfig.getHabitHistoryRepository(), validatorsConfig.getHabitFormValidator(),
+                validatorsConfig.getHabitSearchFormValidator());
+        this.habitHistoryService = new HabitHistoryServiceImpl(repositoriesConfig.getHabitHistoryRepository(), habitService,
+                validatorsConfig.getHabitPercentageFormValidator());
         this.jwtService = new JwtServiceImpl(repositoriesConfig.getTokenRepository(), userService);
-        this.authService = new AuthServiceImpl(passwordService, userService, jwtService);
+        this.authService = new AuthServiceImpl(passwordService, userService, jwtService,
+                validatorsConfig.getSignInValidator(), validatorsConfig.getUserFormValidator());
     }
 }

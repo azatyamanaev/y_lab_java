@@ -20,14 +20,6 @@ public interface RefreshTokenRepository {
     Optional<RefreshToken> findByToken(String token);
 
     /**
-     * Gets refresh token by token.
-     *
-     * @param token token
-     * @return refresh token or null
-     */
-    RefreshToken getByToken(String token);
-
-    /**
      * Saves refresh token.
      *
      * @param refreshToken refresh token

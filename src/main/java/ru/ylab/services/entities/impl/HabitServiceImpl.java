@@ -3,20 +3,21 @@ package ru.ylab.services.entities.impl;
 import java.time.LocalDate;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.entities.HabitService;
+import ru.ylab.services.validation.Validator;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Service implementing {@link HabitService}.
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class HabitServiceImpl implements HabitService {
 
     /**
@@ -30,14 +31,46 @@ public class HabitServiceImpl implements HabitService {
     private final HabitHistoryRepository habitHistoryRepository;
 
     /**
+     * Instance of a {@link Validator<HabitForm>}
+     */
+    private final Validator<HabitForm> habitFormValidator;
+
+    /**
+     * Instance of a {@link Validator<HabitSearchForm>}
+     */
+    private final Validator<HabitSearchForm> habitSearchFormValidator;
+
+    /**
      * Creates new HabitServiceImpl.
      *
      * @param habitRepository        HabitRepository instance
      * @param habitHistoryRepository HabitHistoryRepository instance
+     * @param habitFormValidator Validator<HabitForm> instance
+     * @param habitSearchFormValidator Validator<HabitSearchForm> instance
      */
-    public HabitServiceImpl(HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
+    public HabitServiceImpl(HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository,
+                            Validator<HabitForm> habitFormValidator, Validator<HabitSearchForm> habitSearchFormValidator) {
         this.habitRepository = habitRepository;
         this.habitHistoryRepository = habitHistoryRepository;
+        this.habitFormValidator = habitFormValidator;
+        this.habitSearchFormValidator = habitSearchFormValidator;
+    }
+
+    @Override
+    public Habit get(Long id) {
+        return habitRepository.find(id)
+                .orElseThrow(() -> HttpException.badRequest().addDetail(ErrorConstants.NOT_FOUND, "habit"));
+    }
+
+    @Override
+    public List<Habit> getAll() {
+        return habitRepository.getAll();
+    }
+
+    @Override
+    public List<Habit> search(HabitSearchForm form) {
+        habitSearchFormValidator.validate(form);
+        return habitRepository.search(form);
     }
 
     @Override
@@ -47,12 +80,14 @@ public class HabitServiceImpl implements HabitService {
 
     @Override
     public List<Habit> searchHabitsForUser(Long userId, HabitSearchForm form) {
+        habitSearchFormValidator.validate(form);
         return habitRepository.searchForUser(userId, form);
     }
 
     @Override
-    public Habit create(Long userId, HabitForm form) {
-        return habitRepository.save(Habit.builder()
+    public void create(Long userId, HabitForm form) {
+        habitFormValidator.validate(form);
+        habitRepository.save(Habit.builder()
                                          .name(form.getName())
                                          .description(form.getDescription())
                                          .frequency(Habit.Frequency.valueOf(form.getFrequency()))
@@ -62,17 +97,24 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public Habit update(String name, HabitForm form) {
-        Habit habit = habitRepository.getByName(name);
+    public void update(Long userId, Long habitId, HabitForm form) {
+        habitFormValidator.validate(form);
+        Habit habit = get(habitId);
+        if (!habit.getUserId().equals(userId)) {
+            throw HttpException.badRequest().addDetail(ErrorConstants.NOT_AUTHOR, "user");
+        }
         habit.setName(form.getName());
         habit.setDescription(form.getDescription());
         habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
-        return habitRepository.update(habit);
+        habitRepository.update(habit);
     }
 
     @Override
-    public boolean deleteByName(Long userId, String name) {
-        Habit habit = habitRepository.getByName(name);
-        return habitRepository.delete(userId, habit);
+    public void delete(Long userId, Long habitId) {
+        Habit habit = get(habitId);
+        if (!habit.getUserId().equals(userId)) {
+            throw HttpException.badRequest().addDetail(ErrorConstants.NOT_AUTHOR, "user");
+        }
+        habitRepository.delete(userId, habit.getId());
     }
 }

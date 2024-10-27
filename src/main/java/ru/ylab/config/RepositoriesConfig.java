@@ -12,7 +12,7 @@ import ru.ylab.repositories.impl.RefreshTokenRepositoryImpl;
 import ru.ylab.repositories.impl.UserRepositoryImpl;
 
 /**
- * Repositories configuration class
+ * Repositories configuration class.
  *
  * @author azatyamanaev
  */

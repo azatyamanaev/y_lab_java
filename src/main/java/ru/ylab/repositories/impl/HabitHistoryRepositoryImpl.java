@@ -5,12 +5,15 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.services.datasource.CPDataSource;
+import ru.ylab.dto.out.HabitHistoryProjection;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
+import ru.ylab.services.datasource.CPDataSource;
+import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.SqlConstants;
 
 /**
@@ -18,7 +21,6 @@ import ru.ylab.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
 
     /**
@@ -36,7 +38,8 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
     }
 
     @Override
-    public HabitHistory save(HabitHistory history) {
+    public boolean save(HabitHistory history) {
+        int result;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(SqlConstants.INSERT_INTO_HABIT_HISTORY)) {
@@ -44,19 +47,17 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             statement.setLong(1, history.getUserId());
             statement.setLong(2, history.getHabitId());
             statement.setDate(3, Date.valueOf(history.getCompletedOn()));
-            statement.executeUpdate();
+            result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while saving habit history {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "habit history");
         }
-        return history;
+        return result == 1;
     }
 
     @Override
-    public HabitHistory getByHabitId(@NotNull Long habitId) {
-        HabitHistory history = new HabitHistory();
-        history.setHabitId(habitId);
+    public HabitHistoryProjection getByHabitId(@NotNull Long habitId) {
+        HabitHistoryProjection projection = new HabitHistoryProjection();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(SqlConstants.SELECT_FROM_HABIT_HISTORY_BY_HABIT_ID)) {
@@ -64,20 +65,20 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             statement.setLong(1, habitId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                history.setUserId(resultSet.getLong("user_id"));
-                history.getDays().add(resultSet.getDate("completed_on").toLocalDate());
+                projection.setHabitName(resultSet.getString("name"));
+                projection.setDays(new HashSet<>());
+                projection.getDays().add(resultSet.getDate("completed_on").toLocalDate());
             }
             while (resultSet.next()) {
-                history.getDays().add(resultSet.getDate("completed_on").toLocalDate());
+                projection.getDays().add(resultSet.getDate("completed_on").toLocalDate());
             }
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while getting habit history {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit history");
         }
 
-        return history;
+        return projection;
     }
 
     @Override
@@ -91,8 +92,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while deleting habit history {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.DELETE_ERROR, "habit history");
         }
         return result > 0;
     }

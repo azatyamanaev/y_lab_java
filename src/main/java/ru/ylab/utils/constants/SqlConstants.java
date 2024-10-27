@@ -12,10 +12,10 @@ public interface SqlConstants {
     //Habit requests
 
     /**
-     * Sql request for selecting habit by name.
+     * Sql request for selecting habit by id.
      */
     @Language("SQL")
-    String SELECT_FROM_HABITS_BY_NAME = "SELECT * FROM entity.habits WHERE name = ?";
+    String SELECT_FROM_HABITS_BY_ID = "SELECT * FROM entity.habits WHERE id = ?";
 
     /**
      * Sql request for selecting all habits.
@@ -75,7 +75,8 @@ public interface SqlConstants {
      * Sql request for getting habit history.
      */
     @Language("SQL")
-    String SELECT_FROM_HABIT_HISTORY_BY_HABIT_ID = "SELECT * FROM entity.habit_history WHERE habit_id = ?";
+    String SELECT_FROM_HABIT_HISTORY_BY_HABIT_ID = "SELECT hb.name as name, hh.completed_on as completed_on " +
+            "FROM entity.habits as hb join entity.habit_history as hh on hb.id = hh.habit_id WHERE hb.id = ?";
 
     /**
      * Sql request for deleting habit history.
@@ -126,7 +127,7 @@ public interface SqlConstants {
      * Sql request for deleting user by email.
      */
     @Language("SQL")
-    String DELETE_FROM_USERS_BY_EMAIL = "DELETE FROM entity.users WHERE email = ?";
+    String DELETE_FROM_USERS_BY_ID = "DELETE FROM entity.users WHERE id = ?";
 
     //RefreshToken requests
 

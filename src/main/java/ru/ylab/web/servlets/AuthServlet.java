@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.SignInForm;
-import ru.ylab.dto.in.UserForm;
+import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.out.SignInResult;
 import ru.ylab.services.auth.AuthService;
 import ru.ylab.services.auth.JwtService;
@@ -54,7 +54,7 @@ public class AuthServlet extends HttpServlet implements HttpRequestHandler {
         ServletContext context = config.getServletContext();
         AppContext appContext = (AppContext) context.getAttribute("appContext");
 
-        this.mapper = appContext.getMapper();
+        this.mapper = appContext.getMappersConfig().getMapper();
         this.authService = appContext.getServicesConfig().getAuthService();
         this.jwtService = appContext.getServicesConfig().getJwtService();
     }
@@ -64,7 +64,7 @@ public class AuthServlet extends HttpServlet implements HttpRequestHandler {
         String uri = parseReqUri(req);
         String response = "";
         if (uri.equals(AUTH_URL + REFRESH_TOKEN_URL)) {
-            String refresh = mapper.readValue(IOUtils.toString(req.getReader()), String.class);
+            String refresh = req.getParameter("token");
             response = mapper.writeValueAsString(jwtService.generateAccess(refresh));
         }
 
@@ -84,8 +84,8 @@ public class AuthServlet extends HttpServlet implements HttpRequestHandler {
                 response = mapper.writeValueAsString(signInResult);
                 break;
             case AUTH_URL + SIGN_UP_URL:
-                UserForm userForm = mapper.readValue(IOUtils.toString(req.getReader()), UserForm.class);
-                signInResult = authService.signUp(userForm);
+                SignUpForm signUpForm = mapper.readValue(IOUtils.toString(req.getReader()), SignUpForm.class);
+                signInResult = authService.signUp(signUpForm);
                 response = mapper.writeValueAsString(signInResult);
                 break;
         }

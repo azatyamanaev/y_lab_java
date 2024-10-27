@@ -7,10 +7,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.RefreshToken;
 import ru.ylab.repositories.RefreshTokenRepository;
 import ru.ylab.services.datasource.CPDataSource;
+import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.SqlConstants;
 
 /**
@@ -18,7 +19,6 @@ import ru.ylab.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     /**
@@ -49,15 +49,9 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while getting refresh token {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "refresh token");
         }
         return refreshToken;
-    }
-
-    @Override
-    public RefreshToken getByToken(String token) {
-        return findByToken(token).orElse(null);
     }
 
     @Override
@@ -73,8 +67,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while saving refresh token {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "refresh token");
         }
         return result == 1;
     }

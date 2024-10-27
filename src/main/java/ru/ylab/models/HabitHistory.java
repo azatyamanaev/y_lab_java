@@ -1,8 +1,6 @@
 package ru.ylab.models;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,15 +32,4 @@ public class HabitHistory {
      * Day when user completed habit.
      */
     private LocalDate completedOn;
-
-    /**
-     * Days when user completed habit.
-     */
-    private Set<LocalDate> days = new HashSet<>();
-
-    public HabitHistory(Long userId, Long habitId, LocalDate completedOn) {
-        this.userId = userId;
-        this.habitId = habitId;
-        this.completedOn = completedOn;
-    }
 }

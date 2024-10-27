@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
+import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;
 
@@ -15,28 +16,20 @@ import ru.ylab.models.User;
 public interface UserRepository {
 
     /**
-     * Gets user by id.
+     * Finds user by id.
      *
      * @param id user id
-     * @return user or null
+     * @return {@code Optional<User>}
      */
-    User get(Long id);
+    Optional<User> find(Long id);
 
     /**
-     * Finds user by name.
+     * Finds user by email.
      *
      * @param email user email
      * @return {@code Optional<User>}
      */
     Optional<User> findByEmail(String email);
-
-    /**
-     * Gets user by email.
-     *
-     * @param email user email
-     * @return user or null
-     */
-    User getByEmail(String email);
 
     /**
      * Checks whether user exists by email.
@@ -65,23 +58,24 @@ public interface UserRepository {
      * Saves user to storage.
      *
      * @param user instance of User to save
-     * @return saved user
+     * @return whether save is successful
      */
-    User save(User user);
+    boolean save(User user);
 
     /**
      * Update user in storage.
      *
-     * @param user instance of User to update
-     * @return updated user
+     * @param userId user id
+     * @param form user data
+     * @return whether update is successful
      */
-    User update(User user);
+    boolean update(Long userId, SignUpForm form);
 
     /**
-     * Deletes user from storage by email.
+     * Deletes user from storage by id.
      *
-     * @param email user email
+     * @param userId user id
      * @return whether deletion is successful
      */
-    boolean deleteByEmail(String email);
+    boolean delete(Long userId);
 }
