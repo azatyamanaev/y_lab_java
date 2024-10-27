@@ -2,3 +2,4 @@
 
 1. [ДЗ1](https://github.com/azatyamanaev/y_lab_java/pull/1)
 2. [ДЗ2](https://github.com/azatyamanaev/y_lab_java/pull/2)
+3. [ДЗ3](https://github.com/azatyamanaev/y_lab_java/pull/3)
