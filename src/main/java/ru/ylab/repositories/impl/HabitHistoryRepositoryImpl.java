@@ -60,6 +60,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
     @Override
     public HabitHistoryProjection getByHabitId(@NotNull Long habitId) {
         HabitHistoryProjection projection = new HabitHistoryProjection();
+        projection.setDays(new HashSet<>());
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(SqlConstants.SELECT_FROM_HABIT_HISTORY_BY_HABIT_ID)) {
@@ -68,7 +69,6 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 projection.setHabitName(resultSet.getString("name"));
-                projection.setDays(new HashSet<>());
                 projection.getDays().add(resultSet.getDate("completed_on").toLocalDate());
             }
             while (resultSet.next()) {
