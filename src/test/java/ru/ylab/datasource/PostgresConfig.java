@@ -1,4 +1,4 @@
-package ru.ylab.repositories;
+package ru.ylab.datasource;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -19,13 +19,13 @@ import ru.ylab.utils.constants.AppConstants;
 
 public abstract class PostgresConfig {
 
-    protected static final String IMAGE = "postgres:17-alpine";
-    protected static final String DATABASE = "habits_app_db";
-    protected static final String USERNAME = "liquibase";
-    protected static final String PASSWORD = "liquibase";
+    private static final String IMAGE = "postgres:17-alpine";
+    private static final String DATABASE = "habits_app_db";
+    private static final String USERNAME = "liquibase";
+    private static final String PASSWORD = "liquibase";
     private static final int CONTAINER_PORT = 5432;
     private static final int LOCAL_PORT = 54322;
-    protected static PostgreSQLContainer<?> postgres;
+    private static PostgreSQLContainer<?> postgres;
     protected static CPDataSource dataSource;
     protected static AppContext appContext;
 

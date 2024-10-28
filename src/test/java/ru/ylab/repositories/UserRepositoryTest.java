@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.ylab.datasource.PostgresConfig;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;

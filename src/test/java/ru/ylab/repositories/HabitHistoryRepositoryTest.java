@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.ylab.datasource.PostgresConfig;
 import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.impl.HabitHistoryRepositoryImpl;
