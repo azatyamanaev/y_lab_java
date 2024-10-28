@@ -75,6 +75,17 @@ public class HttpException extends BaseException {
     }
 
     /**
+     * Creates new method not allowed exception.
+     *
+     * @return HttpException instance
+     */
+    public static HttpException methodNotAllowed() {
+        return new HttpException(Error.builder()
+                                      .message(ErrorConstants.METHOD_NOT_ALLOWED)
+                                      .build(), 405);
+    }
+
+    /**
      * Creates new server error exception with database error message.
      *
      * @return HttpException instance

@@ -17,6 +17,7 @@ public interface ErrorConstants {
     String EMPTY_PARAM = "Empty parameter";
     String ALREADY_EXISTS = "Already exists";
     String NOT_AUTHOR = "Not habit author";
+    String NOT_IMPLEMENTED = "Not implemented";
 
     String SELECT_ERROR = "Select error";
     String CREATE_ERROR = "Create error";

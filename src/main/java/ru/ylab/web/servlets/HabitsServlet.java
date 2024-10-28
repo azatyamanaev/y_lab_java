@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,11 +18,13 @@ import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.mappers.HabitMapper;
 import ru.ylab.dto.out.HabitDto;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 import ru.ylab.services.entities.HabitService;
+import ru.ylab.utils.StringUtil;
+import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.WebConstants;
 
-import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.HABITS_URL;
 import static ru.ylab.utils.constants.WebConstants.ONE_URL;
 import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
@@ -66,72 +69,132 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        String response;
-        List<HabitDto> dtos;
+    public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        String uri = StringUtil.parseReqUri(req.getRequestURI());
+        User user = (User) req.getAttribute("currentUser");
+        if (method.equals("GET")) {
+            switch (uri) {
+                case USER_URL + HABITS_URL + ONE_URL:
+                    getHabit(req, resp, user);
+                    break;
+                case USER_URL + HABITS_URL:
+                    getHabits(req, resp, user);
+                    break;
+                case USER_URL + HABITS_URL + SEARCH_URL:
+                    searchHabits(req, resp, user);
+                    break;
+                default:
+                    throw HttpException.methodNotAllowed()
+                                       .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http GET");
+            }
+        } else if (method.equals("POST")) {
+            if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
+                createHabit(req, resp, user);
+            } else {
+                throw HttpException.methodNotAllowed()
+                                   .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http POST");
+            }
+        } else if (method.equals("PUT")) {
+            if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
+                updateHabit(req, resp, user);
+            } else {
+                throw HttpException.methodNotAllowed()
+                                   .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http PUT");
+            }
 
-        User current = (User) req.getAttribute("currentUser");
-        switch (uri) {
-            case USER_URL + HABITS_URL + ONE_URL:
-                HabitDto habit = habitMapper.apply(habitService.get(Long.valueOf(req.getParameter("id"))));
-                response = mapper.writeValueAsString(habit);
-                break;
-            case USER_URL + HABITS_URL:
-                dtos = habitMapper.apply(habitService.getHabitsForUser(current.getId()));
-                response = mapper.writeValueAsString(dtos);
-                break;
-            case USER_URL + HABITS_URL + SEARCH_URL:
-                HabitSearchForm form = new HabitSearchForm();
-                form.setName(req.getParameter("name"));
-                form.setFrequency(req.getParameter("frequency"));
-                form.setFrom(req.getParameter("from") == null ? null : LocalDate.parse(req.getParameter("from")));
-                form.setTo(req.getParameter("to") == null ? null : LocalDate.parse(req.getParameter("to")));
-                dtos = habitMapper.apply(habitService.searchHabitsForUser(current.getId(), form));
-                response = mapper.writeValueAsString(dtos);
-                break;
-            default:
-                response = "";
+        } else if (method.equals("DELETE")) {
+            if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
+                deleteHabit(req, resp, user);
+            } else {
+                throw HttpException.methodNotAllowed()
+                                   .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http DELETE");
+            }
+
+        } else {
+            super.service(req, resp);
         }
-
-        setResponse(resp, HttpServletResponse.SC_OK, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
-            User user = (User) req.getAttribute("currentUser");
-            HabitForm form = mapper.readValue(req.getReader(), HabitForm.class);
-            habitService.create(user.getId(), form);
-        }
+    /**
+     * Gets habit for user and writes it to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void getHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        Long id = Long.valueOf(req.getParameter("id"));
+        HabitDto habit = habitMapper.apply(habitService.getForUser(user.getId(), id));
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(habit));
+    }
 
+    /**
+     * Gets habits for user and writes them to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void getHabits(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        List<HabitDto> dtos = habitMapper.apply(habitService.getHabitsForUser(user.getId()));
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dtos));
+    }
+
+    /**
+     * Searches habits for user and writes them to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void searchHabits(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        HabitSearchForm form = new HabitSearchForm();
+        form.setName(req.getParameter("name"));
+        form.setFrequency(req.getParameter("frequency"));
+        form.setFrom(req.getParameter("from") == null ? null : LocalDate.parse(req.getParameter("from")));
+        form.setTo(req.getParameter("to") == null ? null : LocalDate.parse(req.getParameter("to")));
+        List<HabitDto> dtos = habitMapper.apply(habitService.searchHabitsForUser(user.getId(), form));
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dtos));
+    }
+
+    /**
+     * Creates habit for user and sets created response status.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void createHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        HabitForm form = mapper.readValue(req.getReader(), HabitForm.class);
+        habitService.create(user.getId(), form);
         setResponse(resp, HttpServletResponse.SC_CREATED, "");
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
-            Long id = Long.valueOf(req.getParameter("id"));
-            User user = (User) req.getAttribute("currentUser");
-            HabitForm form = mapper.readValue(req.getReader(), HabitForm.class);
-            habitService.update(user.getId(), id, form);
-        }
-
+    /**
+     * Updates habit for user and sets no content response status.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void updateHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        Long id = Long.valueOf(req.getParameter("id"));
+        HabitForm form = mapper.readValue(req.getReader(), HabitForm.class);
+        habitService.update(user.getId(), id, form);
         setResponse(resp, HttpServletResponse.SC_NO_CONTENT, "");
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        log.info("GET {}", uri);
-        if (uri.equals(USER_URL + HABITS_URL + ONE_URL)) {
-            Long id = Long.valueOf(req.getParameter("id"));
-            User user = (User) req.getAttribute("currentUser");
-            habitService.delete(user.getId(), id);
-        }
-
+    /**
+     * Deletes habit for user and sets no content response status.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void deleteHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        Long id = Long.valueOf(req.getParameter("id"));
+        habitService.delete(user.getId(), id);
         setResponse(resp, HttpServletResponse.SC_NO_CONTENT, "");
     }
 }

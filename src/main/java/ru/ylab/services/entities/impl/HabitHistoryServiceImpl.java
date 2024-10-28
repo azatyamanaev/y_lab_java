@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.dto.in.HabitPercentageForm;
+import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.dto.out.HabitCompletionPercent;
 import ru.ylab.dto.out.HabitCompletionStreak;
 import ru.ylab.dto.out.HabitHistoryProjection;
@@ -35,21 +35,22 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     private final HabitService habitService;
 
     /**
-     * Instance of a {@link Validator<HabitPercentageForm>}.
+     * Instance of a {@link Validator< PeriodForm >}.
      */
-    private final Validator<HabitPercentageForm> habitPercentageFormValidator;
+    private final Validator<PeriodForm> periodFormValidator;
 
     /**
      * Creates new HabitHistoryServiceImpl.
      *
      * @param habitHistoryRepository HabitHistoryRepository instance
      * @param habitService           HabitService instance
+     * @param periodFormValidator    Validator<PeriodForm> instance
      */
     public HabitHistoryServiceImpl(HabitHistoryRepository habitHistoryRepository, HabitService habitService,
-                                   Validator<HabitPercentageForm> habitPercentageFormValidator) {
+                                   Validator<PeriodForm> periodFormValidator) {
         this.habitHistoryRepository = habitHistoryRepository;
         this.habitService = habitService;
-        this.habitPercentageFormValidator = habitPercentageFormValidator;
+        this.periodFormValidator = periodFormValidator;
     }
 
     @Override
@@ -77,12 +78,12 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     }
 
     @Override
-    public List<HabitCompletionPercent> habitCompletionPercent(Long userId, HabitPercentageForm form) {
-        habitPercentageFormValidator.validate(form);
+    public List<HabitCompletionPercent> habitCompletionPercent(Long userId, PeriodForm form) {
+        periodFormValidator.validate(form);
         List<HabitCompletionPercent> percents = new ArrayList<>();
         habitService.getHabitsForUser(userId)
-                .forEach(x -> percents.add(new HabitCompletionPercent(x.getName(),
-                        completionPercent(x, form.getFrom(), form.getTo()), form.getFrom(), form.getTo())));
+                    .forEach(x -> percents.add(new HabitCompletionPercent(x.getName(),
+                            completionPercent(x, form.getFrom(), form.getTo()), form.getFrom(), form.getTo())));
         return percents;
     }
 
@@ -90,7 +91,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     public List<HabitHistoryProjection> habitCompletionReport(Long userId) {
         List<HabitHistoryProjection> report = new ArrayList<>();
         habitService.getHabitsForUser(userId)
-                .forEach(x -> report.add(getHabitHistory(userId, x.getId())));
+                    .forEach(x -> report.add(getHabitHistory(userId, x.getId())));
         return report;
     }
 

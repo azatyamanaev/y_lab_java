@@ -3,7 +3,7 @@ package ru.ylab.services.entities;
 import java.time.LocalDate;
 import java.util.List;
 
-import ru.ylab.dto.in.HabitPercentageForm;
+import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.dto.out.HabitCompletionPercent;
 import ru.ylab.dto.out.HabitCompletionStreak;
 import ru.ylab.dto.out.HabitHistoryProjection;
@@ -48,7 +48,7 @@ public interface HabitHistoryService {
      * @param form period for which to display completion percent
      * @return habit completion percent list
      */
-    List<HabitCompletionPercent> habitCompletionPercent(Long userId, HabitPercentageForm form);
+    List<HabitCompletionPercent> habitCompletionPercent(Long userId, PeriodForm form);
 
     /**
      * Gets habit completion report for user.

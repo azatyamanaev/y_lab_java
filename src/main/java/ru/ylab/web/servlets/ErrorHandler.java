@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,24 @@ public class ErrorHandler extends HttpServlet implements HttpRequestHandler {
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        if (method.equals("GET") || method.equals("POST")
+                || method.equals("PUT") || method.equals("DELETE")) {
+            handleError(req, resp);
+        } else {
+            super.service(req, resp);
+        }
+    }
+
+    /**
+     * Handles error occurred in application.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void handleError(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Error error = new Error();
 
         int status;
@@ -71,20 +89,5 @@ public class ErrorHandler extends HttpServlet implements HttpRequestHandler {
 
         log.error("Error with status {} and message {}", status, error.getMessage());
         setResponse(resp, status, mapper.writeValueAsString(error));
-    }
-
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        doGet(req, resp);
-    }
-
-    @Override
-    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        doGet(req, resp);
-    }
-
-    @Override
-    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        doGet(req, resp);
     }
 }

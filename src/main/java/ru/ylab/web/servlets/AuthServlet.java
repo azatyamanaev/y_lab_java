@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,11 +14,13 @@ import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.SignInForm;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.out.SignInResult;
+import ru.ylab.exception.HttpException;
 import ru.ylab.services.auth.AuthService;
 import ru.ylab.services.auth.JwtService;
+import ru.ylab.utils.StringUtil;
+import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.WebConstants;
 
-import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.AUTH_URL;
 import static ru.ylab.utils.constants.WebConstants.REFRESH_TOKEN_URL;
 import static ru.ylab.utils.constants.WebConstants.SIGN_IN_URL;
@@ -60,36 +63,68 @@ public class AuthServlet extends HttpServlet implements HttpRequestHandler {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        String response = "";
-        if (uri.equals(AUTH_URL + REFRESH_TOKEN_URL)) {
-            String refresh = req.getParameter("token");
-            response = mapper.writeValueAsString(jwtService.generateAccess(refresh));
+    public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        String uri = StringUtil.parseReqUri(req.getRequestURI());
+        if (method.equals("GET")) {
+            if (uri.equals(AUTH_URL + REFRESH_TOKEN_URL)) {
+                refreshToken(req, resp);
+            } else {
+                throw HttpException.methodNotAllowed()
+                                   .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http GET");
+            }
+        } else if (method.equals("POST")) {
+            switch (uri) {
+                case AUTH_URL + SIGN_IN_URL:
+                    signIn(req, resp);
+                    break;
+                case AUTH_URL + SIGN_UP_URL:
+                    signUp(req, resp);
+                    break;
+                default:
+                    throw HttpException.methodNotAllowed()
+                                       .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http POST");
+            }
+        } else {
+            super.service(req, resp);
         }
-
-        setResponse(resp, HttpServletResponse.SC_OK, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        String response = "";
-        SignInResult signInResult;
+    /**
+     * Gets new access token for user and writes it to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void refreshToken(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String refresh = req.getParameter("token");
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(jwtService.generateAccess(refresh)));
+    }
 
-        switch (uri) {
-            case AUTH_URL + SIGN_IN_URL:
-                SignInForm form = mapper.readValue(IOUtils.toString(req.getReader()), SignInForm.class);
-                signInResult = authService.signIn(form);
-                response = mapper.writeValueAsString(signInResult);
-                break;
-            case AUTH_URL + SIGN_UP_URL:
-                SignUpForm signUpForm = mapper.readValue(IOUtils.toString(req.getReader()), SignUpForm.class);
-                signInResult = authService.signUp(signUpForm);
-                response = mapper.writeValueAsString(signInResult);
-                break;
-        }
+    /**
+     * Signs in user and writes access and refresh tokens to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void signIn(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        SignInForm form = mapper.readValue(IOUtils.toString(req.getReader()), SignInForm.class);
+        SignInResult signInResult = authService.signIn(form);
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(signInResult));
+    }
 
-        setResponse(resp, HttpServletResponse.SC_OK, response);
+    /**
+     * Signs up user and writes access and refresh tokens to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void signUp(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        SignUpForm form = mapper.readValue(IOUtils.toString(req.getReader()), SignUpForm.class);
+        SignInResult signInResult = authService.signUp(form);
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(signInResult));
     }
 }

@@ -75,7 +75,7 @@ public class ServicesConfig {
         this.userService = new UserServiceImpl(repositoriesConfig.getUserRepository(), passwordService,
                 validatorsConfig.getUserFormValidator(), validatorsConfig.getUserSearchFormValidator());
         this.habitService = new HabitServiceImpl(repositoriesConfig.getHabitRepository(),
-                repositoriesConfig.getHabitHistoryRepository(), validatorsConfig.getHabitFormValidator(),
+                validatorsConfig.getHabitFormValidator(),
                 validatorsConfig.getHabitSearchFormValidator());
         this.habitHistoryService = new HabitHistoryServiceImpl(repositoriesConfig.getHabitHistoryRepository(), habitService,
                 validatorsConfig.getHabitPercentageFormValidator());

@@ -2,13 +2,13 @@ package ru.ylab.config;
 
 import lombok.Getter;
 import ru.ylab.dto.in.HabitForm;
-import ru.ylab.dto.in.HabitPercentageForm;
+import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.in.SignInForm;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.services.validation.HabitFormValidator;
-import ru.ylab.services.validation.HabitPercentageFormValidator;
+import ru.ylab.services.validation.PeriodFormValidator;
 import ru.ylab.services.validation.HabitSearchFormValidator;
 import ru.ylab.services.validation.SignInFormValidator;
 import ru.ylab.services.validation.UserFormValidator;
@@ -49,9 +49,9 @@ public class ValidatorsConfig {
     private final Validator<HabitSearchForm> habitSearchFormValidator;
 
     /**
-     * Instance of a {@link Validator<HabitPercentageForm>}.
+     * Instance of a {@link Validator< PeriodForm >}.
      */
-    private final Validator<HabitPercentageForm> habitPercentageFormValidator;
+    private final Validator<PeriodForm> habitPercentageFormValidator;
 
     /**
      * Creates new ValidatorsConfig.
@@ -64,6 +64,6 @@ public class ValidatorsConfig {
         this.userSearchFormValidator = new UserSearchFormValidator();
         this.habitFormValidator = new HabitFormValidator();
         this.habitSearchFormValidator = new HabitSearchFormValidator();
-        this.habitPercentageFormValidator = new HabitPercentageFormValidator();
+        this.habitPercentageFormValidator = new PeriodFormValidator();
     }
 }

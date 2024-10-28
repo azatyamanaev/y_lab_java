@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class HabitPercentageForm {
+public class PeriodForm {
 
     /**
      * From which date to count habit completion percent.

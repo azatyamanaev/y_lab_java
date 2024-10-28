@@ -7,7 +7,6 @@ import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
-import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.entities.HabitService;
 import ru.ylab.services.validation.Validator;
@@ -26,11 +25,6 @@ public class HabitServiceImpl implements HabitService {
     private final HabitRepository habitRepository;
 
     /**
-     * Instance of a {@link HabitHistoryRepository}
-     */
-    private final HabitHistoryRepository habitHistoryRepository;
-
-    /**
      * Instance of a {@link Validator<HabitForm>}
      */
     private final Validator<HabitForm> habitFormValidator;
@@ -44,14 +38,12 @@ public class HabitServiceImpl implements HabitService {
      * Creates new HabitServiceImpl.
      *
      * @param habitRepository        HabitRepository instance
-     * @param habitHistoryRepository HabitHistoryRepository instance
      * @param habitFormValidator Validator<HabitForm> instance
      * @param habitSearchFormValidator Validator<HabitSearchForm> instance
      */
-    public HabitServiceImpl(HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository,
-                            Validator<HabitForm> habitFormValidator, Validator<HabitSearchForm> habitSearchFormValidator) {
+    public HabitServiceImpl(HabitRepository habitRepository, Validator<HabitForm> habitFormValidator,
+                            Validator<HabitSearchForm> habitSearchFormValidator) {
         this.habitRepository = habitRepository;
-        this.habitHistoryRepository = habitHistoryRepository;
         this.habitFormValidator = habitFormValidator;
         this.habitSearchFormValidator = habitSearchFormValidator;
     }
@@ -60,6 +52,15 @@ public class HabitServiceImpl implements HabitService {
     public Habit get(Long id) {
         return habitRepository.find(id)
                 .orElseThrow(() -> HttpException.badRequest().addDetail(ErrorConstants.NOT_FOUND, "habit"));
+    }
+
+    @Override
+    public Habit getForUser(Long userId, Long habitId) {
+        Habit habit = get(habitId);
+        if (!habit.getUserId().equals(userId)) {
+            throw HttpException.badRequest().addDetail(ErrorConstants.NOT_AUTHOR, "user");
+        }
+        return habit;
     }
 
     @Override

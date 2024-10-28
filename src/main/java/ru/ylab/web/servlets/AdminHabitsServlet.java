@@ -2,11 +2,11 @@ package ru.ylab.web.servlets;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,10 +16,12 @@ import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.mappers.HabitMapper;
 import ru.ylab.dto.out.HabitDto;
+import ru.ylab.exception.HttpException;
 import ru.ylab.services.entities.HabitService;
+import ru.ylab.utils.StringUtil;
+import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.WebConstants;
 
-import static ru.ylab.utils.StringUtil.parseReqUri;
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
 import static ru.ylab.utils.constants.WebConstants.HABITS_URL;
 import static ru.ylab.utils.constants.WebConstants.ONE_URL;
@@ -35,7 +37,7 @@ import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
         urlPatterns = {ADMIN_URL + HABITS_URL,
                 ADMIN_URL + HABITS_URL + ONE_URL,
                 ADMIN_URL + HABITS_URL + SEARCH_URL})
-public class AdminHabitsServlet extends HttpServlet implements HttpRequestHandler{
+public class AdminHabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
      * Instance of an {@link ObjectMapper}.
@@ -63,33 +65,67 @@ public class AdminHabitsServlet extends HttpServlet implements HttpRequestHandle
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String uri = parseReqUri(req.getRequestURI());
-        String response;
-        List<HabitDto> habits = new ArrayList<>();
-
-        switch (uri) {
-            case ADMIN_URL + HABITS_URL + ONE_URL:
-                HabitDto habit = habitMapper.apply(habitService.get(Long.valueOf(req.getParameter("id"))));
-                response = mapper.writeValueAsString(habit);
-                break;
-            case ADMIN_URL + HABITS_URL:
-                habits.addAll(habitMapper.apply(habitService.getAll()));
-                response = mapper.writeValueAsString(habits);
-                break;
-            case ADMIN_URL + HABITS_URL + SEARCH_URL:
-                HabitSearchForm form = new HabitSearchForm();
-                form.setName(req.getParameter("name"));
-                form.setFrequency(req.getParameter("frequency"));
-                form.setFrom(req.getParameter("from") == null ? null : LocalDate.parse(req.getParameter("from")));
-                form.setTo(req.getParameter("to") == null ? null : LocalDate.parse(req.getParameter("to")));
-                habits.addAll(habitMapper.apply(habitService.search(form)));
-                response = mapper.writeValueAsString(habits);
-                break;
-            default:
-                response = "";
+    public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        String uri = StringUtil.parseReqUri(req.getRequestURI());
+        if (method.equals("GET")) {
+            switch (uri) {
+                case ADMIN_URL + HABITS_URL + ONE_URL:
+                    getHabit(req, resp);
+                    break;
+                case ADMIN_URL + HABITS_URL:
+                    getHabits(req, resp);
+                    break;
+                case ADMIN_URL + HABITS_URL + SEARCH_URL:
+                    searchHabits(req, resp);
+                    break;
+                default:
+                    throw HttpException.methodNotAllowed()
+                                       .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http GET");
+            }
+        } else {
+            super.service(req, resp);
         }
+    }
 
-        setResponse(resp, HttpServletResponse.SC_OK, response);
+    /**
+     * Gets habit for admin and writes it to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void getHabit(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HabitDto habit = habitMapper.apply(habitService.get(Long.valueOf(req.getParameter("id"))));
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(habit));
+    }
+
+    /**
+     * Gets habits for admin and writes them to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void getHabits(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        List<HabitDto> habits = habitMapper.apply(habitService.getAll());
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(habits));
+    }
+
+    /**
+     * Searches habits for admin and writes them to response.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void searchHabits(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HabitSearchForm form = new HabitSearchForm();
+        form.setName(req.getParameter("name"));
+        form.setFrequency(req.getParameter("frequency"));
+        form.setFrom(req.getParameter("from") == null ? null : LocalDate.parse(req.getParameter("from")));
+        form.setTo(req.getParameter("to") == null ? null : LocalDate.parse(req.getParameter("to")));
+        List<HabitDto> habits = habitMapper.apply(habitService.search(form));
+        setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(habits));
     }
 }

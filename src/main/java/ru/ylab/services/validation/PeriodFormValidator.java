@@ -2,19 +2,19 @@ package ru.ylab.services.validation;
 
 import java.time.LocalDate;
 
-import ru.ylab.dto.in.HabitPercentageForm;
+import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.exception.HttpException;
 import ru.ylab.utils.constants.ErrorConstants;
 
 /**
- * Validator for validating {@link HabitPercentageForm}.
+ * Validator for validating {@link PeriodForm}.
  *
  * @author azatyamanaev
  */
-public class HabitPercentageFormValidator implements Validator<HabitPercentageForm> {
+public class PeriodFormValidator implements Validator<PeriodForm> {
 
     @Override
-    public void validate(HabitPercentageForm data) {
+    public void validate(PeriodForm data) {
         isEmpty(data);
 
         HttpException exception = HttpException.validationError();

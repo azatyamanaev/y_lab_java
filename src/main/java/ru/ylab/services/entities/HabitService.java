@@ -24,6 +24,15 @@ public interface HabitService {
     Habit get(Long id);
 
     /**
+     * Gets habit for user.
+     *
+     * @param userId habit author id
+     * @param habitId habit id
+     * @return habit
+     */
+    Habit getForUser(Long userId, Long habitId);
+
+    /**
      * Gets all habits.
      *
      * @return list of habits
