@@ -1,4 +1,4 @@
-package ru.ylab.repositories;
+package ru.ylab.junit.repositories;
 
 import java.util.List;
 
@@ -6,10 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.ylab.datasource.PostgresConfig;
+import ru.ylab.config.PostgresConfig;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;
+import ru.ylab.repositories.UserRepository;
 import ru.ylab.repositories.impl.UserRepositoryImpl;
 
 public class UserRepositoryTest extends PostgresConfig {

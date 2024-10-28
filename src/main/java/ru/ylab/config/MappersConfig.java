@@ -44,7 +44,7 @@ public class MappersConfig {
      *
      * @return instance of an ObjectMapper
      */
-    public ObjectMapper mapper() {
+    public static ObjectMapper mapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

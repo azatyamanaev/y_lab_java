@@ -1,7 +1,8 @@
-package ru.ylab.utils;
+package ru.ylab.junit.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.ylab.utils.RegexMatcher;
 
 public class RegexMatcherTest {
 

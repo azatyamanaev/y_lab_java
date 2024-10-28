@@ -32,8 +32,18 @@ public class ConfigParser {
         try {
             Properties properties = new Properties();
             loadProperties(properties, profile);
+            String url = properties.getProperty("datasource.url");
+            if (profile.equals(AppConstants.DEV_PROFILE)) {
+                String host = System.getenv("DB_HOST");
+                String port = System.getenv("DB_PORT");
+                String dbName = System.getenv("DB_NAME");
+
+                url = url.replace("{DB_HOST}", host);
+                url = url.replace("{DB_PORT}", port);
+                url = url.replace("{DB_NAME}", dbName);
+            }
             return new DbSettings(
-                    properties.getProperty("datasource.url"),
+                    url,
                     properties.getProperty("datasource.username"),
                     properties.getProperty("datasource.password"));
         } catch (IOException e) {
