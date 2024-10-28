@@ -48,7 +48,7 @@ public class AuthFilter implements Filter {
     private UserService userService;
 
     @Override
-    public void init(FilterConfig config) throws ServletException {
+    public void init(FilterConfig config) {
         ServletContext context = config.getServletContext();
         AppContext appContext = (AppContext) context.getAttribute("appContext");
 

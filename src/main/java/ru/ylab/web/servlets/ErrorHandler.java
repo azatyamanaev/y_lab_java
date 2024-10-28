@@ -3,7 +3,6 @@ package ru.ylab.web.servlets;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -32,8 +31,8 @@ public class ErrorHandler extends HttpServlet implements HttpRequestHandler {
     private ObjectMapper mapper;
 
     @Override
-    public void init(ServletConfig config) {
-        ServletContext context = config.getServletContext();
+    public void init() {
+        ServletContext context = this.getServletContext();
         AppContext appContext = (AppContext) context.getAttribute("appContext");
 
         mapper = appContext.getMappersConfig().getMapper();
@@ -58,10 +57,13 @@ public class ErrorHandler extends HttpServlet implements HttpRequestHandler {
             status = resp.getStatus();
             switch (status) {
                 case HttpServletResponse.SC_NOT_FOUND:
-                    error.setMessage("Resource not found");
+                    error.setMessage(ErrorConstants.NOT_FOUND);
+                    break;
+                case HttpServletResponse.SC_METHOD_NOT_ALLOWED:
+                    error.setMessage(ErrorConstants.METHOD_NOT_ALLOWED);
                     break;
                 default:
-                    error.setMessage("Internal server error");
+                    error.setMessage(ErrorConstants.INTERNAL_SERVER_ERROR);
 
             }
 
@@ -73,6 +75,16 @@ public class ErrorHandler extends HttpServlet implements HttpRequestHandler {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        doGet(req, resp);
+    }
+
+    @Override
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        doGet(req, resp);
+    }
+
+    @Override
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         doGet(req, resp);
     }
 }

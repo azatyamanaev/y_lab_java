@@ -31,14 +31,14 @@ public abstract class BaseException extends RuntimeException {
     /**
      * Adds details to exception error.
      *
-     * @param type error type
+     * @param type   error type
      * @param target what object or field error occurred on
      * @return this instance
      */
     public BaseException addDetail(String type, String target) {
         if (error == null) {
             error = Error.builder()
-                    .message(ErrorConstants.VALIDATION_ERROR)
+                         .message(ErrorConstants.INTERNAL_SERVER_ERROR)
                          .build();
         }
         error.getDetails().add(new ErrorDetail(type, target));

@@ -3,7 +3,6 @@ package ru.ylab.web.servlets;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -47,8 +46,8 @@ public class UsersServlet extends HttpServlet implements HttpRequestHandler {
     private UserService userService;
 
     @Override
-    public void init(ServletConfig config) {
-        ServletContext context = config.getServletContext();
+    public void init() {
+        ServletContext context = this.getServletContext();
         AppContext appContext = (AppContext) context.getAttribute("appContext");
 
         this.mapper = appContext.getMappersConfig().getMapper();

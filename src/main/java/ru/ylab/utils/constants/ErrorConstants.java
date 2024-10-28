@@ -32,4 +32,6 @@ public interface ErrorConstants {
     String BAD_REQUEST = "Bad request";
     String UNAUTHORIZED = "Unauthorized";
     String FORBIDDEN = "Access forbidden";
+    String INTERNAL_SERVER_ERROR = "Internal server error";
+    String METHOD_NOT_ALLOWED = "Method not allowed";
 }
