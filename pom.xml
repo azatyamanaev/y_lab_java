@@ -28,7 +28,9 @@
     <jaxb.version>2.3.1</jaxb.version>
     <junit.version>5.10.2</junit.version>
     <mockito.version>5.11.0</mockito.version>
+    <servlet.tester.version>6.1.26</servlet.tester.version>
     <testcontainers.version>1.20.0</testcontainers.version>
+    <script.runner.version>3.5.7</script.runner.version>
 
     <maven.compiler.version>3.11.0</maven.compiler.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -175,11 +177,27 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Jetty servlet tester -->
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-servlet-tester</artifactId>
+      <version>${servlet.tester.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Test containers -->
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
       <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Script runner -->
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+      <version>${script.runner.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -32,7 +32,8 @@ public class LiquibaseServiceImpl implements LiquibaseService {
         try {
             liquibase.update();
         } catch (LiquibaseException e) {
-            throw HttpException.serverError(ErrorConstants.LIQUIBASE_ERROR).addDetail(ErrorConstants.MIGRATION_ERROR, "liquibase");
+            throw HttpException.liquibaseError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.MIGRATION_ERROR, "liquibase");
         }
     }
 }

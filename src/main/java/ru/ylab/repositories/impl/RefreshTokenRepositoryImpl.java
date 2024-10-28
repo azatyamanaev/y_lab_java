@@ -51,7 +51,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "refresh token");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "refresh token");
         }
         return refreshToken;
     }
@@ -69,7 +70,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "refresh token");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "refresh token");
         }
         return result == 1;
     }

@@ -52,7 +52,8 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "habit history");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "habit history");
         }
         return result == 1;
     }
@@ -77,7 +78,8 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit history");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit history");
         }
 
         return projection;
@@ -94,7 +96,8 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.DELETE_ERROR, "habit history");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.DELETE_ERROR, "habit history");
         }
         return result > 0;
     }

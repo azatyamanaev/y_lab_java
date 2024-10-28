@@ -57,7 +57,8 @@ public class UserRepositoryImpl implements UserRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return user;
     }
@@ -76,7 +77,8 @@ public class UserRepositoryImpl implements UserRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return user;
     }
@@ -97,7 +99,8 @@ public class UserRepositoryImpl implements UserRepository {
                 users.add(unwrap(resultSet));
             }
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return users;
     }
@@ -127,7 +130,8 @@ public class UserRepositoryImpl implements UserRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return users;
     }
@@ -145,7 +149,8 @@ public class UserRepositoryImpl implements UserRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "user");
         }
         return result == 1;
     }
@@ -163,7 +168,8 @@ public class UserRepositoryImpl implements UserRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.UPDATE_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.UPDATE_ERROR, "user");
         }
         return result == 1;
     }
@@ -178,7 +184,8 @@ public class UserRepositoryImpl implements UserRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.DELETE_ERROR, "user");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.DELETE_ERROR, "user");
         }
         return result == 1;
     }

@@ -51,7 +51,8 @@ public class LiquibaseConfig {
             database.setLiquibaseSchemaName(settings.changelogSchema());
             return new Liquibase(settings.location(), new ClassLoaderResourceAccessor(), database);
         } catch (SQLException | LiquibaseException e) {
-            throw HttpException.serverError(ErrorConstants.LIQUIBASE_ERROR).addDetail(ErrorConstants.CONFIGURATION_ERROR, "liquibase");
+            throw HttpException.liquibaseError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CONFIGURATION_ERROR, "liquibase");
         }
     }
 }

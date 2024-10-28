@@ -71,7 +71,8 @@ public class BasicConnectionPool implements ConnectionPool {
         try {
             DriverManager.registerDriver(new org.postgresql.Driver());
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.REGISTER_ERROR, "driver");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.REGISTER_ERROR, "driver");
         }
         this.url = settings.url();
         this.username = settings.username();
@@ -84,7 +85,8 @@ public class BasicConnectionPool implements ConnectionPool {
                 connectionPool.add(createConnection(settings.url(), settings.username(), settings.password()));
             }
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "connection");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "connection");
         }
     }
 
@@ -107,7 +109,8 @@ public class BasicConnectionPool implements ConnectionPool {
             if (usedConnections.size() < MAX_POOL_SIZE) {
                 connectionPool.add(createConnection(url, username, password));
             } else {
-                throw HttpException.databaseAccessError().addDetail(ErrorConstants.MAX_SIZE_REACHED, "connection pool");
+                throw HttpException.databaseAccessError(null, null)
+                                   .addDetail(ErrorConstants.MAX_SIZE_REACHED, "connection pool");
             }
         }
         Connection connection = connectionPool.remove(connectionPool.size() - 1);

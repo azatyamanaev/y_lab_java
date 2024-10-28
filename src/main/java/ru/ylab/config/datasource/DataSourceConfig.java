@@ -7,7 +7,6 @@ import ru.ylab.services.datasource.impl.BasicCPDataSource;
 import ru.ylab.services.datasource.impl.BasicConnectionPool;
 import ru.ylab.settings.DbSettings;
 import ru.ylab.settings.LiquibaseSettings;
-import ru.ylab.utils.ConfigParser;
 
 /**
  * DataSource configuration class.
@@ -34,11 +33,11 @@ public class DataSourceConfig {
 
     /**
      * Creates new DataSourceConfig.
+     *
+     * @param dbSettings DbSettings instance
+     * @param liquibaseSettings LiquibaseSettings instance
      */
-    public DataSourceConfig() {
-        DbSettings dbSettings = ConfigParser.parseDbSettings();
-        LiquibaseSettings liquibaseSettings = ConfigParser.parseLiquibaseSettings();
-
+    public DataSourceConfig(DbSettings dbSettings, LiquibaseSettings liquibaseSettings) {
         this.connectionPool = new BasicConnectionPool(dbSettings);
         this.dataSource = new BasicCPDataSource(connectionPool);
         this.dataSource.setAutoCommit(false);

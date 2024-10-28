@@ -20,11 +20,23 @@ public abstract class BaseException extends RuntimeException {
     private Error error;
 
     /**
-     * Creates new BaseException.
+     * Creates new BaseException
      *
      * @param error error data
      */
     public BaseException(@NotNull Error error) {
+        this(null, null, error);
+    }
+
+    /**
+     * Creates new BaseException.
+     *
+     * @param msg exception message
+     * @param cause exception cause
+     * @param error error data
+     */
+    public BaseException(String msg, Throwable cause, @NotNull Error error) {
+        super(msg, cause);
         this.error = error;
     }
 

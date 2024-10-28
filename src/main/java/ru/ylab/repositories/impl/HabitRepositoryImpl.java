@@ -57,7 +57,8 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habit;
     }
@@ -73,7 +74,8 @@ public class HabitRepositoryImpl implements HabitRepository {
                 habits.add(unwrap(resultSet));
             }
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -102,7 +104,8 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -121,7 +124,8 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -152,7 +156,8 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.SELECT_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habits;
     }
@@ -171,7 +176,8 @@ public class HabitRepositoryImpl implements HabitRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.CREATE_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "habit");
         }
         return result == 1;
     }
@@ -191,7 +197,8 @@ public class HabitRepositoryImpl implements HabitRepository {
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.UPDATE_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.UPDATE_ERROR, "habit");
         }
         return result == 1;
     }
@@ -209,7 +216,8 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             return result == 1;
         } catch (SQLException e) {
-            throw HttpException.databaseAccessError().addDetail(ErrorConstants.DELETE_ERROR, "habit");
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.DELETE_ERROR, "habit");
         }
     }
 
