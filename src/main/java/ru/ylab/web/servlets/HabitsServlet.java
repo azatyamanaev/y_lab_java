@@ -38,9 +38,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
 @LogRequest
 @Slf4j
 @WebServlet(name = WebConstants.HABITS_SERVLET_NAME,
-        urlPatterns = {USER_URL + HABITS_URL,
-                USER_URL + HABITS_URL + SEARCH_URL,
-                USER_URL + HABITS_URL + ONE_URL,})
+        urlPatterns = {USER_URL + HABITS_URL + "/*"})
 public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     /**

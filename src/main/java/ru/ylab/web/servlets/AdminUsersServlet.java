@@ -34,9 +34,7 @@ import static ru.ylab.utils.constants.WebConstants.USERS_URL;
  */
 @LogRequest
 @WebServlet(name = WebConstants.ADMIN_USERS_SERVLET_NAME,
-        urlPatterns = {ADMIN_URL + USERS_URL,
-                ADMIN_URL + USERS_URL + ONE_URL,
-                ADMIN_URL + USERS_URL + SEARCH_URL})
+        urlPatterns = {ADMIN_URL + USERS_URL + "/*"})
 public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
@@ -85,7 +83,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
             }
         } else if (method.equals("POST")) {
             if (uri.equals(ADMIN_URL + USERS_URL + ONE_URL)) {
-               createUser(req, resp);
+                createUser(req, resp);
             } else {
                 throw HttpException.methodNotAllowed()
                                    .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http POST");
@@ -105,7 +103,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
     /**
      * Gets user for admin and writes it to response.
      *
-     * @param req Http request
+     * @param req  Http request
      * @param resp Http response
      * @throws IOException if error occurs when writing to response
      */
@@ -118,7 +116,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
     /**
      * Gets users for admin and writes them to response.
      *
-     * @param req Http request
+     * @param req  Http request
      * @param resp Http response
      * @throws IOException if error occurs when writing to response
      */
@@ -130,7 +128,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
     /**
      * Searches users for admin and writes them to response.
      *
-     * @param req Http request
+     * @param req  Http request
      * @param resp Http response
      * @throws IOException if error occurs when writing to response
      */
@@ -146,7 +144,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
     /**
      * Creates user for admin and sets created response status.
      *
-     * @param req Http request
+     * @param req  Http request
      * @param resp Http response
      * @throws IOException if error occurs when writing to response
      */
@@ -159,7 +157,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
     /**
      * Deletes user for admin and sets no content response status.
      *
-     * @param req Http request
+     * @param req  Http request
      * @param resp Http response
      * @throws IOException if error occurs when writing to response
      */

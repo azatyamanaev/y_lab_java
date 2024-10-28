@@ -39,10 +39,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  */
 @LogRequest
 @WebServlet(name = WebConstants.HABIT_HISTORY_SERVLET_NAME,
-        urlPatterns = {USER_URL + HABIT_HISTORY_URL + ONE_URL,
-                USER_URL + HABIT_HISTORY_URL + HABIT_STREAK_URL,
-                USER_URL + HABIT_HISTORY_URL + HABIT_PERCENTAGE_URL,
-                USER_URL + HABIT_HISTORY_URL + HABIT_REPORT_URL})
+        urlPatterns = {USER_URL + HABIT_HISTORY_URL + "/*"})
 public class HabitHistoryServlet extends HttpServlet implements HttpRequestHandler {
 
     /**

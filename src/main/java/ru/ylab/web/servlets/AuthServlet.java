@@ -32,9 +32,7 @@ import static ru.ylab.utils.constants.WebConstants.SIGN_UP_URL;
  * @author azatyamanaev
  */
 @WebServlet(name = WebConstants.AUTH_SERVLET_NAME,
-        urlPatterns = {AUTH_URL + SIGN_IN_URL,
-                AUTH_URL + SIGN_UP_URL,
-                AUTH_URL + REFRESH_TOKEN_URL})
+        urlPatterns = {AUTH_URL + "/*"})
 public class AuthServlet extends HttpServlet implements HttpRequestHandler {
 
     /**

@@ -28,7 +28,7 @@ public interface WebConstants {
     // habit history patterns
 
     String HABIT_HISTORY_SERVLET_NAME = "habitHistoryServlet";
-    String HABIT_HISTORY_URL = HABITS_URL + "/history";
+    String HABIT_HISTORY_URL = "/habit-history";
     String HABIT_HISTORY_COMPLETION_URL = "/completion";
     String HABIT_STREAK_URL = HABIT_HISTORY_COMPLETION_URL + "/streak";
     String HABIT_PERCENTAGE_URL = HABIT_HISTORY_COMPLETION_URL + "/percent";

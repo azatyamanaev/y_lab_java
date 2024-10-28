@@ -34,9 +34,7 @@ import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
  */
 @LogRequest
 @WebServlet(name = WebConstants.ADMIN_HABITS_SERVLET_NAME,
-        urlPatterns = {ADMIN_URL + HABITS_URL,
-                ADMIN_URL + HABITS_URL + ONE_URL,
-                ADMIN_URL + HABITS_URL + SEARCH_URL})
+        urlPatterns = {ADMIN_URL + HABITS_URL + "/*"})
 public class AdminHabitsServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
