@@ -21,26 +21,37 @@ import ru.ylab.utils.StringUtil;
 public class AuditAspect {
 
     @Pointcut("within(@ru.ylab.aspects.LogRequest *)")
-    public void annotatedWithLogRequest() {}
-
-    @Pointcut("execution(* do*(..))")
-    public void servletMethod() {}
+    public void annotatedWithLogRequest() {
+    }
 
     @Pointcut("within(@ru.ylab.aspects.LogQuery *)")
-    public void annotatedWithLogQuery() {}
+    public void annotatedWithLogQuery() {
+    }
 
     @Pointcut("execution(public * *(..))")
-    public void repositoryMethod() {}
+    public void publicMethod() {
+    }
 
-    @AfterReturning(value = "annotatedWithLogRequest() && servletMethod() && args(req, resp)",
-            argNames = "req, resp")
-    public void logUserRequest(HttpServletRequest req, HttpServletResponse resp) throws Throwable {
+    @Pointcut("!execution(* *service(..))")
+    public void excludeRouting() {
+    }
+
+    @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeRouting() " +
+            "&& args(req, resp, user)", argNames = "req, resp, user")
+    public void logUserRequest(HttpServletRequest req, HttpServletResponse resp, User user) throws Throwable {
+        String uri = StringUtil.parseReqUri(req.getRequestURI());
+        log.info("Request {} {} completed for user {} with role {}", req.getMethod(), uri, user.getEmail(), user.getRole());
+    }
+
+    @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeRouting() " +
+            "&& args(req, resp)", argNames = "req, resp")
+    public void logAuthAndAdminRequest(HttpServletRequest req, HttpServletResponse resp) throws Throwable {
         User user = (User) req.getAttribute("currentUser");
         String uri = StringUtil.parseReqUri(req.getRequestURI());
         log.info("Request {} {} completed for user {} with role {}", req.getMethod(), uri, user.getEmail(), user.getRole());
     }
 
-    @Around("annotatedWithLogQuery() && repositoryMethod()")
+    @Around("annotatedWithLogQuery() && publicMethod()")
     public Object calculateDatabaseRequestExecution(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();
