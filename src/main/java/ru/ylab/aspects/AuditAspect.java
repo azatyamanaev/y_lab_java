@@ -39,14 +39,17 @@ public class AuditAspect {
     @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeRouting() " +
             "&& args(req, resp, user)", argNames = "req, resp, user")
     public void logUserRequest(HttpServletRequest req, HttpServletResponse resp, User user) throws Throwable {
-        String uri = StringUtil.parseReqUri(req.getRequestURI());
-        log.info("Request {} {} completed for user {} with role {}", req.getMethod(), uri, user.getEmail(), user.getRole());
+        writeRequestLog(req, user);
     }
 
     @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeRouting() " +
             "&& args(req, resp)", argNames = "req, resp")
     public void logAuthAndAdminRequest(HttpServletRequest req, HttpServletResponse resp) throws Throwable {
         User user = (User) req.getAttribute("currentUser");
+        writeRequestLog(req, user);
+    }
+
+    private void writeRequestLog(HttpServletRequest req, User user) {
         String uri = StringUtil.parseReqUri(req.getRequestURI());
         log.info("Request {} {} completed for user {} with role {}", req.getMethod(), uri, user.getEmail(), user.getRole());
     }
