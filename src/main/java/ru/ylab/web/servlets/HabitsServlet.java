@@ -123,7 +123,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
      */
     public void getHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
         Long id = Long.valueOf(req.getParameter("id"));
-        HabitDto habit = habitMapper.apply(habitService.getForUser(user.getId(), id));
+        HabitDto habit = habitMapper.mapToDto(habitService.getForUser(user.getId(), id));
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(habit));
     }
 
@@ -135,7 +135,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
      * @throws IOException if error occurs when writing to response
      */
     public void getHabits(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
-        List<HabitDto> dtos = habitMapper.apply(habitService.getHabitsForUser(user.getId()));
+        List<HabitDto> dtos = habitMapper.mapToDto(habitService.getHabitsForUser(user.getId()));
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dtos));
     }
 
@@ -152,7 +152,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
         form.setFrequency(req.getParameter("frequency"));
         form.setFrom(req.getParameter("from") == null ? null : LocalDate.parse(req.getParameter("from")));
         form.setTo(req.getParameter("to") == null ? null : LocalDate.parse(req.getParameter("to")));
-        List<HabitDto> dtos = habitMapper.apply(habitService.searchHabitsForUser(user.getId(), form));
+        List<HabitDto> dtos = habitMapper.mapToDto(habitService.searchHabitsForUser(user.getId(), form));
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dtos));
     }
 

@@ -109,7 +109,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
      */
     public void getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long id = Long.valueOf(req.getParameter("id"));
-        UserDto dto = userMapper.apply(userService.get(id));
+        UserDto dto = userMapper.mapToDto(userService.get(id));
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dto));
     }
 
@@ -121,7 +121,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
      * @throws IOException if error occurs when writing to response
      */
     public void getUsers(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<UserDto> dtos = userMapper.apply(userService.getAll());
+        List<UserDto> dtos = userMapper.mapToDto(userService.getAll());
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dtos));
     }
 
@@ -137,7 +137,7 @@ public class AdminUsersServlet extends HttpServlet implements HttpRequestHandler
         form.setName(req.getParameter("name"));
         form.setEmail(req.getParameter("email"));
         form.setRole(req.getParameter("role"));
-        List<UserDto> dtos = userMapper.apply(userService.searchUsers(form));
+        List<UserDto> dtos = userMapper.mapToDto(userService.searchUsers(form));
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dtos));
     }
 

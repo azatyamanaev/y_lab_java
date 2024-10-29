@@ -98,7 +98,7 @@ public class UsersServlet extends HttpServlet implements HttpRequestHandler {
      * @throws IOException if error occurs when writing to response
      */
     public void getProfile(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
-        UserDto dto = userMapper.apply(userService.get(user.getId()));
+        UserDto dto = userMapper.mapToDto(userService.get(user.getId()));
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(dto));
     }
 

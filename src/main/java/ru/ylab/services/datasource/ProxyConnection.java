@@ -49,7 +49,8 @@ public class ProxyConnection implements Connection {
 
     // Override close method to return to pool instead of closing connection.
     @Override
-    public void close() {
+    public void close() throws SQLException {
+        this.rollback();
         this.connectionPool.releaseConnection(this);
     }
 

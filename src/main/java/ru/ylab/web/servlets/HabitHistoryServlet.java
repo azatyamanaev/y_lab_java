@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.ylab.aspects.LogRequest;
 import ru.ylab.config.AppContext;
 import ru.ylab.dto.in.PeriodForm;
-import ru.ylab.dto.mappers.HabitMapper;
 import ru.ylab.dto.out.HabitCompletionPercent;
 import ru.ylab.dto.out.HabitCompletionStreak;
 import ru.ylab.dto.out.HabitHistoryProjection;
@@ -48,11 +47,6 @@ public class HabitHistoryServlet extends HttpServlet implements HttpRequestHandl
     private ObjectMapper mapper;
 
     /**
-     * Instance of a {@link HabitMapper}.
-     */
-    private HabitMapper habitMapper;
-
-    /**
      * Instance of a {@link HabitHistoryService}.
      */
     private HabitHistoryService habitHistoryService;
@@ -63,7 +57,6 @@ public class HabitHistoryServlet extends HttpServlet implements HttpRequestHandl
         AppContext appContext = (AppContext) context.getAttribute("appContext");
 
         this.mapper = appContext.getMappersConfig().getMapper();
-        this.habitMapper = appContext.getMappersConfig().getHabitMapper();
         this.habitHistoryService = appContext.getServicesConfig().getHabitHistoryService();
     }
 

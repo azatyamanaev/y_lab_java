@@ -14,5 +14,5 @@ import ru.ylab.models.Habit;
 public interface HabitMapper extends DtoMapper<Habit, HabitDto> {
 
     @Override
-    HabitDto apply(Habit habit);
+    HabitDto mapToDto(Habit habit);
 }

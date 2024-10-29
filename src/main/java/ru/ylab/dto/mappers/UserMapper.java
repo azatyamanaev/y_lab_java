@@ -14,5 +14,5 @@ import ru.ylab.models.User;
 public interface UserMapper extends DtoMapper<User, UserDto> {
 
     @Override
-    UserDto apply(User user);
+    UserDto mapToDto(User user);
 }
