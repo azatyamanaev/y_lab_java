@@ -22,31 +22,31 @@ public class UserRepositoryTest extends PostgresConfig {
         userRepository = new UserRepositoryImpl(dataSource);
     }
 
-    @DisplayName("Test: find user by id")
+    @DisplayName("Test(repository): find user by id")
     @Test
     public void testFindById() {
         Assertions.assertTrue(userRepository.find(-10L).isPresent());
     }
 
-    @DisplayName("Test: fail to find user by id, user does not exist")
+    @DisplayName("Test(repository): fail to find user by id, user does not exist")
     @Test
     public void testFindByIdFail() {
         Assertions.assertTrue(userRepository.find(-100L).isEmpty());
     }
 
-    @DisplayName("Test: user exists by email")
+    @DisplayName("Test(repository): user exists by email")
     @Test
     public void testExistsByEmail() {
         Assertions.assertTrue(userRepository.existsByEmail("admin_test@mail.ru"));
     }
 
-    @DisplayName("Test: user does not exist by email")
+    @DisplayName("Test(repository): user does not exist by email")
     @Test
     public void testExistsByEmailFail() {
         Assertions.assertFalse(userRepository.existsByEmail("a123_test@mail.ru"));
     }
 
-    @DisplayName("Test: search users by role and name")
+    @DisplayName("Test(repository): search users by role and name")
     @Test
     public void testSearchByRole() {
         UserSearchForm form = new UserSearchForm();
@@ -57,7 +57,7 @@ public class UserRepositoryTest extends PostgresConfig {
         Assertions.assertEquals(User.Role.ADMIN, users.get(0).getRole());
     }
 
-    @DisplayName("Test: search users by email")
+    @DisplayName("Test(repository): search users by email")
     @Test
     public void testSearchByEmail() {
         UserSearchForm form = new UserSearchForm();
@@ -67,7 +67,7 @@ public class UserRepositoryTest extends PostgresConfig {
         Assertions.assertTrue(users.get(0).getEmail().startsWith("a_test"));
     }
 
-    @DisplayName("Test: save user")
+    @DisplayName("Test(repository): save user")
     @Test
     public void testSave() {
         Assertions.assertTrue(userRepository.save(User.builder()
@@ -77,7 +77,7 @@ public class UserRepositoryTest extends PostgresConfig {
                                                       .role(User.Role.USER).build()));
     }
 
-    @DisplayName("Test: update user")
+    @DisplayName("Test(repository): update user")
     @Test
     public void testUpdate() {
         SignUpForm form = new SignUpForm();
@@ -87,13 +87,13 @@ public class UserRepositoryTest extends PostgresConfig {
         Assertions.assertTrue(userRepository.update(-20L, form));
     }
 
-    @DisplayName("Test: delete user by id")
+    @DisplayName("Test(repository): delete user by id")
     @Test
     public void testDeleteById() {
         Assertions.assertTrue(userRepository.delete(-30L));
     }
 
-    @DisplayName("Test: fail to delete user by id, user does not exist")
+    @DisplayName("Test(repository): fail to delete user by id, user does not exist")
     @Test
     public void testDeleteByIdFail() {
         Assertions.assertFalse(userRepository.delete(-100L));

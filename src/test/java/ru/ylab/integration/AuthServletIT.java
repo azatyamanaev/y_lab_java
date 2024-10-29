@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.ylab.config.MappersConfig;
 import ru.ylab.config.WebAppConfig;
@@ -26,6 +27,7 @@ public class AuthServletIT extends WebAppConfig {
         mapper = MappersConfig.mapper();
     }
 
+    @DisplayName("Test(integration): sign in")
     @Test
     public void testSignIn() throws IOException, InterruptedException {
         int port = dockerCompose.getServicePort(TOMCAT_NAME, TOMCAT_PORT);
