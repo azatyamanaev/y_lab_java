@@ -44,7 +44,7 @@ public class AuditAspect {
 
     @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeRouting() " +
             "&& args(req, resp)", argNames = "req, resp")
-    public void logAuthAndAdminRequest(HttpServletRequest req, HttpServletResponse resp) throws Throwable {
+    public void logAdminRequest(HttpServletRequest req, HttpServletResponse resp) throws Throwable {
         User user = (User) req.getAttribute("currentUser");
         writeRequestLog(req, user);
     }
