@@ -14,7 +14,7 @@ public abstract class PostgresConfig {
 
     private static PostgreSQLContainer<?> postgres;
     protected static CPDataSource dataSource;
-    private static AppContext appContext;
+    protected static AppContext appContext;
 
     @BeforeAll
     public static void beforeAll() throws SQLException, FileNotFoundException {

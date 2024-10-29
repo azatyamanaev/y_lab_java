@@ -233,7 +233,7 @@
           <source>16</source>
           <target>16</target>
           <complianceLevel>16</complianceLevel>
-          <showWeaveInfo>true</showWeaveInfo>
+          <showWeaveInfo>false</showWeaveInfo>
           <verbose>true</verbose>
           <Xlint>ignore</Xlint>
           <forceAjcCompile>true</forceAjcCompile>

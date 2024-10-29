@@ -139,7 +139,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
      */
     private String completionPercent(@NotNull Habit habit, LocalDate from, LocalDate to) {
         HabitHistoryProjection history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null || history.getDays() == null) {
+        if (history == null || history.getDays() == null || history.getDays().isEmpty()) {
             return "0%";
         }
 
