@@ -83,6 +83,13 @@ public class HabitHistoryServlet extends HttpServlet implements HttpRequestHandl
                     throw HttpException.methodNotAllowed()
                                        .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http GET");
             }
+        } else if (method.equals("PUT")) {
+            if (uri.equals(USER_URL + HABIT_HISTORY_URL + ONE_URL)) {
+                markHabitCompleted(req, resp, user);
+            } else {
+                throw HttpException.methodNotAllowed()
+                                   .addDetail(ErrorConstants.NOT_IMPLEMENTED, "Http PUT");
+            }
         } else {
             super.service(req, resp);
         }
@@ -99,6 +106,20 @@ public class HabitHistoryServlet extends HttpServlet implements HttpRequestHandl
         Long id = Long.valueOf(req.getParameter("id"));
         HabitHistoryProjection projection = habitHistoryService.getHabitHistory(user.getId(), id);
         setResponse(resp, HttpServletResponse.SC_OK, mapper.writeValueAsString(projection));
+    }
+
+    /**
+     * Marks habit completed for user.
+     *
+     * @param req Http request
+     * @param resp Http response
+     * @throws IOException if error occurs when writing to response
+     */
+    public void markHabitCompleted(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        Long id = Long.valueOf(req.getParameter("id"));
+        LocalDate date = req.getParameter("completed_on") == null ? null : LocalDate.parse(req.getParameter("completed_on"));
+        habitHistoryService.markHabitCompleted(user.getId(), id, date);
+        setResponse(resp, HttpServletResponse.SC_NO_CONTENT, "");
     }
 
     /**

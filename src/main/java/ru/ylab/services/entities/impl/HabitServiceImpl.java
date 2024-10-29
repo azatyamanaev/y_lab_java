@@ -98,12 +98,9 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void update(Long userId, Long habitId, HabitForm form) {
+    public void updateForUser(Long userId, Long habitId, HabitForm form) {
         habitFormValidator.validate(form);
-        Habit habit = get(habitId);
-        if (!habit.getUserId().equals(userId)) {
-            throw HttpException.badRequest().addDetail(ErrorConstants.NOT_AUTHOR, "user");
-        }
+        Habit habit = getForUser(userId, habitId);
         habit.setName(form.getName());
         habit.setDescription(form.getDescription());
         habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
@@ -111,11 +108,8 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void delete(Long userId, Long habitId) {
-        Habit habit = get(habitId);
-        if (!habit.getUserId().equals(userId)) {
-            throw HttpException.badRequest().addDetail(ErrorConstants.NOT_AUTHOR, "user");
-        }
+    public void deleteForUser(Long userId, Long habitId) {
+        Habit habit = getForUser(userId, habitId);
         habitRepository.delete(userId, habit.getId());
     }
 }

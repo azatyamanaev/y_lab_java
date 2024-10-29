@@ -55,7 +55,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     @Override
     public void markHabitCompleted(Long userId, Long habitId, LocalDate completedOn) {
-        Habit habit = habitService.get(habitId);
+        Habit habit = habitService.getForUser(userId, habitId);
 
         HabitHistory history = new HabitHistory();
         history.setUserId(userId);
@@ -66,7 +66,7 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     @Override
     public HabitHistoryProjection getHabitHistory(Long userId, Long habitId) {
-        return habitHistoryRepository.getByHabitId(habitService.get(habitId).getId());
+        return habitHistoryRepository.getByHabitId(habitService.getForUser(userId, habitId).getId());
     }
 
     @Override

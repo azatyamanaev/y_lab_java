@@ -79,7 +79,7 @@ public interface HabitService {
      * @param habitId habit id
      * @param form habit data
      */
-    void update(Long userId, Long habitId, HabitForm form);
+    void updateForUser(Long userId, Long habitId, HabitForm form);
 
     /**
      * Deletes habit by id.
@@ -87,5 +87,5 @@ public interface HabitService {
      * @param userId habit author id
      * @param habitId habit id
      */
-    void delete(Long userId, Long habitId);
+    void deleteForUser(Long userId, Long habitId);
 }

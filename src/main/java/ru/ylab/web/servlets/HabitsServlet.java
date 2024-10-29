@@ -179,7 +179,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
     public void updateHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
         Long id = Long.valueOf(req.getParameter("id"));
         HabitForm form = mapper.readValue(req.getReader(), HabitForm.class);
-        habitService.update(user.getId(), id, form);
+        habitService.updateForUser(user.getId(), id, form);
         setResponse(resp, HttpServletResponse.SC_NO_CONTENT, "");
     }
 
@@ -192,7 +192,7 @@ public class HabitsServlet extends HttpServlet implements HttpRequestHandler {
      */
     public void deleteHabit(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
         Long id = Long.valueOf(req.getParameter("id"));
-        habitService.delete(user.getId(), id);
+        habitService.deleteForUser(user.getId(), id);
         setResponse(resp, HttpServletResponse.SC_NO_CONTENT, "");
     }
 }
