@@ -1,4 +1,4 @@
-package ru.ylab.config;
+package ru.ylab.integration;
 
 import java.io.File;
 import java.net.URI;
@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.DockerComposeContainer;
+import ru.ylab.config.MappersConfig;
 
 public abstract class WebAppConfig {
 

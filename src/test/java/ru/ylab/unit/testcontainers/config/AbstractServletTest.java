@@ -1,4 +1,4 @@
-package ru.ylab.junit.servlets;
+package ru.ylab.unit.testcontainers.config;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import ru.ylab.config.PostgresConfig;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;

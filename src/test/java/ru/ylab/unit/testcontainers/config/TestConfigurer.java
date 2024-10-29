@@ -1,4 +1,4 @@
-package ru.ylab.config;
+package ru.ylab.unit.testcontainers.config;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

@@ -1,4 +1,4 @@
-package ru.ylab.junit.servlets.mockito;
+package ru.ylab.unit.mockito.servlets;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import ru.ylab.config.MappersConfig;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.out.HabitDto;
+import ru.ylab.unit.mockito.conifg.WebAppConfig;
 import ru.ylab.models.Habit;
 import ru.ylab.services.entities.HabitService;
 import ru.ylab.web.servlets.AdminHabitsServlet;

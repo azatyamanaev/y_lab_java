@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.ylab.config.MappersConfig;
-import ru.ylab.config.WebAppConfig;
 import ru.ylab.dto.in.SignInForm;
 import ru.ylab.dto.out.SignInResult;
 

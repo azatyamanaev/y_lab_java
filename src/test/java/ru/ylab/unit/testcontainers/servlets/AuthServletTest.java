@@ -1,4 +1,4 @@
-package ru.ylab.junit.servlets;
+package ru.ylab.unit.testcontainers.servlets;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import ru.ylab.dto.in.SignInForm;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.out.SignInResult;
+import ru.ylab.unit.testcontainers.config.AbstractServletTest;
 import ru.ylab.services.auth.JWToken;
 import ru.ylab.web.servlets.AuthServlet;
 

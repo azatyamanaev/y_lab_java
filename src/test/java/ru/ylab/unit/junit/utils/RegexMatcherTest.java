@@ -1,4 +1,4 @@
-package ru.ylab.junit.utils;
+package ru.ylab.unit.junit.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

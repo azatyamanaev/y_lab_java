@@ -1,4 +1,4 @@
-package ru.ylab.junit.repositories;
+package ru.ylab.unit.testcontainers.repositories;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.ylab.config.PostgresConfig;
+import ru.ylab.unit.testcontainers.config.PostgresConfig;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;

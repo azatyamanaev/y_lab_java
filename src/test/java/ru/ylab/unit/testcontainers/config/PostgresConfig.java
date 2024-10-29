@@ -1,4 +1,4 @@
-package ru.ylab.config;
+package ru.ylab.unit.testcontainers.config;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
+import ru.ylab.config.AppContext;
 import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.utils.constants.AppConstants;
 

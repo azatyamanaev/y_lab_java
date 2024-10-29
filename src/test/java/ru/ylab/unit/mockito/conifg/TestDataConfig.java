@@ -1,4 +1,4 @@
-package ru.ylab.junit.servlets.mockito;
+package ru.ylab.unit.mockito.conifg;
 
 import java.time.LocalDate;
 import java.util.HashMap;

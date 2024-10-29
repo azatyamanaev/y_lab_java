@@ -1,4 +1,4 @@
-package ru.ylab.junit.servlets;
+package ru.ylab.unit.testcontainers.servlets;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import ru.ylab.dto.out.HabitCompletionPercent;
 import ru.ylab.dto.out.HabitCompletionStreak;
 import ru.ylab.dto.out.HabitHistoryProjection;
+import ru.ylab.unit.testcontainers.config.AbstractServletTest;
 import ru.ylab.models.User;
 import ru.ylab.web.servlets.HabitHistoryServlet;
 
