@@ -2,6 +2,7 @@ package ru.ylab.dto.in;
 
 import java.time.LocalDate;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
 public class HabitSearchForm {
 
     /**
