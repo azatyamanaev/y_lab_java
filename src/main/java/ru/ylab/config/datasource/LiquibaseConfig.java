@@ -9,16 +9,16 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import lombok.extern.slf4j.Slf4j;
+import ru.ylab.exception.HttpException;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.settings.LiquibaseSettings;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Class for migrating database with Liquibase.
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class LiquibaseConfig {
 
     /**
@@ -51,8 +51,8 @@ public class LiquibaseConfig {
             database.setLiquibaseSchemaName(settings.changelogSchema());
             return new Liquibase(settings.location(), new ClassLoaderResourceAccessor(), database);
         } catch (SQLException | LiquibaseException e) {
-            log.error("Error when configuring liquibase {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.liquibaseError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CONFIGURATION_ERROR, "liquibase");
         }
     }
 }

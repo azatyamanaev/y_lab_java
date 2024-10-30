@@ -11,9 +11,9 @@
             delete from users where id in (0, -1, -2);
 
             insert into users(id, name, email, password, role)
-            values (0, 'admin', 'admin@mail.ru', 'admin', 'ADMIN'),
-                   (-1, 'user1', 'a@mail.ru', '123', 'USER'),
-                   (-2, 'user2', 'b@mail.ru', '456', 'USER');
+            values (0, 'admin', 'admin@mail.ru', '$2a$08$C/rwJDUXe6fpVN.ViMKjBuPtS0q0zx9Sg73D0WxHIupfuZc.WtWhe', 'ADMIN'),
+                   (-1, 'user1', 'a@mail.ru', '$2a$08$si6Z2oAD8/JmD4.brrTnbOQQG7DSjGxnr1cY.kM.nnEXjOsqgp6dK', 'USER'),
+                   (-2, 'user2', 'b@mail.ru', '$2a$08$RknMO7K52XKpq0RBtVu2Z.UBjrBVNT7BUVqd3S7kr3YO/hUiu3Aqm', 'USER');
 
             insert into habits(id, name, description, frequency, created, user_id)
             values (-1, 'h1', 'd1', 'DAILY', to_date('2024-10-01', 'YYYY/MM/DD'), -1),

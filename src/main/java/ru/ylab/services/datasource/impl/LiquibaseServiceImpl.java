@@ -2,15 +2,15 @@ package ru.ylab.services.datasource.impl;
 
 import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
-import lombok.extern.slf4j.Slf4j;
+import ru.ylab.exception.HttpException;
 import ru.ylab.services.datasource.LiquibaseService;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Service implementing {@link LiquibaseService}
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class LiquibaseServiceImpl implements LiquibaseService {
 
     /**
@@ -32,8 +32,8 @@ public class LiquibaseServiceImpl implements LiquibaseService {
         try {
             liquibase.update();
         } catch (LiquibaseException e) {
-            log.error("Error when migrating database {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.liquibaseError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.MIGRATION_ERROR, "liquibase");
         }
     }
 }

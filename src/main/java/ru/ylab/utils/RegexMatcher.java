@@ -13,7 +13,7 @@ public class RegexMatcher {
     /**
      * Email regex.
      */
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9]+@(mail.ru)$";
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9_]+@(mail.ru)$";
 
     /**
      * Matches string to regex.

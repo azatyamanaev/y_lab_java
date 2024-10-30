@@ -1,6 +1,7 @@
 package ru.ylab.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,8 +13,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     /**
@@ -32,7 +34,7 @@ public class User {
     private String email;
 
     /**
-     * User password.
+     * Hashed user password.
      */
     private String password;
 

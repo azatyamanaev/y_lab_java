@@ -1,6 +1,7 @@
 package ru.ylab.repositories;
 
 import org.jetbrains.annotations.NotNull;
+import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.models.HabitHistory;
 
 /**
@@ -14,17 +15,17 @@ public interface HabitHistoryRepository {
      * Saves habit history to storage.
      *
      * @param history habit history data
-     * @return saved history
+     * @return whether save is successful
      */
-    HabitHistory save(HabitHistory history);
+    boolean save(HabitHistory history);
 
     /**
      * Gets habit history by habit id
      *
      * @param habitId habit id
-     * @return habit history or null
+     * @return habit history projection
      */
-    HabitHistory getByHabitId(@NotNull Long habitId);
+    HabitHistoryProjection getByHabitId(@NotNull Long habitId);
 
     /**
      * Deletes history of a habit by habit id.

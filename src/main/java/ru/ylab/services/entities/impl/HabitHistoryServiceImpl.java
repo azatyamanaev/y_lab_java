@@ -2,36 +2,27 @@ package ru.ylab.services.entities.impl;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.App;
+import ru.ylab.dto.in.PeriodForm;
+import ru.ylab.dto.out.HabitCompletionPercent;
+import ru.ylab.dto.out.HabitCompletionStreak;
+import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.models.Habit;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
-import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.entities.HabitHistoryService;
-import ru.ylab.utils.InputParser;
+import ru.ylab.services.entities.HabitService;
+import ru.ylab.services.validation.Validator;
 
 /**
  * Service implementing {@link HabitHistoryService}.
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class HabitHistoryServiceImpl implements HabitHistoryService {
-
-    /**
-     * Scanner for reading user input.
-     */
-    private final Scanner scanner;
-
-    /**
-     * Instance of a {@link HabitRepository}
-     */
-    private final HabitRepository habitRepository;
 
     /**
      * Instance of a {@link HabitHistoryRepository}
@@ -39,130 +30,69 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
     private final HabitHistoryRepository habitHistoryRepository;
 
     /**
+     * Instance of a {@link HabitService}
+     */
+    private final HabitService habitService;
+
+    /**
+     * Instance of a {@link Validator< PeriodForm >}.
+     */
+    private final Validator<PeriodForm> periodFormValidator;
+
+    /**
      * Creates new HabitHistoryServiceImpl.
      *
-     * @param scanner                scanner for reading user input
-     * @param habitRepository        HabitRepository instance
      * @param habitHistoryRepository HabitHistoryRepository instance
+     * @param habitService           HabitService instance
+     * @param periodFormValidator    Validator<PeriodForm> instance
      */
-    public HabitHistoryServiceImpl(Scanner scanner, HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
-        this.scanner = scanner;
-        this.habitRepository = habitRepository;
+    public HabitHistoryServiceImpl(HabitHistoryRepository habitHistoryRepository, HabitService habitService,
+                                   Validator<PeriodForm> periodFormValidator) {
         this.habitHistoryRepository = habitHistoryRepository;
+        this.habitService = habitService;
+        this.periodFormValidator = periodFormValidator;
     }
 
     @Override
-    public void markHabitCompleted() {
-        System.out.print("Enter habit name: ");
-        String name = scanner.next();
-        Habit habit = habitRepository.getByName(name);
-        if (habit == null) {
-            log.warn("Habit with name {} not found.", name);
-            return;
-        }
+    public void markHabitCompleted(Long userId, Long habitId, LocalDate completedOn) {
+        Habit habit = habitService.getForUser(userId, habitId);
 
-        System.out.print("Enter habit completion date: ");
-        LocalDate date = InputParser.parseDate(scanner);
-
-        HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null) {
-            history = new HabitHistory();
-            history.setUserId(App.getCurrentUser().getId());
-            history.setHabitId(habit.getId());
-        }
-        history.setCompletedOn(date);
+        HabitHistory history = new HabitHistory();
+        history.setUserId(userId);
+        history.setHabitId(habit.getId());
+        history.setCompletedOn(completedOn);
         habitHistoryRepository.save(history);
-        log.info("Habit completion recorded.");
     }
 
     @Override
-    public String viewHabitHistory() {
-        StringBuilder response = new StringBuilder();
-
-        System.out.print("Enter habit name: ");
-        String name = scanner.next();
-        Habit habit = habitRepository.getByName(name);
-        if (habit == null) {
-            response.append("Habit with name ").append(name).append(" not found.");
-        } else {
-            System.out.print("Enter date from(format yyyy-MM-dd): ");
-            LocalDate after = InputParser.parseDate(scanner);
-
-            System.out.print("Enter date until(format yyyy-MM-dd): ");
-            LocalDate before = InputParser.parseDate(scanner);
-
-            HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
-
-            if (history == null) {
-                response.append("Habit does not have history.");
-            } else {
-                response.append("After ")
-                        .append(after)
-                        .append(" before ")
-                        .append(before)
-                        .append(" habit ")
-                        .append(name)
-                        .append(" was completed on days:\n");
-
-                history.getDays().stream()
-                       .filter(x -> x.isAfter(after) && x.isBefore(before))
-                       .forEach(x -> response.append(x).append("\n"));
-            }
-        }
-
-        return response.toString();
+    public HabitHistoryProjection getHabitHistory(Long userId, Long habitId) {
+        return habitHistoryRepository.getByHabitId(habitService.getForUser(userId, habitId).getId());
     }
 
     @Override
-    public String habitCompletionStreak() {
-        StringBuilder response = new StringBuilder("Current completion streak for habits:\n");
-        habitRepository.getAllForUser(App.getCurrentUser().getId())
-                       .forEach(x -> response.append("Habit: name - ")
-                                             .append(x.getName())
-                                             .append(", streak - ")
-                                             .append(countStreak(x))
-                                             .append("\n"));
-        return response.toString();
+    public List<HabitCompletionStreak> habitCompletionStreak(Long userId) {
+        List<HabitCompletionStreak> streaks = new ArrayList<>();
+        habitService.getHabitsForUser(userId)
+                    .forEach(x -> streaks.add(new HabitCompletionStreak(x.getName(), countStreak(x))));
+        return streaks;
     }
 
     @Override
-    public String habitCompletionPercent() {
-        System.out.print("Enter date from: ");
-        LocalDate from = InputParser.parseDate(scanner);
-
-        System.out.print("Enter date to: ");
-        LocalDate to = InputParser.parseDate(scanner);
-
-        StringBuilder response = new StringBuilder("Current habit completion percent:\n");
-        habitRepository.getAllForUser(App.getCurrentUser().getId())
-                       .forEach(x -> response.append("Habit: name - ")
-                                             .append(x.getName())
-                                             .append(", completion - ")
-                                             .append(completionPercent(x, from, to))
-                                             .append("\n"));
-        return response.toString();
+    public List<HabitCompletionPercent> habitCompletionPercent(Long userId, PeriodForm form) {
+        periodFormValidator.validate(form);
+        List<HabitCompletionPercent> percents = new ArrayList<>();
+        habitService.getHabitsForUser(userId)
+                    .forEach(x -> percents.add(new HabitCompletionPercent(x.getName(),
+                            completionPercent(x, form.getFrom(), form.getTo()), form.getFrom(), form.getTo())));
+        return percents;
     }
 
     @Override
-    public String habitCompletionReport() {
-        StringBuilder response = new StringBuilder("Current habit completion:\n");
-        habitRepository.getAllForUser(App.getCurrentUser().getId())
-                       .forEach(x -> {
-                           HabitHistory history = habitHistoryRepository.getByHabitId(x.getId());
-                           if (history != null) {
-                               StringBuilder builder = new StringBuilder();
-                               history.getDays().stream()
-                                      .sorted(Comparator.naturalOrder())
-                                      .forEach(date -> builder.append(date).append(" "));
-
-                               response.append("Habit: name - ")
-                                       .append(x.getName())
-                                       .append(", completed on - ")
-                                       .append(builder)
-                                       .append("\n");
-                           }
-                       });
-        return response.toString();
+    public List<HabitHistoryProjection> habitCompletionReport(Long userId) {
+        List<HabitHistoryProjection> report = new ArrayList<>();
+        habitService.getHabitsForUser(userId)
+                    .forEach(x -> report.add(getHabitHistory(userId, x.getId())));
+        return report;
     }
 
     /**
@@ -172,8 +102,8 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
      * @return streak
      */
     private int countStreak(@NotNull Habit habit) {
-        HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null) {
+        HabitHistoryProjection history = habitHistoryRepository.getByHabitId(habit.getId());
+        if (history == null || history.getDays() == null) {
             return 0;
         }
 
@@ -208,8 +138,8 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
      * @return completion percent
      */
     private String completionPercent(@NotNull Habit habit, LocalDate from, LocalDate to) {
-        HabitHistory history = habitHistoryRepository.getByHabitId(habit.getId());
-        if (history == null) {
+        HabitHistoryProjection history = habitHistoryRepository.getByHabitId(habit.getId());
+        if (history == null || history.getDays() == null || history.getDays().isEmpty()) {
             return "0%";
         }
 

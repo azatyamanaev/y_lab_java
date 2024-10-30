@@ -1,5 +1,11 @@
 package ru.ylab.services.entities;
 
+import java.util.List;
+
+import ru.ylab.dto.in.SignUpForm;
+import ru.ylab.dto.in.UserForm;
+import ru.ylab.dto.in.UserSearchForm;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 
 /**
@@ -10,53 +16,64 @@ import ru.ylab.models.User;
 public interface UserService {
 
     /**
+     * Gets user by id.
+     *
+     * @param id user id
+     * @return user
+     * @throws HttpException if user does not exist
+     */
+    User get(Long id) throws HttpException;
+
+    /**
      * Gets user by email.
      *
      * @param email user email
-     * @return user or null
+     * @return user
+     * @throws HttpException if user does not exist
      */
-    User getByEmail(String email);
-
-    /**
-     * Checks whether user exists by email.
-     *
-     * @param email user email
-     * @return whether user exists
-     */
-    boolean existsByEmail(String email);
+    User getByEmail(String email) throws HttpException;
 
     /**
      * Saves user to storage.
      *
      * @param user user data
      */
-    User save(User user);
+    void save(User user);
 
     /**
-     * Gets users with filtering depending on user input.
+     * Gets all users.
      *
-     * @return list of users in string format
+     * @return list of all users
      */
-    String getUsers();
+    List<User> getAll();
+
+    /**
+     * Search users with filters.
+     *
+     * @param form filters to apply
+     * @return list of users
+     */
+    List<User> searchUsers(UserSearchForm form);
 
     /**
      * Creates user according to user input.
+     *
+     * @param form user data
      */
-    void createByAdmin();
+    void createByAdmin(UserForm form);
 
     /**
-     * Deletes user according to user input.
+     * Edits user data.
+     *
+     * @param userId user id
+     * @param form user data
      */
-    void deleteByAdmin();
+    void update(Long userId, SignUpForm form);
 
     /**
-     * Edits user data according to user input.
+     * Deletes user.
+     *
+     * @param userId user id
      */
-    void update();
-
-    /**
-     * Deletes user account or not depending on user input.
-     * If user choose to delete account, redirects to auth page.
-     */
-    void delete();
+    void delete(Long userId);
 }

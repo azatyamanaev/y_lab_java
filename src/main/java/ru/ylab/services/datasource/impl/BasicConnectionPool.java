@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.ylab.config.datasource.ProxyConnection;
+import ru.ylab.exception.HttpException;
+import ru.ylab.services.datasource.ProxyConnection;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.settings.DbSettings;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Class implementing {@link ConnectionPool}.
@@ -66,6 +68,12 @@ public class BasicConnectionPool implements ConnectionPool {
      * @param settings settings for connecting to database
      */
     public BasicConnectionPool(DbSettings settings) {
+        try {
+            DriverManager.registerDriver(new org.postgresql.Driver());
+        } catch (SQLException e) {
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.REGISTER_ERROR, "driver");
+        }
         this.url = settings.url();
         this.username = settings.username();
         this.password = settings.password();
@@ -77,8 +85,8 @@ public class BasicConnectionPool implements ConnectionPool {
                 connectionPool.add(createConnection(settings.url(), settings.username(), settings.password()));
             }
         } catch (SQLException e) {
-            log.error("Error when creating connection {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "connection");
         }
     }
 
@@ -98,11 +106,11 @@ public class BasicConnectionPool implements ConnectionPool {
     @Override
     public Connection getConnection() throws SQLException, RuntimeException {
         if (connectionPool.isEmpty()) {
-            log.info("Connection pool is empty");
             if (usedConnections.size() < MAX_POOL_SIZE) {
                 connectionPool.add(createConnection(url, username, password));
             } else {
-                throw new RuntimeException("Maximum pool size reached, no available connections!");
+                throw HttpException.databaseAccessError(null, null)
+                                   .addDetail(ErrorConstants.MAX_SIZE_REACHED, "connection pool");
             }
         }
         Connection connection = connectionPool.remove(connectionPool.size() - 1);

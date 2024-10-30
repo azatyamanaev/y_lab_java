@@ -9,21 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.config.datasource.CPDataSource;
-import ru.ylab.forms.UserSearchForm;
+import ru.ylab.aspects.LogQuery;
+import ru.ylab.dto.in.SignUpForm;
+import ru.ylab.dto.in.UserSearchForm;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
-import ru.ylab.utils.SqlConstants;
+import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.utils.StringUtil;
+import ru.ylab.utils.constants.ErrorConstants;
+import ru.ylab.utils.constants.SqlConstants;
 
 /**
  * Class implementing {@link UserRepository}.
  *
  * @author azatyamanaev
  */
-@Slf4j
+@LogQuery
 public class UserRepositoryImpl implements UserRepository {
 
     /**
@@ -41,10 +44,30 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> find(Long id) {
+        Optional<User> user = Optional.empty();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_USERS_BY_ID)) {
+
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                user = Optional.of(unwrap(resultSet));
+            }
+
+            resultSet.close();
+        } catch (SQLException e) {
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
+        }
+        return user;
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         Optional<User> user = Optional.empty();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_USERS_BY_EMAIL)){
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_USERS_BY_EMAIL)) {
 
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
@@ -54,15 +77,10 @@ public class UserRepositoryImpl implements UserRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while getting user {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return user;
-    }
-
-    @Override
-    public User getByEmail(String email) {
-        return findByEmail(email).orElse(null);
     }
 
     @Override
@@ -81,8 +99,8 @@ public class UserRepositoryImpl implements UserRepository {
                 users.add(unwrap(resultSet));
             }
         } catch (SQLException e) {
-            log.error("Error while getting users {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return users;
     }
@@ -93,7 +111,7 @@ public class UserRepositoryImpl implements UserRepository {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.SEARCH_USERS)) {
 
-            String value =  !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            String value = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
             statement.setString(1, value);
             statement.setString(2, value);
 
@@ -112,14 +130,15 @@ public class UserRepositoryImpl implements UserRepository {
 
             resultSet.close();
         } catch (SQLException e) {
-            log.error("Error while searching users {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "user");
         }
         return users;
     }
 
     @Override
-    public User save(User user) {
+    public boolean save(User user) {
+        int result;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.INSERT_INTO_USERS)) {
 
@@ -127,52 +146,48 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
             statement.setString(4, user.getRole().toString());
-            statement.executeUpdate();
+            result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while saving user {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.CREATE_ERROR, "user");
         }
-        return user;
+        return result == 1;
     }
 
     @Override
-    public User update(User user) {
+    public boolean update(Long userId, SignUpForm form) {
+        int result;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.UPDATE_USERS)) {
 
-            statement.setString(1, user.getName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getPassword());
-            statement.setLong(4, user.getId());
-            statement.executeUpdate();
+            statement.setString(1, form.getName());
+            statement.setString(2, form.getEmail());
+            statement.setString(3, form.getPassword());
+            statement.setLong(4, userId);
+            result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            log.error("Error while updating user {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.UPDATE_ERROR, "user");
         }
-        return user;
+        return result == 1;
     }
 
     @Override
-    public boolean deleteByEmail(String email) {
-        User user = getByEmail(email);
+    public boolean delete(Long userId) {
         int result;
-        if (user == null) {
-            return false;
-        } else {
-            try (Connection connection = dataSource.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(SqlConstants.DELETE_FROM_USERS_BY_EMAIL)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.DELETE_FROM_USERS_BY_ID)) {
 
-                statement.setString(1, email);
-                result = statement.executeUpdate();
-                connection.commit();
-            } catch (SQLException e) {
-                log.error("Error while deleting user {}", e.getMessage());
-                throw new RuntimeException(e);
-            }
-            return result == 1;
+            statement.setLong(1, userId);
+            result = statement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.DELETE_ERROR, "user");
         }
+        return result == 1;
     }
 
     /**

@@ -1,5 +1,13 @@
 package ru.ylab.services.entities;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import ru.ylab.dto.in.PeriodForm;
+import ru.ylab.dto.out.HabitCompletionPercent;
+import ru.ylab.dto.out.HabitCompletionStreak;
+import ru.ylab.dto.out.HabitHistoryProjection;
+
 /**
  * Interface describing logic for working with habit history.
  *
@@ -8,35 +16,45 @@ package ru.ylab.services.entities;
 public interface HabitHistoryService {
 
     /**
-     * Mark habit as completed on day from user input.
+     * Mark habit as completed.
+     *
+     * @param userId user id
+     * @param habitId habit id
+     * @param completedOn completed on day
      */
-    void markHabitCompleted();
+    void markHabitCompleted(Long userId, Long habitId, LocalDate completedOn);
 
     /**
-     * View days on which habit was completed for user.
+     * Gets days on which habit was completed for user.
      *
-     * @return habit history in string format
+     * @param userId user id
+     * @param habitId habit id
+     * @return habit history
      */
-    String viewHabitHistory();
+    HabitHistoryProjection getHabitHistory(Long userId, Long habitId);
 
     /**
-     * Prints current habit completion streak for user.
+     * Gets current habit completion streak for user.
      *
-     * @return habit completion streak in string format
+     * @param userId user id
+     * @return habit completion streak list
      */
-    String habitCompletionStreak();
+    List<HabitCompletionStreak> habitCompletionStreak(Long userId);
 
     /**
-     * Prints habit completion percent for user for the period.
+     * Gets habit completion percent for user for the period.
      *
-     * @return habit completion percent in string format
+     * @param userId user id
+     * @param form period for which to display completion percent
+     * @return habit completion percent list
      */
-    String habitCompletionPercent();
+    List<HabitCompletionPercent> habitCompletionPercent(Long userId, PeriodForm form);
 
     /**
-     * Prints habit completion report for user
+     * Gets habit completion report for user.
      *
-     * @return habit completion report in string format
+     * @param userId user id
+     * @return habit completion report
      */
-    String habitCompletionReport();
+    List<HabitHistoryProjection> habitCompletionReport(Long userId);
 }

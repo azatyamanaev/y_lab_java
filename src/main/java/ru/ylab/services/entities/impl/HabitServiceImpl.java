@@ -1,32 +1,23 @@
 package ru.ylab.services.entities.impl;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Scanner;
 
-import lombok.extern.slf4j.Slf4j;
-import ru.ylab.App;
-import ru.ylab.forms.HabitForm;
-import ru.ylab.forms.HabitSearchForm;
+import ru.ylab.dto.in.HabitForm;
+import ru.ylab.dto.in.HabitSearchForm;
+import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
-import ru.ylab.models.User;
-import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.entities.HabitService;
-import ru.ylab.utils.IdUtil;
-import ru.ylab.utils.InputParser;
+import ru.ylab.services.validation.Validator;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Service implementing {@link HabitService}.
  *
  * @author azatyamanaev
  */
-@Slf4j
 public class HabitServiceImpl implements HabitService {
-
-    /**
-     * Scanner for reading user input.
-     */
-    private final Scanner scanner;
 
     /**
      * Instance of a {@link HabitRepository}
@@ -34,153 +25,91 @@ public class HabitServiceImpl implements HabitService {
     private final HabitRepository habitRepository;
 
     /**
-     * Instance of a {@link HabitHistoryRepository}
+     * Instance of a {@link Validator<HabitForm>}
      */
-    private final HabitHistoryRepository habitHistoryRepository;
+    private final Validator<HabitForm> habitFormValidator;
+
+    /**
+     * Instance of a {@link Validator<HabitSearchForm>}
+     */
+    private final Validator<HabitSearchForm> habitSearchFormValidator;
 
     /**
      * Creates new HabitServiceImpl.
      *
-     * @param scanner                scanner for reading user input
      * @param habitRepository        HabitRepository instance
-     * @param habitHistoryRepository HabitHistoryRepository instance
+     * @param habitFormValidator Validator<HabitForm> instance
+     * @param habitSearchFormValidator Validator<HabitSearchForm> instance
      */
-    public HabitServiceImpl(Scanner scanner, HabitRepository habitRepository, HabitHistoryRepository habitHistoryRepository) {
-        this.scanner = scanner;
+    public HabitServiceImpl(HabitRepository habitRepository, Validator<HabitForm> habitFormValidator,
+                            Validator<HabitSearchForm> habitSearchFormValidator) {
         this.habitRepository = habitRepository;
-        this.habitHistoryRepository = habitHistoryRepository;
+        this.habitFormValidator = habitFormValidator;
+        this.habitSearchFormValidator = habitSearchFormValidator;
     }
 
     @Override
-    public String getHabits() {
-        System.out.println("Do you want to use filters?(y/n)");
-        String in = scanner.next();
-
-        while (!"y".equals(in) && !"n".equals(in)) {
-            System.out.print("Invalid input. Please write 'y' or 'n': ");
-            in = scanner.next();
-        }
-
-        List<Habit> habits;
-        User user = App.getCurrentUser();
-        if (user.getRole().equals(User.Role.ADMIN)) {
-            if ("y".equals(in)) {
-                habits = habitRepository.search(getHabitFilters());
-            } else {
-                habits = habitRepository.getAll();
-            }
-        } else {
-            if ("y".equals(in)) {
-                habits = habitRepository.searchForUser(user.getId(), getHabitFilters());
-            } else {
-                habits = habitRepository.getAllForUser(user.getId());
-            }
-        }
-
-        StringBuilder response = new StringBuilder();
-
-        for (Habit habit : habits) {
-            response.append(habit).append("\n");
-        }
-        return response.toString();
+    public Habit get(Long id) {
+        return habitRepository.find(id)
+                .orElseThrow(() -> HttpException.badRequest().addDetail(ErrorConstants.NOT_FOUND, "habit"));
     }
 
     @Override
-    public void create() {
-        HabitForm form = new HabitForm();
-        System.out.print("Enter name: ");
-        form.setName(scanner.next());
-        if (habitRepository.existsByName(form.getName())) {
-            log.warn("Habit with name {} already exists.", form.getName());
-            return;
+    public Habit getForUser(Long userId, Long habitId) {
+        Habit habit = get(habitId);
+        if (!habit.getUserId().equals(userId)) {
+            throw HttpException.badRequest().addDetail(ErrorConstants.NOT_AUTHOR, "user");
         }
-
-        System.out.print("Enter description: ");
-        form.setDescription(scanner.next());
-
-        System.out.print("Enter frequency(1 - daily, 2 - weekly, 3 - monthly): ");
-        form.setFrequency(InputParser.parseFrequency(scanner));
-
-        Habit habit = new Habit(
-                IdUtil.generateHabitId(),
-                form.getName(),
-                form.getDescription(),
-                Habit.Frequency.valueOf(form.getFrequency()),
-                App.getCurrentUser().getId());
-        habitRepository.save(habit);
-        log.info("Habit created.");
+        return habit;
     }
 
     @Override
-    public void update() {
-        System.out.println("Enter name of the habit: ");
+    public List<Habit> getAll() {
+        return habitRepository.getAll();
+    }
 
-        Habit habit = habitRepository.getByName(scanner.next());
-        if (habit == null) {
-            log.warn("Habit not found.");
-            return;
-        }
+    @Override
+    public List<Habit> search(HabitSearchForm form) {
+        habitSearchFormValidator.validate(form);
+        return habitRepository.search(form);
+    }
 
-        System.out.println("Fill out new values for habit.");
-        HabitForm form = new HabitForm();
-        System.out.print("Enter name: ");
-        form.setName(scanner.next());
+    @Override
+    public List<Habit> getHabitsForUser(Long userId) {
+        return habitRepository.getAllForUser(userId);
+    }
 
-        System.out.print("Enter description: ");
-        form.setDescription(scanner.next());
+    @Override
+    public List<Habit> searchHabitsForUser(Long userId, HabitSearchForm form) {
+        habitSearchFormValidator.validate(form);
+        return habitRepository.searchForUser(userId, form);
+    }
 
-        System.out.print("Enter frequency(1 - daily, 2 - weekly, 3 - monthly): ");
-        form.setFrequency(InputParser.parseFrequency(scanner));
+    @Override
+    public void create(Long userId, HabitForm form) {
+        habitFormValidator.validate(form);
+        habitRepository.save(Habit.builder()
+                                         .name(form.getName())
+                                         .description(form.getDescription())
+                                         .frequency(Habit.Frequency.valueOf(form.getFrequency()))
+                                         .created(LocalDate.now())
+                                         .userId(userId)
+                                         .build());
+    }
 
-        if (habitRepository.existsByName(form.getName())) {
-            log.warn("Habit with name {} already exists.", form.getName());
-            return;
-        }
-
+    @Override
+    public void updateForUser(Long userId, Long habitId, HabitForm form) {
+        habitFormValidator.validate(form);
+        Habit habit = getForUser(userId, habitId);
         habit.setName(form.getName());
         habit.setDescription(form.getDescription());
         habit.setFrequency(Habit.Frequency.valueOf(form.getFrequency()));
         habitRepository.update(habit);
-        log.info("Habit updated.");
     }
 
     @Override
-    public void deleteByName() {
-        System.out.print("Enter habit name: ");
-
-        String name = scanner.next();
-        Habit habit = habitRepository.getByName(name);
-        if (habit == null) {
-            log.info("Habit with name {} not found.", name);
-        } else {
-            boolean res = habitRepository.delete(App.getCurrentUser().getId(), habit);
-            if (res) {
-                log.info("Habit deleted.");
-            } else {
-                log.warn("Something went wrong.");
-            }
-        }
-    }
-
-    /**
-     * Forms instance of {@link HabitSearchForm} according to user input.
-     *
-     * @return created instance of a HabitSearchForm
-     */
-    private HabitSearchForm getHabitFilters() {
-        HabitSearchForm form = new HabitSearchForm();
-        System.out.print("Enter name: ");
-        form.setName(scanner.next());
-
-        System.out.print("Enter frequency(1 - daily, 2 - weekly, 3 - monthly): ");
-        form.setFrequency(InputParser.parseFrequency(scanner));
-
-        System.out.print("Enter date from(format yyyy-MM-dd): ");
-        form.setFrom(InputParser.parseDate(scanner));
-
-        System.out.print("Enter date to(format yyyy-MM-dd): ");
-        form.setTo(InputParser.parseDate(scanner));
-
-        return form;
+    public void deleteForUser(Long userId, Long habitId) {
+        Habit habit = getForUser(userId, habitId);
+        habitRepository.delete(userId, habit.getId());
     }
 }

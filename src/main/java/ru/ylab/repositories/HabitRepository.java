@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import ru.ylab.forms.HabitSearchForm;
+import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 
 /**
@@ -15,28 +15,12 @@ import ru.ylab.models.Habit;
 public interface HabitRepository {
 
     /**
-     * Finds habit by name.
+     * Finds habit by id.
      *
-     * @param name habit name
+     * @param id habit id
      * @return {@code Optional<Habit>}
      */
-    Optional<Habit> findByName(String name);
-
-    /**
-     * Gets habit by name.
-     *
-     * @param name habit name
-     * @return habit or null
-     */
-    Habit getByName(String name);
-
-    /**
-     * Checks whether habit exists by name.
-     *
-     * @param name habit name
-     * @return whether habit exists
-     */
-    boolean existsByName(String name);
+    Optional<Habit> find(Long id);
 
     /**
      * Gets all habits.
@@ -74,24 +58,24 @@ public interface HabitRepository {
      * Saves habit to storage.
      *
      * @param habit instance of Habit to save
-     * @return saved habit
+     * @return whether save is successful
      */
-    Habit save(Habit habit);
+    boolean save(Habit habit);
 
     /**
      * Updates habit in storage.
      *
      * @param habit instance of Habit to update
-     * @return updated habit
+     * @return whether update is successful
      */
-    Habit update(Habit habit);
+    boolean update(Habit habit);
 
     /**
      * Deletes habit and habit history from storage.
      *
      * @param userId id of a user who created habit
-     * @param habit  habit data
+     * @param habitId  habit id
      * @return whether deletion is successful
      */
-    boolean delete(Long userId, @NotNull Habit habit);
+    boolean delete(Long userId, Long habitId);
 }
