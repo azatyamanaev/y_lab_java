@@ -12,7 +12,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
 
-    <tomcat.version>10.1.20</tomcat.version>
     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
     <bcrypt.version>0.10.2</bcrypt.version>
     <jwt.version>0.12.6</jwt.version>
@@ -40,18 +39,6 @@
   </properties>
 
   <dependencies>
-
-    <!-- Tomcat -->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-jasper</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
 
     <!-- Servlets -->
     <dependency>
