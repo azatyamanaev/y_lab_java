@@ -41,7 +41,7 @@ public class LiquibaseConfig {
                                                .findCorrectDatabaseImplementation(new JdbcConnection(connection));
             database.setDefaultSchemaName(settings.defaultSchema());
             database.setLiquibaseSchemaName(settings.changelogSchema());
-            return new Liquibase(settings.location(), new ClassLoaderResourceAccessor(), database);
+            return new Liquibase(settings.changelogPath(), new ClassLoaderResourceAccessor(), database);
         } catch (SQLException | LiquibaseException e) {
             throw HttpException.liquibaseError(e.getMessage(), e.getCause())
                                .addDetail(ErrorConstants.CONFIGURATION_ERROR, "liquibase");

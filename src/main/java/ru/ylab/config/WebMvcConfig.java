@@ -23,5 +23,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .modulesToInstall(new JavaTimeModule());
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
     }
-
 }

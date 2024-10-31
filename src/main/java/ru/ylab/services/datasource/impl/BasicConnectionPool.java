@@ -76,15 +76,15 @@ public class BasicConnectionPool implements ConnectionPool {
             throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
                                .addDetail(ErrorConstants.REGISTER_ERROR, "driver");
         }
-        this.url = settings.url();
-        this.username = settings.username();
-        this.password = settings.password();
+        this.url = settings.getUrl();
+        this.username = settings.getUsername();
+        this.password = settings.getPassword();
         this.usedConnections = new ArrayList<>();
 
         this.connectionPool = new ArrayList<>(INITIAL_POOL_SIZE);
         try {
             for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
-                connectionPool.add(createConnection(settings.url(), settings.username(), settings.password()));
+                connectionPool.add(createConnection(settings.getUrl(), settings.getUsername(), settings.getPassword()));
             }
         } catch (SQLException e) {
             throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
