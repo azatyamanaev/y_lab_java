@@ -8,6 +8,8 @@ datasource:
 
 # LIQUIBASE
 liquibase:
-  changelogPath: "db/changelog/changelog.xml"
-  changelogSchema: "liquibase"
-  defaultSchema: "entity"
+  changelog:
+    path: "db/changelog/changelog.xml"
+    schema: "liquibase"
+  default:
+    schema: "entity"
