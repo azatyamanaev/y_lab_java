@@ -35,7 +35,6 @@
     <maven.compiler.version>3.11.0</maven.compiler.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <maven.aspectj.version>1.14.0</maven.aspectj.version>
     <maven.surefire.version>3.2.5</maven.surefire.version>
     <maven.failsafe.version>3.1.2</maven.failsafe.version>
   </properties>
@@ -124,13 +123,9 @@
     <!-- Aspectj -->
     <dependency>
       <groupId>org.aspectj</groupId>
-      <artifactId>aspectjrt</artifactId>
-      <version>${aspectj.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <version>${aspectj.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <!-- Logging -->
@@ -219,38 +214,6 @@
             </path>
           </annotationProcessorPaths>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>aspectj-maven-plugin</artifactId>
-        <version>${maven.aspectj.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjtools</artifactId>
-            <version>${aspectj.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <source>16</source>
-          <target>16</target>
-          <complianceLevel>16</complianceLevel>
-          <showWeaveInfo>false</showWeaveInfo>
-          <verbose>true</verbose>
-          <Xlint>ignore</Xlint>
-          <forceAjcCompile>true</forceAjcCompile>
-          <sources/>
-          <weaveDirectories>
-            <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
-          </weaveDirectories>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
