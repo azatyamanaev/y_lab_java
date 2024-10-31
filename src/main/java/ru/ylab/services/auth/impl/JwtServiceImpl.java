@@ -13,7 +13,9 @@ import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 import ru.ylab.dto.out.SignInResult;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.RefreshToken;
@@ -29,6 +31,8 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
+@RequiredArgsConstructor
+@Service("jwtServiceImpl")
 public class JwtServiceImpl implements JwtService {
 
     /**
@@ -58,16 +62,6 @@ public class JwtServiceImpl implements JwtService {
      * Instance of a {@link UserService}.
      */
     private final UserService userService;
-
-    /**
-     * Creates new JwtServiceImpl.
-     *
-     * @param tokenRepository TokenRepository instance
-     */
-    public JwtServiceImpl(RefreshTokenRepository tokenRepository, UserService userService) {
-        this.tokenRepository = tokenRepository;
-        this.userService = userService;
-    }
 
     @Override
     public JWToken parse(String token) {

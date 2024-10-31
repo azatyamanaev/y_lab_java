@@ -10,7 +10,7 @@ import ru.ylab.models.User;
  *
  * @author azatyamanaev
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper extends DtoMapper<User, UserDto> {
 
     @Override

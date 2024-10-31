@@ -23,6 +23,14 @@ public interface HabitRepository {
     Optional<Habit> find(Long id);
 
     /**
+     * Checks whether habit exists by name.
+     *
+     * @param name habit name
+     * @return whether habit exists
+     */
+    boolean existsByName(String name);
+
+    /**
      * Gets all habits.
      *
      * @return list of all habits

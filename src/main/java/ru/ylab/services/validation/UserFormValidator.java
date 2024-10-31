@@ -1,11 +1,10 @@
 package ru.ylab.services.validation;
 
-import java.util.List;
-
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserForm;
-import ru.ylab.exception.HttpException;
-import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
 import ru.ylab.utils.constants.ErrorConstants;
 
@@ -14,29 +13,25 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
+@Component("userFormValidator")
 public class UserFormValidator extends SignUpFormValidator {
 
-    /**
-     * Creates new SignUpFormValidator.
-     *
-     * @param userRepository UserRepository instance
-     */
     public UserFormValidator(UserRepository userRepository) {
         super(userRepository);
     }
 
     @Override
-    public void validate(SignUpForm data) {
-        super.validate(data);
-        if (data instanceof UserForm) {
-            UserForm userForm = (UserForm) data;
-            HttpException exception = HttpException.validationError();
-            if (!isEmptyString(userForm.getRole(), "role", exception)
-                    && !List.of(User.Role.USER.name(), User.Role.ADMIN.name()).contains(userForm.getRole())) {
-                exception.addDetail(ErrorConstants.INVALID_PARAMETER, "role");
-            }
+    public boolean supports(@NotNull Class<?> clazz) {
+        return SignUpForm.class.isAssignableFrom(clazz);
+    }
 
-            exception.throwIfErrorsNotEmpty();
-        }
+    @Override
+    public void validate(@NotNull Object target, @NotNull Errors errors) {
+       super.validate(target, errors);
+       if (target instanceof UserForm userForm) {
+           if (userForm.getRole() == null) {
+               errors.rejectValue("role", ErrorConstants.EMPTY_PARAM);
+           }
+       }
     }
 }

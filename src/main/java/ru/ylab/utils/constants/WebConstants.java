@@ -9,6 +9,7 @@ public interface WebConstants {
 
     String APP_CONTEXT_PATH = "habits-app";
 
+    String ID_URL = "/{id}";
     String ONE_URL = "/one";
     String SEARCH_URL = "/search";
 

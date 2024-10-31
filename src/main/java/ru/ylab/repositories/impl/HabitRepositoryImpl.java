@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.exception.HttpException;
@@ -27,21 +29,14 @@ import ru.ylab.utils.constants.SqlConstants;
  * @author azatyamanaev
  */
 @LogQuery
+@RequiredArgsConstructor
+@Repository
 public class HabitRepositoryImpl implements HabitRepository {
 
     /**
      * Instance of a {@link CPDataSource}.
      */
     private final CPDataSource dataSource;
-
-    /**
-     * Creates new HabitRepositoryImpl.
-     *
-     * @param dataSource CPDataSource instance
-     */
-    public HabitRepositoryImpl(CPDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Override
     public Optional<Habit> find(Long id) {
@@ -61,6 +56,26 @@ public class HabitRepositoryImpl implements HabitRepository {
                                .addDetail(ErrorConstants.SELECT_ERROR, "habit");
         }
         return habit;
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        Optional<Habit> user = Optional.empty();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SqlConstants.SELECT_FROM_HABITS_BY_NAME)) {
+
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                user = Optional.of(unwrap(resultSet));
+            }
+
+            resultSet.close();
+        } catch (SQLException e) {
+            throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
+                               .addDetail(ErrorConstants.SELECT_ERROR, "habit");
+        }
+        return user.isPresent();
     }
 
     @Override
@@ -90,7 +105,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setString(1, name);
             statement.setString(2, name);
 
-            String frequency = form.getFrequency() != null ? form.getFrequency() : null;
+            String frequency = form.getFrequency() != null ? form.getFrequency().name() : null;
             statement.setString(3, frequency);
             statement.setString(4, frequency);
 
@@ -142,7 +157,7 @@ public class HabitRepositoryImpl implements HabitRepository {
             statement.setString(2, value);
             statement.setString(3, value);
 
-            value = form.getFrequency() != null ? form.getFrequency() : null;
+            value = form.getFrequency() != null ? form.getFrequency().name() : null;
             statement.setString(4, value);
             statement.setString(5, value);
 

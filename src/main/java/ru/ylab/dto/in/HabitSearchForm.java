@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import ru.ylab.models.Habit;
 
 /**
  * Class containing filters for searching habits.
@@ -24,7 +25,7 @@ public class HabitSearchForm {
     /**
      * How often habit needs to be completed.
      */
-    private String frequency;
+    private Habit.Frequency frequency;
 
     /**
      * Habit was created later than date.

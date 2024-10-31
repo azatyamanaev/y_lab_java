@@ -10,11 +10,11 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import ru.ylab.config.AppContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 import ru.ylab.services.auth.JWToken;
@@ -33,8 +33,6 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  * @author azatyamanaev
  */
 @Slf4j
-@WebFilter(filterName = "authFilter",
-        urlPatterns = {USER_URL + "/*", ADMIN_URL + "/*"})
 public class AuthFilter implements Filter {
 
     /**
@@ -48,12 +46,14 @@ public class AuthFilter implements Filter {
     private UserService userService;
 
     @Override
-    public void init(FilterConfig config) {
-        ServletContext context = config.getServletContext();
-        AppContext appContext = (AppContext) context.getAttribute("appContext");
+    public void init(FilterConfig filterConfig) throws ServletException {
+        ServletContext servletContext = filterConfig.getServletContext();
+        AnnotationConfigWebApplicationContext context =
+                (AnnotationConfigWebApplicationContext) servletContext
+                        .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 
-        this.jwtService = appContext.getServicesConfig().getJwtService();
-        this.userService = appContext.getServicesConfig().getUserService();
+        jwtService = (JwtService) context.getBean("jwtServiceImpl");
+        userService = (UserService) context.getBean("userServiceImpl");
     }
 
     @Override

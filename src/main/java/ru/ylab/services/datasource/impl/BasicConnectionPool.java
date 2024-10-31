@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.ylab.exception.HttpException;
 import ru.ylab.services.datasource.ProxyConnection;
 import ru.ylab.services.datasource.ConnectionPool;
@@ -19,6 +20,7 @@ import ru.ylab.utils.constants.ErrorConstants;
  * @author azatyamanaev
  */
 @Slf4j
+@Component
 public class BasicConnectionPool implements ConnectionPool {
 
     /**

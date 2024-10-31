@@ -5,7 +5,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.dto.out.HabitCompletionPercent;
 import ru.ylab.dto.out.HabitCompletionStreak;
@@ -15,13 +17,14 @@ import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
 import ru.ylab.services.entities.HabitHistoryService;
 import ru.ylab.services.entities.HabitService;
-import ru.ylab.services.validation.Validator;
 
 /**
  * Service implementing {@link HabitHistoryService}.
  *
  * @author azatyamanaev
  */
+@RequiredArgsConstructor
+@Service
 public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     /**
@@ -33,25 +36,6 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
      * Instance of a {@link HabitService}
      */
     private final HabitService habitService;
-
-    /**
-     * Instance of a {@link Validator< PeriodForm >}.
-     */
-    private final Validator<PeriodForm> periodFormValidator;
-
-    /**
-     * Creates new HabitHistoryServiceImpl.
-     *
-     * @param habitHistoryRepository HabitHistoryRepository instance
-     * @param habitService           HabitService instance
-     * @param periodFormValidator    Validator<PeriodForm> instance
-     */
-    public HabitHistoryServiceImpl(HabitHistoryRepository habitHistoryRepository, HabitService habitService,
-                                   Validator<PeriodForm> periodFormValidator) {
-        this.habitHistoryRepository = habitHistoryRepository;
-        this.habitService = habitService;
-        this.periodFormValidator = periodFormValidator;
-    }
 
     @Override
     public void markHabitCompleted(Long userId, Long habitId, LocalDate completedOn) {
@@ -79,7 +63,6 @@ public class HabitHistoryServiceImpl implements HabitHistoryService {
 
     @Override
     public List<HabitCompletionPercent> habitCompletionPercent(Long userId, PeriodForm form) {
-        periodFormValidator.validate(form);
         List<HabitCompletionPercent> percents = new ArrayList<>();
         habitService.getHabitsForUser(userId)
                     .forEach(x -> percents.add(new HabitCompletionPercent(x.getName(),

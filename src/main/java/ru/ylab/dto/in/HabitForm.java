@@ -2,6 +2,7 @@ package ru.ylab.dto.in;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.ylab.models.Habit;
 
 /**
  * Class containing data for creating and updating habits.
@@ -25,5 +26,5 @@ public class HabitForm {
     /**
      * How often habit needs to be completed.
      */
-    private String frequency;
+    private Habit.Frequency frequency;
 }

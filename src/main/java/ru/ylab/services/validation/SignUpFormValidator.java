@@ -1,7 +1,11 @@
 package ru.ylab.services.validation;
 
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import ru.ylab.dto.in.SignUpForm;
-import ru.ylab.exception.HttpException;
 import ru.ylab.repositories.UserRepository;
 import ru.ylab.utils.constants.ErrorConstants;
 
@@ -10,35 +14,35 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
-public class SignUpFormValidator implements Validator<SignUpForm> {
+@RequiredArgsConstructor
+@Component("signUpFormValidator")
+public class SignUpFormValidator implements Validator, DtoValidator {
 
-    /**
-     * Instance of an {@link UserRepository}.
-     */
     private final UserRepository userRepository;
 
-    /**
-     * Creates new SignUpFormValidator.
-     *
-     * @param userRepository UserRepository instance
-     */
-    public SignUpFormValidator(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Override
+    public boolean supports(@NotNull Class<?> clazz) {
+        return SignUpForm.class.equals(clazz);
     }
 
-
     @Override
-    public void validate(SignUpForm data) {
-        isEmpty(data);
+    public void validate(@NotNull Object target, @NotNull Errors errors) {
+        SignUpForm form = (SignUpForm) target;
 
-        HttpException exception = HttpException.validationError();
-        isEmptyString(data.getName(), "name", exception);
-        if (validEmail(data.getEmail(), exception) && !isEmptyString(data.getEmail(), "email", exception)
-                && userRepository.existsByEmail(data.getEmail())) {
-            exception.addDetail(ErrorConstants.ALREADY_EXISTS, "email");
+        if (isEmptyString(form.getEmail())) {
+            errors.rejectValue("email", ErrorConstants.EMPTY_PARAM);
+        } else if (!validEmail(form.getEmail())) {
+            errors.rejectValue("email", ErrorConstants.INVALID_PARAMETER);
+        } else if (userRepository.existsByEmail(form.getEmail())) {
+            errors.rejectValue("email", ErrorConstants.ALREADY_EXISTS);
         }
-        isEmptyString(data.getPassword(), "password", exception);
 
-        exception.throwIfErrorsNotEmpty();
+        if (isEmptyString(form.getName())) {
+            errors.rejectValue("name", ErrorConstants.EMPTY_PARAM);
+        }
+
+        if (isEmptyString(form.getPassword())) {
+            errors.rejectValue("password", ErrorConstants.EMPTY_PARAM);
+        }
     }
 }
