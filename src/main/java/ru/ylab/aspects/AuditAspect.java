@@ -13,6 +13,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.ylab.models.User;
 import ru.ylab.utils.StringUtil;
 
+import static ru.ylab.utils.constants.WebConstants.APP_CONTEXT_PATH;
+
 /**
  * Aspect auditing user actions and calculating database requests execution time.
  *
@@ -42,7 +44,13 @@ public class AuditAspect {
     public void logUserRequest() {
         HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
         User user = (User) req.getAttribute("currentUser");
-        String uri = StringUtil.parseReqUri(req.getRequestURI());
+        String reqUri = req.getRequestURI();
+        String uri;
+        if (reqUri.contains(APP_CONTEXT_PATH)) {
+            uri = StringUtil.parseReqUri(reqUri);
+        } else {
+            uri = reqUri;
+        }
         log.info("Request {} {} completed for user {} with role {}", req.getMethod(), uri, user.getEmail(), user.getRole());
     }
 

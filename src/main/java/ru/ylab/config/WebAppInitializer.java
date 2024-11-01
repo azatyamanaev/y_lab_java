@@ -10,6 +10,7 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+import ru.ylab.utils.constants.AppConstants;
 import ru.ylab.web.filters.AuthFilter;
 
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
@@ -23,6 +24,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
         context.register(WebMvcConfig.class);
         context.register(AppConfig.class);
         servletContext.addListener(new ContextLoaderListener(context));
+        servletContext.setInitParameter("spring.profiles.active", AppConstants.DEV_PROFILE);
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);

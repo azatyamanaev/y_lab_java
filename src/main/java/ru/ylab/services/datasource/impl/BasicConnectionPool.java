@@ -6,11 +6,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.ylab.exception.HttpException;
-import ru.ylab.services.datasource.ProxyConnection;
 import ru.ylab.services.datasource.ConnectionPool;
+import ru.ylab.services.datasource.ProxyConnection;
 import ru.ylab.settings.DbSettings;
 import ru.ylab.utils.constants.ErrorConstants;
 
@@ -165,5 +167,10 @@ public class BasicConnectionPool implements ConnectionPool {
         }
         connectionPool.clear();
         log.info("Connection pool shut down. Closed {} connections", count);
+    }
+
+    @PreDestroy
+    public void destroy() throws SQLException {
+        this.shutdown();
     }
 }

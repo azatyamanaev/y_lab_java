@@ -183,6 +183,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Spring Test -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${springframework.version}</version>
+    </dependency>
+
     <!-- Script runner -->
     <dependency>
       <groupId>org.mybatis</groupId>

@@ -1,43 +1,51 @@
-package ru.ylab.config;
+package ru.ylab.testcontainers.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import liquibase.Liquibase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
+import ru.ylab.config.YmlPropertySourceFactory;
 import ru.ylab.config.datasource.LiquibaseConfig;
 import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.settings.DbSettings;
 import ru.ylab.settings.LiquibaseSettings;
 import ru.ylab.utils.constants.AppConstants;
 
-@Profile(AppConstants.DEV_PROFILE)
+@Profile(AppConstants.TEST_PROFILE)
 @Configuration
 @EnableAspectJAutoProxy
 @PropertySources({
         @PropertySource(value = "classpath:application.yml", factory = YmlPropertySourceFactory.class),
-        @PropertySource(value = "classpath:application-dev.yml", factory = YmlPropertySourceFactory.class)
+        @PropertySource(value = "classpath:application-test.yml", factory = YmlPropertySourceFactory.class)
 })
-@ComponentScan(basePackages = "ru.ylab")
-public class AppConfig {
+@ComponentScan("ru.ylab")
+public class TestAppConfig {
+
+    @Bean("mapper")
+    @Primary
+    public ObjectMapper mapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return mapper;
+    }
 
     @Bean
     public DbSettings dbSettings(Environment env) {
-        String url = env.getProperty("datasource.url");
-        String host = System.getenv("DB_HOST");
-        String port = System.getenv("DB_PORT");
-        String dbName = System.getenv("DB_NAME");
-
-        url = url.replace("{DB_HOST}", host);
-        url = url.replace("{DB_PORT}", port);
-        url = url.replace("{DB_NAME}", dbName);
-
         return new DbSettings(
-                url,
+                env.getProperty("datasource.url"),
                 env.getProperty("datasource.username"),
                 env.getProperty("datasource.password"));
     }

@@ -1,9 +1,9 @@
 package ru.ylab.web.controllers;
 
-import java.net.URI;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -94,30 +94,30 @@ public class HabitsController {
      * Creates habit for user and sets created response status.
      */
     @PostMapping
-    public ResponseEntity.BodyBuilder createHabit(@RequestAttribute("currentUser") User user,
+    public ResponseEntity<String> createHabit(@RequestAttribute("currentUser") User user,
                                                   @Validated @RequestBody HabitForm form) {
         habitService.create(user.getId(), form);
-        return ResponseEntity.created(URI.create(USER_URL + HABITS_URL));
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     /**
      * Updates habit for user and sets no content response status.
      */
     @PutMapping(ID_URL)
-    public ResponseEntity.HeadersBuilder updateHabit(@PathVariable("id") Long id,
+    public ResponseEntity<String> updateHabit(@PathVariable("id") Long id,
                                                      @RequestAttribute("currentUser") User user,
                                                      @Validated @RequestBody HabitForm form) {
         habitService.updateForUser(user.getId(), id, form);
-        return ResponseEntity.noContent();
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 
     /**
      * Deletes habit for user and sets no content response status.
      */
     @DeleteMapping(ID_URL)
-    public ResponseEntity.HeadersBuilder deleteHabit(@PathVariable("id") Long id,
+    public ResponseEntity<String> deleteHabit(@PathVariable("id") Long id,
                                                      @RequestAttribute("currentUser") User user) {
         habitService.deleteForUser(user.getId(), id);
-        return ResponseEntity.noContent();
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }

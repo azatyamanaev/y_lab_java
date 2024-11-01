@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,10 +58,10 @@ public class HabitHistoryController {
      * Marks habit completed for user.
      */
     @PutMapping(ID_URL)
-    public ResponseEntity.HeadersBuilder markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
-                                                            @RequestParam LocalDate completedOn) {
+    public ResponseEntity<String> markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
+                                                     @RequestParam("completed_on") LocalDate completedOn) {
         habitHistoryService.markHabitCompleted(user.getId(), id, completedOn);
-        return ResponseEntity.noContent();
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -77,7 +78,7 @@ public class HabitHistoryController {
      */
     @GetMapping(HABIT_PERCENTAGE_URL)
     public ResponseEntity<List<HabitCompletionPercent>> getHabitPercentage(@RequestAttribute("currentUser") User user,
-                                                                            PeriodForm form) {
+                                                                           PeriodForm form) {
         List<HabitCompletionPercent> percentage = habitHistoryService.habitCompletionPercent(user.getId(), form);
         return ResponseEntity.ok(percentage);
     }

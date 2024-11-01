@@ -1,6 +1,7 @@
 package ru.ylab.web.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,18 +54,18 @@ public class UserProfileController {
      * Updates user profile for user and sets no content response status.
      */
     @PutMapping
-    public ResponseEntity.HeadersBuilder updateProfile(@RequestAttribute("currentUser") User user,
+    public ResponseEntity<String> updateProfile(@RequestAttribute("currentUser") User user,
                                                        @RequestBody SignUpForm form) {
         userService.update(user.getId(), form);
-        return ResponseEntity.noContent();
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 
     /**
      * Deletes user profile for user and sets no content response status.
      */
     @DeleteMapping
-    public ResponseEntity.HeadersBuilder deleteProfile(@RequestAttribute("currentUser") User user) {
+    public ResponseEntity<String> deleteProfile(@RequestAttribute("currentUser") User user) {
         userService.delete(user.getId());
-        return ResponseEntity.noContent();
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }

@@ -1,9 +1,9 @@
 package ru.ylab.web.controllers;
 
-import java.net.URI;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -90,17 +90,17 @@ public class AdminUsersController {
      * Creates user for admin and sets created response status.
      */
     @PostMapping
-    public ResponseEntity.BodyBuilder createUser(@Validated @RequestBody UserForm form) {
+    public ResponseEntity<String> createUser(@Validated @RequestBody UserForm form) {
         userService.createByAdmin(form);
-        return ResponseEntity.created(URI.create(ADMIN_URL + USERS_URL));
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     /**
      * Deletes user for admin and sets no content response status.
      */
     @DeleteMapping(ID_URL)
-    public ResponseEntity.HeadersBuilder deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable("id") Long id) {
         userService.delete(id);
-        return ResponseEntity.noContent();
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }

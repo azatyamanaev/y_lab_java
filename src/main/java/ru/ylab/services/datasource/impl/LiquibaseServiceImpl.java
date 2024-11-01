@@ -24,11 +24,6 @@ public class LiquibaseServiceImpl implements LiquibaseService {
      */
     private final Liquibase liquibase;
 
-    @PostConstruct
-    public void init() {
-        this.migrate();
-    }
-
     @Override
     public void migrate() {
         try {
@@ -37,5 +32,10 @@ public class LiquibaseServiceImpl implements LiquibaseService {
             throw HttpException.liquibaseError(e.getMessage(), e.getCause())
                                .addDetail(ErrorConstants.MIGRATION_ERROR, "liquibase");
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        this.migrate();
     }
 }
