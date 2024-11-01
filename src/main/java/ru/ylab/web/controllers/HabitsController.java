@@ -3,6 +3,7 @@ package ru.ylab.web.controllers;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -85,7 +86,7 @@ public class HabitsController {
      */
     @GetMapping(SEARCH_URL)
     public ResponseEntity<List<HabitDto>> searchHabits(@RequestAttribute("currentUser") User user,
-                                                       HabitSearchForm form) {
+                                                       @ParameterObject HabitSearchForm form) {
         List<HabitDto> dtos = habitMapper.mapToDto(habitService.searchHabitsForUser(user.getId(), form));
         return ResponseEntity.ok(dtos);
     }
@@ -95,7 +96,7 @@ public class HabitsController {
      */
     @PostMapping
     public ResponseEntity<String> createHabit(@RequestAttribute("currentUser") User user,
-                                                  @Validated @RequestBody HabitForm form) {
+                                              @Validated @RequestBody HabitForm form) {
         habitService.create(user.getId(), form);
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
@@ -105,8 +106,8 @@ public class HabitsController {
      */
     @PutMapping(ID_URL)
     public ResponseEntity<String> updateHabit(@PathVariable("id") Long id,
-                                                     @RequestAttribute("currentUser") User user,
-                                                     @Validated @RequestBody HabitForm form) {
+                                              @RequestAttribute("currentUser") User user,
+                                              @Validated @RequestBody HabitForm form) {
         habitService.updateForUser(user.getId(), id, form);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
@@ -116,7 +117,7 @@ public class HabitsController {
      */
     @DeleteMapping(ID_URL)
     public ResponseEntity<String> deleteHabit(@PathVariable("id") Long id,
-                                                     @RequestAttribute("currentUser") User user) {
+                                              @RequestAttribute("currentUser") User user) {
         habitService.deleteForUser(user.getId(), id);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }

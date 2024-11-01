@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,7 +79,7 @@ public class HabitHistoryController {
      */
     @GetMapping(HABIT_PERCENTAGE_URL)
     public ResponseEntity<List<HabitCompletionPercent>> getHabitPercentage(@RequestAttribute("currentUser") User user,
-                                                                           PeriodForm form) {
+                                                                           @ParameterObject PeriodForm form) {
         List<HabitCompletionPercent> percentage = habitHistoryService.habitCompletionPercent(user.getId(), form);
         return ResponseEntity.ok(percentage);
     }

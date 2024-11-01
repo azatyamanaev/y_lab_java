@@ -3,6 +3,7 @@ package ru.ylab.web.controllers;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,7 +63,7 @@ public class AdminHabitsController {
      * Searches habits for admin and writes them to response.
      */
     @GetMapping(SEARCH_URL)
-    public ResponseEntity<List<HabitDto>> searchHabits(HabitSearchForm form) {
+    public ResponseEntity<List<HabitDto>> searchHabits(@ParameterObject HabitSearchForm form) {
         List<HabitDto> habits = habitMapper.mapToDto(habitService.search(form));
         return ResponseEntity.ok(habits);
     }
