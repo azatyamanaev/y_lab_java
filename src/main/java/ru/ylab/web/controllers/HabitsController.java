@@ -3,7 +3,6 @@ package ru.ylab.web.controllers;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -86,7 +85,7 @@ public class HabitsController {
      */
     @GetMapping(SEARCH_URL)
     public ResponseEntity<List<HabitDto>> searchHabits(@RequestAttribute("currentUser") User user,
-                                                       @ParameterObject HabitSearchForm form) {
+                                                       HabitSearchForm form) {
         List<HabitDto> dtos = habitMapper.mapToDto(habitService.searchHabitsForUser(user.getId(), form));
         return ResponseEntity.ok(dtos);
     }

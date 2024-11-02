@@ -1,7 +1,9 @@
 package ru.ylab.dto.in;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.Setter;
+import org.springdoc.core.annotations.ParameterObject;
 import ru.ylab.models.User;
 
 /**
@@ -11,20 +13,24 @@ import ru.ylab.models.User;
  */
 @Getter
 @Setter
+@ParameterObject
 public class UserSearchForm {
 
     /**
      * User name.
      */
+    @Parameter
     private String name;
 
     /**
      * User email.
      */
+    @Parameter
     private String email;
 
     /**
      * User role.
      */
+    @Parameter
     private User.Role role;
 }

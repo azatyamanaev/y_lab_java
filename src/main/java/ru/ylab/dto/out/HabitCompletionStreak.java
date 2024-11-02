@@ -1,5 +1,7 @@
 package ru.ylab.dto.out;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Habit completion streak.
  *
@@ -7,4 +9,11 @@ package ru.ylab.dto.out;
  * @param streak current streak length
  * @author azatyamanaev
  */
-public record HabitCompletionStreak(String name, int streak) {}
+public record HabitCompletionStreak(
+
+        @Schema(description = "habit name")
+        String name,
+
+        @Schema(description = "current habit completion streak")
+        int streak
+) {}

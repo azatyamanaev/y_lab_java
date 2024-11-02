@@ -1,5 +1,6 @@
 package ru.ylab.web.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import static jakarta.servlet.RequestDispatcher.ERROR_EXCEPTION;
 @RestController
 public class ErrorController {
 
+    @Operation(hidden = true)
     @RequestMapping(ErrorConstants.ERROR_HANDLER_URL)
     public void handleError(HttpServletRequest request) throws Throwable {
         if (request.getAttribute(ERROR_EXCEPTION) != null) {

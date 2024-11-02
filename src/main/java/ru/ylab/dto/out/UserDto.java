@@ -1,5 +1,6 @@
 package ru.ylab.dto.out;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.ylab.models.User;
 
 /**
@@ -11,6 +12,17 @@ import ru.ylab.models.User;
  * @param role user role
  * @author azatyamanaev
  */
-public record UserDto(Long id, String email, String name,
-                      User.Role role) {
-}
+public record UserDto(
+
+        @Schema(description = "user id")
+        Long id,
+
+        @Schema(description = "user email")
+        String email,
+
+        @Schema(description = "user name")
+        String name,
+
+        @Schema(description = "user role")
+        User.Role role
+) {}

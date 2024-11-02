@@ -2,6 +2,7 @@ package ru.ylab.dto.out;
 
 import java.time.LocalDate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.ylab.models.Habit;
 
 /**
@@ -14,4 +15,20 @@ import ru.ylab.models.Habit;
  * @param created date, when habit was created
  * @author azatyamanaev
  */
-public record HabitDto(Long id, String name, String description, Habit.Frequency frequency, LocalDate created) {}
+public record HabitDto(
+
+        @Schema(description = "habit id")
+        Long id,
+
+        @Schema(description = "habit name")
+        String name,
+
+        @Schema(description = "habit description")
+        String description,
+
+        @Schema(description = "how often habit needs to be completed")
+        Habit.Frequency frequency,
+
+        @Schema(description = "when habit was created")
+        LocalDate created
+) {}

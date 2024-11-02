@@ -3,7 +3,6 @@ package ru.ylab.web.controllers;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -82,7 +81,7 @@ public class AdminUsersController {
      * Searches users for admin and writes them to response.
      */
     @GetMapping(SEARCH_URL)
-    public ResponseEntity<List<UserDto>> searchUsers(@ParameterObject UserSearchForm form) {
+    public ResponseEntity<List<UserDto>> searchUsers(UserSearchForm form) {
         List<UserDto> dtos = userMapper.mapToDto(userService.searchUsers(form));
         return ResponseEntity.ok(dtos);
     }
