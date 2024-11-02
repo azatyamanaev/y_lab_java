@@ -1,9 +1,11 @@
 package ru.ylab.config;
 
+import java.util.List;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
@@ -23,6 +25,8 @@ import org.springframework.http.HttpHeaders;
         org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class})
 public class OpenApiConfig {
 
+    public static final String SECURITY_SCHEME_NAME = "JWT Authentication";
+
     @Bean
     public GroupedOpenApi api() {
         return GroupedOpenApi.builder()
@@ -34,7 +38,6 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openApi() {
         return new OpenAPI()
-                .specVersion(SpecVersion.V30)
                 .addServersItem(new Server().url("http://localhost:8080/habits-app"))
                 .info(
                         new Info()
@@ -45,15 +48,20 @@ public class OpenApiConfig {
                 .components(
                         new Components()
                                 .addSecuritySchemes(
-                                        "jwtoken",
-                                        new SecurityScheme()
-                                                .type(SecurityScheme.Type.HTTP)
-                                                .scheme("bearer")
-                                                .bearerFormat("JWT")
-                                                .in(SecurityScheme.In.HEADER)
-                                                .name(HttpHeaders.AUTHORIZATION)
+                                        SECURITY_SCHEME_NAME,
+                                        authorization()
                                 )
-                );
+                )
+                .security(List.of(new SecurityRequirement().addList(SECURITY_SCHEME_NAME)));
+    }
+
+    private SecurityScheme authorization() {
+        return new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name(HttpHeaders.AUTHORIZATION);
     }
 }
 
