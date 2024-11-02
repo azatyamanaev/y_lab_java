@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 
 @Configuration
-@ComponentScan(basePackages = "org.springdoc")
+@ComponentScan(basePackages = "org.springdoc.core")
 @Import({org.springdoc.core.configuration.SpringDocConfiguration.class,
         org.springdoc.webmvc.core.configuration.SpringDocWebMvcConfiguration.class,
         org.springdoc.webmvc.ui.SwaggerConfig.class,
@@ -34,7 +34,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openApi() {
         return new OpenAPI()
-                .specVersion(SpecVersion.V31)
+                .specVersion(SpecVersion.V30)
                 .addServersItem(new Server().url("http://localhost:8080/habits-app"))
                 .info(
                         new Info()
