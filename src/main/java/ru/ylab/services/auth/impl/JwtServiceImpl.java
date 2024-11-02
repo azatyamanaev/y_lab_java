@@ -32,7 +32,7 @@ import ru.ylab.utils.constants.ErrorConstants;
  * @author azatyamanaev
  */
 @RequiredArgsConstructor
-@Service("jwtServiceImpl")
+@Service("jwtService")
 public class JwtServiceImpl implements JwtService {
 
     /**

@@ -7,6 +7,7 @@ package ru.ylab.utils.constants;
  */
 public interface WebConstants {
 
+    String JWTOKEN_PREFIX = "Bearer ";
     String APP_CONTEXT_PATH = "habits-app";
 
     String ID_URL = "/{id}";

@@ -6,4 +6,8 @@
 
     <display-name>Habits App</display-name>
 
+    <error-page>
+        <location>/error-handler</location>
+    </error-page>
+
 </web-app>
