@@ -1,31 +1,14 @@
 package ru.ylab.settings;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Class containing settings for connecting ot database.
  *
+ * @param url Database url.
+ * @param username Database username.
+ * @param password Database password.
  * @author azatyamanaev
  */
-@Getter
-@Setter
-@AllArgsConstructor
-public class DbSettings {
-
-    /**
-     * Database url.
-     */
-    private String url;
-
-    /**
-     * Database username.
-     */
-    private String username;
-
-    /**
-     * Database password.
-     */
-    private String password;
-}
+@ConfigurationProperties(prefix = "datasource")
+public record DbSettings(String url, String username, String password) { }

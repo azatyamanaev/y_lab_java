@@ -1,53 +1,38 @@
 package ru.ylab.config;
 
 import liquibase.Liquibase;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
-import org.springframework.core.env.Environment;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.EncodedResource;
 import ru.ylab.config.datasource.LiquibaseConfig;
 import ru.ylab.services.datasource.CPDataSource;
-import ru.ylab.settings.DbSettings;
 import ru.ylab.settings.LiquibaseSettings;
 import ru.ylab.utils.constants.AppConstants;
 
 @Profile(AppConstants.DEV_PROFILE)
 @Configuration
 @EnableAspectJAutoProxy
-@PropertySources({
-        @PropertySource(value = "classpath:application.yml", factory = YmlPropertySourceFactory.class),
-        @PropertySource(value = "classpath:application-dev.yml", factory = YmlPropertySourceFactory.class)
-})
 @ComponentScan(basePackages = "ru.ylab")
+@ConfigurationPropertiesScan("ru.ylab.settings")
 public class AppConfig {
 
     @Bean
-    public DbSettings dbSettings(Environment env) {
-        String url = env.getProperty("datasource.url");
-        String host = System.getenv("DB_HOST");
-        String port = System.getenv("DB_PORT");
-        String dbName = System.getenv("DB_NAME");
-
-        url = url.replace("{DB_HOST}", host);
-        url = url.replace("{DB_PORT}", port);
-        url = url.replace("{DB_NAME}", dbName);
-
-        return new DbSettings(
-                url,
-                env.getProperty("datasource.username"),
-                env.getProperty("datasource.password"));
-    }
-
-    @Bean
-    public LiquibaseSettings liquibaseSettings(Environment env) {
-        return new LiquibaseSettings(
-                env.getProperty("liquibase.changelog.path"),
-                env.getProperty("liquibase.changelog.schema"),
-                env.getProperty("liquibase.default.schema"));
+    public static PropertySourcesPlaceholderConfigurer propertiesResolver() {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        MutablePropertySources sources = new MutablePropertySources();
+        PropertySource<?> propertySource1 = new YmlPropertySourceFactory().createPropertySource("default-yml",
+                new EncodedResource(new ClassPathResource("application.yml")));
+        sources.addFirst(propertySource1);
+        configurer.setPropertySources(sources);
+        return configurer;
     }
 
     @Bean

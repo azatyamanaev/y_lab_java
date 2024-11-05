@@ -1,10 +1,13 @@
 ---
 # LIQUIBASE
 liquibase:
-  changelog:
-    path: "db/changelog/changelog.xml"
-    schema: "liquibase"
-  default:
-    schema: "entity"
+  changelog-path: "db/changelog/changelog.xml"
+  changelog-schema: "liquibase"
+  default-schema: "entity"
 
+# DATASOURCE
+datasource:
+  url: "jdbc:postgresql://${DB_HOST:postgres-db}:${DB_PORT:5432}/${DB_NAME:habits_app_db}"
+  username: "liquibase"
+  password: "498d4840-8c47-460d"
 ---

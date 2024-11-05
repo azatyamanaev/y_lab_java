@@ -7,30 +7,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import liquibase.Liquibase;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
-import org.springframework.core.env.Environment;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.EncodedResource;
 import ru.ylab.config.YmlPropertySourceFactory;
 import ru.ylab.config.datasource.LiquibaseConfig;
 import ru.ylab.services.datasource.CPDataSource;
-import ru.ylab.settings.DbSettings;
 import ru.ylab.settings.LiquibaseSettings;
 import ru.ylab.utils.constants.AppConstants;
 
 @Profile(AppConstants.TEST_PROFILE)
 @Configuration
 @EnableAspectJAutoProxy
-@PropertySources({
-        @PropertySource(value = "classpath:application.yml", factory = YmlPropertySourceFactory.class),
-        @PropertySource(value = "classpath:application-test.yml", factory = YmlPropertySourceFactory.class)
-})
-@ComponentScan("ru.ylab")
+@ComponentScan(basePackages = "ru.ylab")
+@ConfigurationPropertiesScan("ru.ylab.settings")
 public class TestAppConfig {
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertiesResolver() {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        MutablePropertySources sources = new MutablePropertySources();
+        PropertySource<?> propertySource1 = new YmlPropertySourceFactory().createPropertySource("default-yml",
+                new EncodedResource(new ClassPathResource("application.yml")));
+        PropertySource<?> propertySource2 = new YmlPropertySourceFactory().createPropertySource("test-yml",
+                new EncodedResource(new ClassPathResource("application-test.yml")));
+        sources.addFirst(propertySource1);
+        sources.addFirst(propertySource2);
+        configurer.setPropertySources(sources);
+        return configurer;
+    }
 
     @Bean("mapper")
     public ObjectMapper mapper() {
@@ -41,22 +54,6 @@ public class TestAppConfig {
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper;
-    }
-
-    @Bean
-    public DbSettings dbSettings(Environment env) {
-        return new DbSettings(
-                env.getProperty("datasource.url"),
-                env.getProperty("datasource.username"),
-                env.getProperty("datasource.password"));
-    }
-
-    @Bean
-    public LiquibaseSettings liquibaseSettings(Environment env) {
-        return new LiquibaseSettings(
-                env.getProperty("liquibase.changelog.path"),
-                env.getProperty("liquibase.changelog.schema"),
-                env.getProperty("liquibase.default.schema"));
     }
 
     @Bean

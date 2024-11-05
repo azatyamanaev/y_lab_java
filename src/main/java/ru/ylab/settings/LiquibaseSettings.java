@@ -1,5 +1,7 @@
 package ru.ylab.settings;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * Class containing Liquibase settings.
  *
@@ -8,4 +10,5 @@ package ru.ylab.settings;
  * @param defaultSchema Default schema for entities.
  * @author azatyamanaev
  */
+@ConfigurationProperties(prefix = "liquibase")
 public record LiquibaseSettings(String changelogPath, String changelogSchema, String defaultSchema) { }
