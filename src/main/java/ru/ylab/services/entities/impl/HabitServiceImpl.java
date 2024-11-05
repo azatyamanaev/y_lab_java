@@ -22,9 +22,6 @@ import ru.ylab.utils.constants.ErrorConstants;
 @Service
 public class HabitServiceImpl implements HabitService {
 
-    /**
-     * Instance of a {@link HabitRepository}
-     */
     private final HabitRepository habitRepository;
 
     @Override

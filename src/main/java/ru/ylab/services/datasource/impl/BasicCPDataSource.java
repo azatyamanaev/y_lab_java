@@ -23,7 +23,7 @@ public class BasicCPDataSource implements CPDataSource {
     private boolean autoCommit;
 
     /**
-     * Instance of a {@link ConnectionPool}.
+     * Connection pool, associated with this datasource.
      */
     private final ConnectionPool connectionPool;
 

@@ -35,34 +35,11 @@ import static ru.ylab.utils.constants.WebConstants.SIGN_UP_URL;
 @RequestMapping(AUTH_URL)
 public class AuthController {
 
-    /**
-     * Instance of an {@link AuthService}.
-     */
     private final AuthService authService;
-
-    /**
-     * Instance of an {@link JwtService}.
-     */
     private final JwtService jwtService;
-
-    /**
-     * Instance of an {@link SignInFormValidator}.
-     */
     private final SignInFormValidator signInFormValidator;
-
-    /**
-     * Instance of an {@link SignUpFormValidator}.
-     */
     private final SignUpFormValidator signUpFormValidator;
 
-    /**
-     * Creates new AuthController.
-     *
-     * @param authService AuthService instance
-     * @param jwtService JwtService instance
-     * @param signInFormValidator SignInFormValidator instance
-     * @param signUpFormValidator SignUpFormValidator instance
-     */
     public AuthController(AuthService authService, JwtService jwtService,
                           SignInFormValidator signInFormValidator,
                           @Qualifier("signUpFormValidator") SignUpFormValidator signUpFormValidator) {

@@ -39,19 +39,8 @@ import static ru.ylab.utils.constants.WebConstants.USERS_URL;
 @RequestMapping(ADMIN_URL + USERS_URL)
 public class AdminUsersController {
 
-    /**
-     * Instance of an {@link UserMapper}.
-     */
     private final UserMapper userMapper;
-
-    /**
-     * Instance of an {@link UserService}.
-     */
     private final UserService userService;
-
-    /**
-     * Instance of an {@link UserFormValidator}.
-     */
     private final UserFormValidator userFormValidator;
 
     @InitBinder

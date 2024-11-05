@@ -25,7 +25,7 @@ import static ru.ylab.utils.constants.WebConstants.SELF_URL;
 import static ru.ylab.utils.constants.WebConstants.USER_URL;
 
 /**
- * Servlet for handling user profile HTTP requests for user.
+ * Controller for handling user profile HTTP requests for user.
  *
  * @author azatyamanaev
  */
@@ -34,28 +34,10 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
 @RequestMapping(USER_URL + SELF_URL)
 public class UserProfileController {
 
-    /**
-     * Instance of an {@link UserMapper}.
-     */
     private final UserMapper userMapper;
-
-    /**
-     * Instance of an {@link UserService}.
-     */
     private final UserService userService;
-
-    /**
-     * Instance of an {@link SignUpFormValidator}.
-     */
     private final SignUpFormValidator signUpFormValidator;
 
-    /**
-     * Creates new UserProfileController.
-     *
-     * @param userMapper UserMapper instance
-     * @param userService UserService instance
-     * @param signUpFormValidator SignUpFormValidator instance
-     */
     public UserProfileController(UserMapper userMapper, UserService userService,
                                  @Qualifier("signUpFormValidator") SignUpFormValidator signUpFormValidator) {
         this.userMapper = userMapper;

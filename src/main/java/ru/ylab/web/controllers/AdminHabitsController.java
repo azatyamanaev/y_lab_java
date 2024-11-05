@@ -30,14 +30,7 @@ import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
 @RequestMapping(ADMIN_URL + HABITS_URL)
 public class AdminHabitsController {
 
-    /**
-     * Instance of a {@link HabitMapper}.
-     */
     private final HabitMapper habitMapper;
-
-    /**
-     * Instance of a {@link HabitService}.
-     */
     private final HabitService habitService;
 
     /**

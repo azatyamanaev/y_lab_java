@@ -35,32 +35,14 @@ import ru.ylab.utils.constants.ErrorConstants;
 @Service("jwtService")
 public class JwtServiceImpl implements JwtService {
 
-    /**
-     * How long in days access token is valid.
-     */
     private static final int ACCESS_TOKEN_EXPIRATION = 1;
-
-    /**
-     * How long in days refresh token is valid.
-     */
     private static final int REFRESH_TOKEN_EXPIRATION = 14;
-
-    /**
-     *
-     */
     private static final String ROLE_KEY = "role";
 
     private static final String SECRET_STRING = "habits-app-yLRdtN3NsFRHKkThmB6EN2QXLxXGTPa7bgzx0pY72";
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
 
-    /**
-     * Instance of a {@link RefreshTokenRepository}.
-     */
     private final RefreshTokenRepository tokenRepository;
-
-    /**
-     * Instance of a {@link UserService}.
-     */
     private final UserService userService;
 
     @Override

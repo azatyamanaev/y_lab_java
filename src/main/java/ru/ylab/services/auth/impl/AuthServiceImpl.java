@@ -22,19 +22,8 @@ import ru.ylab.utils.constants.ErrorConstants;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    /**
-     * Instance of a {@link PasswordService}.
-     */
     private final PasswordService passwordService;
-
-    /**
-     * Instance of an {@link UserService}.
-     */
     private final UserService userService;
-
-    /**
-     * Instance of a {@link JwtService}
-     */
     private final JwtService jwtService;
 
     @Override

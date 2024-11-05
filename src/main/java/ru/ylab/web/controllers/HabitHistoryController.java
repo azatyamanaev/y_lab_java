@@ -39,9 +39,6 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
 @RequestMapping(USER_URL + HABIT_HISTORY_URL)
 public class HabitHistoryController {
 
-    /**
-     * Instance of a {@link HabitHistoryService}.
-     */
     private final HabitHistoryService habitHistoryService;
 
     /**

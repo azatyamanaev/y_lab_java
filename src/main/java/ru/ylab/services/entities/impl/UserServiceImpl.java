@@ -23,14 +23,7 @@ import ru.ylab.utils.constants.ErrorConstants;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    /**
-     * Instance of an {@link UserRepository}.
-     */
     private final UserRepository userRepository;
-
-    /**
-     * Instance of an {@link PasswordService}.
-     */
     private final PasswordService passwordService;
 
     @Override

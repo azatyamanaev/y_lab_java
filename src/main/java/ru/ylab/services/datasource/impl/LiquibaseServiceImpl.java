@@ -19,9 +19,6 @@ import ru.ylab.utils.constants.ErrorConstants;
 @RequiredArgsConstructor
 public class LiquibaseServiceImpl implements LiquibaseService {
 
-    /**
-     * Liquibase instance.
-     */
     private final Liquibase liquibase;
 
     @Override

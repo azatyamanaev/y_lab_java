@@ -27,14 +27,7 @@ import ru.ylab.services.entities.HabitService;
 @Service
 public class HabitHistoryServiceImpl implements HabitHistoryService {
 
-    /**
-     * Instance of a {@link HabitHistoryRepository}
-     */
     private final HabitHistoryRepository habitHistoryRepository;
-
-    /**
-     * Instance of a {@link HabitService}
-     */
     private final HabitService habitService;
 
     @Override

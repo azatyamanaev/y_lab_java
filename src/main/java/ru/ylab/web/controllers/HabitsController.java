@@ -42,19 +42,8 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
 @RequestMapping(USER_URL + HABITS_URL)
 public class HabitsController {
 
-    /**
-     * Instance of a {@link HabitMapper}.
-     */
     private final HabitMapper habitMapper;
-
-    /**
-     * Instance of a {@link HabitService}.
-     */
     private final HabitService habitService;
-
-    /**
-     * Instance of a {@link HabitFormValidator}.
-     */
     private final HabitFormValidator habitFormValidator;
 
     @InitBinder
