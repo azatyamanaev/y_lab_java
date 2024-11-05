@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,10 +54,10 @@ public class HabitHistoryController {
      * Marks habit completed for user.
      */
     @PutMapping(ID_URL)
-    public ResponseEntity<String> markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
+    public ResponseEntity<Void> markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
                                                      @RequestParam("completed_on") LocalDate completedOn) {
         habitHistoryService.markHabitCompleted(user.getId(), id, completedOn);
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     /**

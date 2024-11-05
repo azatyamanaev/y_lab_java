@@ -1,7 +1,6 @@
 package ru.ylab.web.controllers;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -63,18 +62,19 @@ public class UserProfileController {
      * Updates user profile for user and sets no content response status.
      */
     @PutMapping
-    public ResponseEntity<String> updateProfile(@RequestAttribute("currentUser") User user,
+    public ResponseEntity<Void> updateProfile(@RequestAttribute("currentUser") User user,
                                                 @Validated @RequestBody SignUpForm form) {
         userService.update(user.getId(), form);
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * Deletes user profile for user and sets no content response status.
      */
     @DeleteMapping
-    public ResponseEntity<String> deleteProfile(@RequestAttribute("currentUser") User user) {
+    public ResponseEntity<Void> deleteProfile(@RequestAttribute("currentUser") User user) {
         userService.delete(user.getId());
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
+
     }
 }

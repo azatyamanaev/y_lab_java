@@ -79,17 +79,17 @@ public class AdminUsersController {
      * Creates user for admin and sets created response status.
      */
     @PostMapping
-    public ResponseEntity<String> createUser(@Validated @RequestBody UserForm form) {
+    public ResponseEntity<Void> createUser(@Validated @RequestBody UserForm form) {
         userService.createByAdmin(form);
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * Deletes user for admin and sets no content response status.
      */
     @DeleteMapping(ID_URL)
-    public ResponseEntity<String> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.delete(id);
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

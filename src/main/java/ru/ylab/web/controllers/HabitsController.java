@@ -83,30 +83,30 @@ public class HabitsController {
      * Creates habit for user and sets created response status.
      */
     @PostMapping
-    public ResponseEntity<String> createHabit(@RequestAttribute("currentUser") User user,
+    public ResponseEntity<Void> createHabit(@RequestAttribute("currentUser") User user,
                                               @Validated @RequestBody HabitForm form) {
         habitService.create(user.getId(), form);
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * Updates habit for user and sets no content response status.
      */
     @PutMapping(ID_URL)
-    public ResponseEntity<String> updateHabit(@PathVariable("id") Long id,
+    public ResponseEntity<Void> updateHabit(@PathVariable("id") Long id,
                                               @RequestAttribute("currentUser") User user,
                                               @Validated @RequestBody HabitForm form) {
         habitService.updateForUser(user.getId(), id, form);
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * Deletes habit for user and sets no content response status.
      */
     @DeleteMapping(ID_URL)
-    public ResponseEntity<String> deleteHabit(@PathVariable("id") Long id,
+    public ResponseEntity<Void> deleteHabit(@PathVariable("id") Long id,
                                               @RequestAttribute("currentUser") User user) {
         habitService.deleteForUser(user.getId(), id);
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
