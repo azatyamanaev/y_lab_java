@@ -1,11 +1,14 @@
 package ru.ylab.settings;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * Class containing Liquibase settings.
  *
- * @param location Path to changelog.xml file.
+ * @param changelogPath Path to changelog.xml file.
  * @param changelogSchema Default schema for liquibase.
  * @param defaultSchema Default schema for entities.
  * @author azatyamanaev
  */
-public record LiquibaseSettings(String location, String changelogSchema, String defaultSchema) { }
+@ConfigurationProperties(prefix = "liquibase")
+public record LiquibaseSettings(String changelogPath, String changelogSchema, String defaultSchema) { }

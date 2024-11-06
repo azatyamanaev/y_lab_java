@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
@@ -27,21 +29,14 @@ import ru.ylab.utils.constants.SqlConstants;
  * @author azatyamanaev
  */
 @LogQuery
+@RequiredArgsConstructor
+@Repository
 public class UserRepositoryImpl implements UserRepository {
 
     /**
      * Instance of a {@link CPDataSource}.
      */
     private final CPDataSource dataSource;
-
-    /**
-     * Creates new UserRepositoryImpl.
-     *
-     * @param dataSource CPDataSource instance
-     */
-    public UserRepositoryImpl(CPDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Override
     public Optional<User> find(Long id) {
@@ -119,7 +114,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(3, value);
             statement.setString(4, value);
 
-            value = !StringUtil.isEmpty(form.getRole()) ? form.getRole() : null;
+            value = form.getRole() != null ? form.getRole().name() : null;
             statement.setString(5, value);
             statement.setString(6, value);
 

@@ -1,24 +1,37 @@
 package ru.ylab.services.validation;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import ru.ylab.dto.in.SignInForm;
-import ru.ylab.exception.HttpException;
+import ru.ylab.utils.constants.ErrorConstants;
 
 /**
  * Validator for validating {@link SignInForm}.
  *
  * @author azatyamanaev
  */
-public class SignInFormValidator implements Validator<SignInForm> {
+@Component
+public class SignInFormValidator implements Validator, DtoValidator {
 
     @Override
-    public void validate(SignInForm data) {
-        isEmpty(data);
+    public boolean supports(@NotNull Class<?> clazz) {
+        return SignInForm.class.equals(clazz);
+    }
 
-        HttpException exception = HttpException.validationError();
-        validEmail(data.getEmail(), exception);
-        isEmptyString(data.getEmail(), "email", exception);
-        isEmptyString(data.getPassword(), "password", exception);
+    @Override
+    public void validate(@NotNull Object target, @NotNull Errors errors) {
+        SignInForm form = (SignInForm) target;
 
-        exception.throwIfErrorsNotEmpty();
+        if (isEmptyString(form.getEmail())) {
+            errors.rejectValue("email", ErrorConstants.EMPTY_PARAM);
+        } else if (!validEmail(form.getEmail())) {
+            errors.rejectValue("email", ErrorConstants.INVALID_PARAMETER);
+        }
+
+        if (isEmptyString(form.getPassword())) {
+            errors.rejectValue("password", ErrorConstants.EMPTY_PARAM);
+        }
     }
 }

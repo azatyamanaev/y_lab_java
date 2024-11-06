@@ -1,6 +1,7 @@
 package ru.ylab.services.auth.impl;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 import ru.ylab.services.auth.PasswordService;
 
 /**
@@ -8,6 +9,7 @@ import ru.ylab.services.auth.PasswordService;
  *
  * @author azatyamanaev
  */
+@Service
 public class PasswordServiceImpl implements PasswordService {
 
     @Override

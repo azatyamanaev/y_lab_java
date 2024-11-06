@@ -2,8 +2,10 @@ package ru.ylab.dto.in;
 
 import java.time.LocalDate;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.Setter;
+import org.springdoc.core.annotations.ParameterObject;
 
 /**
  * Habit completion percentage request form.
@@ -12,15 +14,18 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@ParameterObject
 public class PeriodForm {
 
     /**
      * From which date to count habit completion percent.
      */
+    @Parameter(description = "from which date to show habit completion percent")
     private LocalDate from;
 
     /**
      * Until which date to count habit completion percent.
      */
+    @Parameter(description = "until which date to show habit completion percent")
     private LocalDate to;
 }

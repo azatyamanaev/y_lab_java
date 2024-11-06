@@ -1,5 +1,7 @@
 package ru.ylab.settings;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * Class containing settings for connecting ot database.
  *
@@ -8,4 +10,5 @@ package ru.ylab.settings;
  * @param password Database password.
  * @author azatyamanaev
  */
+@ConfigurationProperties(prefix = "datasource")
 public record DbSettings(String url, String username, String password) { }

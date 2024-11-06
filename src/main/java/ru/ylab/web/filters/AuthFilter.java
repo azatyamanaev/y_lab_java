@@ -10,11 +10,11 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import ru.ylab.config.AppContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 import ru.ylab.services.auth.JWToken;
@@ -33,8 +33,6 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  * @author azatyamanaev
  */
 @Slf4j
-@WebFilter(filterName = "authFilter",
-        urlPatterns = {USER_URL + "/*", ADMIN_URL + "/*"})
 public class AuthFilter implements Filter {
 
     /**
@@ -48,16 +46,19 @@ public class AuthFilter implements Filter {
     private UserService userService;
 
     @Override
-    public void init(FilterConfig config) {
-        ServletContext context = config.getServletContext();
-        AppContext appContext = (AppContext) context.getAttribute("appContext");
+    public void init(FilterConfig filterConfig) throws ServletException {
+        ServletContext servletContext = filterConfig.getServletContext();
+        AnnotationConfigWebApplicationContext context =
+                (AnnotationConfigWebApplicationContext) servletContext
+                        .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 
-        this.jwtService = appContext.getServicesConfig().getJwtService();
-        this.userService = appContext.getServicesConfig().getUserService();
+        jwtService = (JwtService) context.getBean("jwtService");
+        userService = (UserService) context.getBean("userService");
     }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
+
         HttpServletRequest request = (HttpServletRequest) req;
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf(WebConstants.APP_CONTEXT_PATH) + WebConstants.APP_CONTEXT_PATH.length());
@@ -65,8 +66,11 @@ public class AuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) resp;
         String authorization = request.getHeader("Authorization");
         if (StringUtil.isEmpty(authorization)) {
-            throw HttpException.unauthorized();
+            throw HttpException.unauthorized().addDetail(ErrorConstants.EMPTY_PARAM, "Authorization Header");
+        } else if (!authorization.startsWith(WebConstants.JWTOKEN_PREFIX)) {
+            throw HttpException.unauthorized().addDetail(ErrorConstants.INVALID_PARAMETER, "Authorization Header");
         } else {
+            authorization = authorization.substring(WebConstants.JWTOKEN_PREFIX.length());
             JWToken token = jwtService.parse(authorization);
             if (!token.getExpires().isAfter(Instant.now())) {
                 throw HttpException.badRequest().addDetail(ErrorConstants.TOKEN_EXPIRED, "access token");

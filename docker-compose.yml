@@ -33,10 +33,6 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
-    environment:
-      DB_HOST: "postgres-db"
-      DB_PORT: "5432"
-      DB_NAME: "habits_app_db"
     depends_on:
       postgres-db:
         condition: service_healthy

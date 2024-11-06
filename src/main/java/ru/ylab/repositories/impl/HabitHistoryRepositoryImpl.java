@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.exception.HttpException;
@@ -23,21 +25,14 @@ import ru.ylab.utils.constants.SqlConstants;
  * @author azatyamanaev
  */
 @LogQuery
+@RequiredArgsConstructor
+@Repository
 public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
 
     /**
      * Instance of a {@link CPDataSource}.
      */
     private final CPDataSource dataSource;
-
-    /**
-     * Creates new HabitHistoryRepository.
-     *
-     * @param dataSource CPDataSource instance
-     */
-    public HabitHistoryRepositoryImpl(CPDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Override
     public boolean save(HabitHistory history) {

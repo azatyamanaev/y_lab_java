@@ -7,16 +7,22 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.ylab.models.User;
 import ru.ylab.utils.StringUtil;
+
+import static ru.ylab.utils.constants.WebConstants.APP_CONTEXT_PATH;
 
 /**
  * Aspect auditing user actions and calculating database requests execution time.
  *
  * @author azatyamanaev
  */
-@Aspect
 @Slf4j
+@Aspect
+@Component
 public class AuditAspect {
 
     @Pointcut("within(@ru.ylab.aspects.LogRequest *)")
@@ -31,15 +37,20 @@ public class AuditAspect {
     public void publicMethod() {
     }
 
-    @Pointcut("!execution(* *service(..))")
-    public void excludeRouting() {
-    }
+    @Pointcut("!execution(public * *initBinder(..))")
+    public void excludeBinding() {}
 
-    @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeRouting() " +
-            "&& args(req,..)", argNames = "req")
-    public void logUserRequest(HttpServletRequest req) {
+    @AfterReturning(value = "annotatedWithLogRequest() && publicMethod() && excludeBinding()")
+    public void logUserRequest() {
+        HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
         User user = (User) req.getAttribute("currentUser");
-        String uri = StringUtil.parseReqUri(req.getRequestURI());
+        String reqUri = req.getRequestURI();
+        String uri;
+        if (reqUri.contains(APP_CONTEXT_PATH)) {
+            uri = StringUtil.parseReqUri(reqUri);
+        } else {
+            uri = reqUri;
+        }
         log.info("Request {} {} completed for user {} with role {}", req.getMethod(), uri, user.getEmail(), user.getRole());
     }
 

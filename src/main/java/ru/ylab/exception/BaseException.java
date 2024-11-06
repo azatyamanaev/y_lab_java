@@ -74,4 +74,11 @@ public abstract class BaseException extends RuntimeException {
             throw this;
         }
     }
+
+    /**
+     * Gets Http status og this exception.
+     *
+     * @return Http status
+     */
+    public abstract int getStatus();
 }

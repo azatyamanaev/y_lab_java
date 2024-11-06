@@ -2,6 +2,8 @@ package ru.ylab.dto.out;
 
 import java.time.LocalDate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Habit completion percent.
  *
@@ -11,4 +13,17 @@ import java.time.LocalDate;
  * @param to date until which percent was counted
  * @author azatyamanaev
  */
-public record HabitCompletionPercent(String name, String percent, LocalDate from, LocalDate to) {}
+public record HabitCompletionPercent(
+
+        @Schema(description = "habit name")
+        String name,
+
+        @Schema(description = "habit completion percent")
+        String percent,
+
+        @Schema(description = "from which date completion was counted")
+        LocalDate from,
+
+        @Schema(description = "until which date completion was counted")
+        LocalDate to
+) { }

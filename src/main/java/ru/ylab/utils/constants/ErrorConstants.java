@@ -18,6 +18,7 @@ public interface ErrorConstants {
     String ALREADY_EXISTS = "Already exists";
     String NOT_AUTHOR = "Not habit author";
     String NOT_IMPLEMENTED = "Not implemented";
+    String PARSE_ERROR = "Parse error";
 
     String SELECT_ERROR = "Select error";
     String CREATE_ERROR = "Create error";

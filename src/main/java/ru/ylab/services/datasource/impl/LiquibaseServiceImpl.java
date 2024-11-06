@@ -1,7 +1,11 @@
 package ru.ylab.services.datasource.impl;
 
+import javax.annotation.PostConstruct;
+
 import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.ylab.exception.HttpException;
 import ru.ylab.services.datasource.LiquibaseService;
 import ru.ylab.utils.constants.ErrorConstants;
@@ -11,21 +15,11 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
+@Service
+@RequiredArgsConstructor
 public class LiquibaseServiceImpl implements LiquibaseService {
 
-    /**
-     * Liquibase instance.
-     */
     private final Liquibase liquibase;
-
-    /**
-     * Creates new LiquibaseServiceImpl.
-     *
-     * @param liquibase Liquibase instance
-     */
-    public LiquibaseServiceImpl(Liquibase liquibase) {
-        this.liquibase = liquibase;
-    }
 
     @Override
     public void migrate() {
@@ -35,5 +29,10 @@ public class LiquibaseServiceImpl implements LiquibaseService {
             throw HttpException.liquibaseError(e.getMessage(), e.getCause())
                                .addDetail(ErrorConstants.MIGRATION_ERROR, "liquibase");
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        this.migrate();
     }
 }

@@ -189,4 +189,18 @@ public class HttpException extends BaseException {
                      .message(ErrorConstants.LIQUIBASE_ERROR)
                      .build(), 500);
     }
+
+    /**
+     * Creates new internal server error exception.
+     *
+     * @param msg   exception message
+     * @param cause exception cause
+     * @return HttpException instance
+     */
+    public static HttpException serverError(String msg, Throwable cause) {
+        return new HttpException(msg, cause,
+                Error.builder()
+                     .message(ErrorConstants.INTERNAL_SERVER_ERROR)
+                     .build(), 500);
+    }
 }

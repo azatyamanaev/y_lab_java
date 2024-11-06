@@ -1,0 +1,7 @@
+---
+# DATASOURCE
+datasource:
+  url: "jdbc:postgresql://localhost:54322/habits_app_db"
+  username: "liquibase"
+  password: "liquibase"
+---

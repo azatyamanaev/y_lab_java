@@ -10,7 +10,7 @@ import ru.ylab.models.Habit;
  *
  * @author azatyamanaev
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface HabitMapper extends DtoMapper<Habit, HabitDto> {
 
     @Override

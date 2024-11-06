@@ -18,6 +18,12 @@ public interface SqlConstants {
     String SELECT_FROM_HABITS_BY_ID = "SELECT * FROM entity.habits WHERE id = ?";
 
     /**
+     * Sql request for selecting habit by name.
+     */
+    @Language("SQL")
+    String SELECT_FROM_HABITS_BY_NAME = "SELECT * FROM entity.habits WHERE name = ?";
+
+    /**
      * Sql request for selecting all habits.
      */
     @Language("SQL")

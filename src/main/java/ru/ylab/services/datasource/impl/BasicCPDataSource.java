@@ -3,6 +3,8 @@ package ru.ylab.services.datasource.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.services.datasource.ConnectionPool;
 
@@ -11,6 +13,8 @@ import ru.ylab.services.datasource.ConnectionPool;
  *
  * @author azatyamanaev
  */
+@Component
+@RequiredArgsConstructor
 public class BasicCPDataSource implements CPDataSource {
 
     /**
@@ -19,18 +23,9 @@ public class BasicCPDataSource implements CPDataSource {
     private boolean autoCommit;
 
     /**
-     * Instance of a {@link ConnectionPool}.
+     * Connection pool, associated with this datasource.
      */
     private final ConnectionPool connectionPool;
-
-    /**
-     * Creates new BasicCPDataSource.
-     *
-     * @param connectionPool ConnectionPool instance.
-     */
-    public BasicCPDataSource(ConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
-    }
 
     @Override
     public Connection getConnection() throws SQLException {
