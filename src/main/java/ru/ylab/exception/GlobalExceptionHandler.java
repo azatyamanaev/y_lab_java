@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<Error> baseException(BaseException exception) {
-        log.trace(String.format("%s. Cause: ", exception.getClass().getSimpleName()), exception);
+        log.trace("{}. Cause: ", exception.getClass().getSimpleName(), exception);
         return ResponseEntity.status(exception.getStatus())
                              .body(exception.getError());
     }
@@ -58,14 +58,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Error> invalidRequestBody(HttpMessageNotReadableException exception, HttpServletRequest request) {
-        log.warn(
-                String.format(
-                        "Failed to read %s request %s body",
-                        request.getMethod(),
-                        request.getRequestURI()
-                ),
-                exception
-        );
+        log.warn("Failed to read {} request {} body",
+                request.getMethod(),
+                request.getRequestURI(),
+                exception);
 
         return ResponseEntity.badRequest()
                              .body(Error.builder()
@@ -80,14 +76,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Error> invalidArgumentException(MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
-        log.warn(
-                String.format(
-                        "Failed to convert to correct type %s request %s parameter",
-                        request.getMethod(),
-                        request.getRequestURI()
-                ),
-                exception
-        );
+        log.warn("Failed to convert to correct type {} request {} parameter",
+                request.getMethod(),
+                request.getRequestURI(),
+                exception);
         return ResponseEntity.badRequest()
                              .body(Error.builder()
                                         .message(ErrorConstants.BAD_REQUEST)
@@ -115,15 +107,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Error> serverException(Exception exception, HttpServletRequest request) {
-        log.error(
-                String.format(
-                        "Failed to process %s request %s",
-                        request.getMethod(),
-                        request.getRequestURI()
-                ),
-                exception
-        );
-
+        log.error("Failed to process {} request {}", request.getMethod(), request.getRequestURI(), exception);
         return ResponseEntity.internalServerError()
                              .body(Error.builder()
                                         .message(ErrorConstants.INTERNAL_SERVER_ERROR)
