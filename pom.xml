@@ -30,6 +30,7 @@
     <postgresql.version>42.7.2</postgresql.version>
     <liquibase.version>4.29.0</liquibase.version>
     <junit.version>5.10.2</junit.version>
+    <assertj.version>3.25.3</assertj.version>
     <mockito.version>5.11.0</mockito.version>
     <testcontainers.version>1.20.0</testcontainers.version>
     <script.runner.version>3.5.7</script.runner.version>
@@ -187,6 +188,13 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- Assertj -->
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
     </dependency>
 
     <!-- Mockito -->

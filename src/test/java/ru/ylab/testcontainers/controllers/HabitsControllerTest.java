@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
 import ru.ylab.utils.constants.ErrorConstants;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,8 +42,8 @@ public class HabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         HabitDto dto = mapper.readValue(result.getResponse().getContentAsString(), HabitDto.class);
-        Assertions.assertNotNull(dto);
-        Assertions.assertEquals("h2_test", dto.name());
+        assertThat(dto).isNotNull();
+        assertThat(dto.name()).isEqualTo("h2_test");
     }
 
     @DisplayName("Test(controller): fail get habit for user not author")
@@ -55,10 +55,10 @@ public class HabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
-        Assertions.assertNotNull(error);
-        Assertions.assertEquals(ErrorConstants.BAD_REQUEST, error.getMessage());
-        Assertions.assertEquals(ErrorConstants.NOT_AUTHOR, error.getDetails().get(0).getType());
-        Assertions.assertEquals("user", error.getDetails().get(0).getTarget());
+        assertThat(error).isNotNull();
+        assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
+        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.NOT_AUTHOR);
+        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("user");
     }
 
     @DisplayName("Test(controller): get habits for user")
@@ -70,8 +70,8 @@ public class HabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(3, dtos.size());
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(3);
     }
 
     @DisplayName("Test(controller): search habits by name for user")
@@ -84,9 +84,9 @@ public class HabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(1, dtos.size());
-        Assertions.assertTrue(dtos.get(0).name().contains("h1"));
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(1);
+        assertThat(dtos.get(0).name()).startsWith("h1");
     }
 
     @DisplayName("Test(controller): search habits by frequency for user")
@@ -99,9 +99,9 @@ public class HabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(1, dtos.size());
-        Assertions.assertEquals(Habit.Frequency.WEEKLY, dtos.get(0).frequency());
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(1);
+        assertThat(dtos.get(0).frequency()).isEqualTo(Habit.Frequency.WEEKLY);
     }
 
     @DisplayName("Test(controller): create habit for user")

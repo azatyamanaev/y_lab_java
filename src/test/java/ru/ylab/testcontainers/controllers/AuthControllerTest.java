@@ -1,7 +1,6 @@
 package ru.ylab.testcontainers.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import ru.ylab.exception.Error;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.utils.constants.ErrorConstants;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,9 +43,9 @@ public class AuthControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         SignInResult res = mapper.readValue(result.getResponse().getContentAsString(), SignInResult.class);
-        Assertions.assertNotNull(res);
-        Assertions.assertNotNull(res.access());
-        Assertions.assertNotNull(res.refresh());
+        assertThat(res).isNotNull();
+        assertThat(res.access()).isNotNull();
+        assertThat(res.refresh()).isNotNull();
     }
 
     @DisplayName("Test(controller): sign in fail on incorrect password")
@@ -62,10 +62,10 @@ public class AuthControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
-        Assertions.assertNotNull(error);
-        Assertions.assertEquals(ErrorConstants.BAD_REQUEST, error.getMessage());
-        Assertions.assertEquals(ErrorConstants.INVALID_PARAMETER, error.getDetails().get(0).getType());
-        Assertions.assertEquals("password", error.getDetails().get(0).getTarget());
+        assertThat(error).isNotNull();
+        assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
+        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.INVALID_PARAMETER);
+        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("password");
     }
 
     @DisplayName("Test(controller): sign in fail on user not found")
@@ -82,10 +82,10 @@ public class AuthControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
-        Assertions.assertNotNull(error);
-        Assertions.assertEquals(ErrorConstants.BAD_REQUEST, error.getMessage());
-        Assertions.assertEquals(ErrorConstants.NOT_FOUND, error.getDetails().get(0).getType());
-        Assertions.assertEquals("user", error.getDetails().get(0).getTarget());
+        assertThat(error).isNotNull();
+        assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
+        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.NOT_FOUND);
+        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("user");
     }
 
     @DisplayName("Test(controller): sign up")
@@ -103,9 +103,9 @@ public class AuthControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         SignInResult res = mapper.readValue(result.getResponse().getContentAsString(), SignInResult.class);
-        Assertions.assertNotNull(res);
-        Assertions.assertNotNull(res.access());
-        Assertions.assertNotNull(res.refresh());
+        assertThat(res).isNotNull();
+        assertThat(res.access()).isNotNull();
+        assertThat(res.refresh()).isNotNull();
     }
 
     @DisplayName("Test(controller): sign up fail on empty name")
@@ -122,10 +122,10 @@ public class AuthControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
-        Assertions.assertNotNull(error);
-        Assertions.assertEquals(ErrorConstants.VALIDATION_ERROR, error.getMessage());
-        Assertions.assertEquals(ErrorConstants.EMPTY_PARAM, error.getDetails().get(0).getType());
-        Assertions.assertEquals("name", error.getDetails().get(0).getTarget());
+        assertThat(error).isNotNull();
+        assertThat(error.getMessage()).isEqualTo(ErrorConstants.VALIDATION_ERROR);
+        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.EMPTY_PARAM);
+        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("name");
     }
 
     @DisplayName("Test(controller): refresh access token")
@@ -144,6 +144,6 @@ public class AuthControllerTest extends AbstractSpringTest {
         this.mockMvc.perform(get(AUTH_URL + REFRESH_TOKEN_URL).param("token", response.refresh()))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(result -> Assertions.assertNotNull(result.getResponse().getContentAsString()));
+                    .andExpect(result -> assertThat(result.getResponse().getContentAsString()).isNotBlank());
     }
 }

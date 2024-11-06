@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import ru.ylab.models.User;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,8 +40,8 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         UserDto dto = mapper.readValue(result.getResponse().getContentAsString(), UserDto.class);
-        Assertions.assertNotNull(dto);
-        Assertions.assertEquals("a_test@mail.ru", dto.email());
+        assertThat(dto).isNotNull();
+        assertThat(dto.email()).isEqualTo("a_test@mail.ru");
     }
 
     @DisplayName("Test(controller): search users by email for admin")
@@ -54,9 +54,9 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(3, dtos.size());
-        Assertions.assertEquals("admin_test", dtos.get(0).name());
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(3);
+        assertThat(dtos.get(0).name()).isEqualTo("admin_test");
     }
 
     @DisplayName("Test(controller): search users by email and role for admin")
@@ -70,9 +70,9 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(1, dtos.size());
-        Assertions.assertEquals("admin_test", dtos.get(0).name());
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(1);
+        assertThat(dtos.get(0).name()).isEqualTo("admin_test");
     }
 
     @DisplayName("Test(controller): create user for admin")

@@ -1,7 +1,6 @@
 package ru.ylab.testcontainers.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import ru.ylab.dto.out.UserDto;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -34,8 +34,8 @@ public class UserProfileControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         UserDto dto = mapper.readValue(result.getResponse().getContentAsString(), UserDto.class);
-        Assertions.assertNotNull(dto);
-        Assertions.assertEquals("user1", dto.name());
+        assertThat(dto).isNotNull();
+        assertThat(dto.name()).isEqualTo("user1");
     }
 
     @DisplayName("Test(controller): update profile for user")
@@ -43,7 +43,7 @@ public class UserProfileControllerTest extends AbstractSpringTest {
     public void testUpdateProfile() throws Exception {
         SignUpForm form = new SignUpForm();
         form.setName("user11");
-        form.setEmail("user11_test@gmail.com");
+        form.setEmail("user11_test@mail.ru");
         form.setPassword("1234");
 
         this.mockMvc.perform(put(USER_URL + SELF_URL)

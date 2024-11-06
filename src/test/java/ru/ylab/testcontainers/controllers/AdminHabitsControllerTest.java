@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import ru.ylab.models.Habit;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
@@ -36,8 +36,8 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         HabitDto habit = mapper.readValue(result.getResponse().getContentAsString(), HabitDto.class);
-        Assertions.assertNotNull(habit);
-        Assertions.assertEquals("h1_test", habit.name());
+        assertThat(habit).isNotNull();
+        assertThat(habit.name()).isEqualTo("h1_test");
     }
 
     @DisplayName("Test(controller): get habits for admin")
@@ -49,8 +49,8 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(5, dtos.size());
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(5);
     }
 
     @DisplayName("Test(controller): search habits by name for admin")
@@ -63,9 +63,9 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(2, dtos.size());
-        Assertions.assertTrue(dtos.get(0).name().contains("hb"));
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(2);
+        assertThat(dtos.get(0).name()).startsWith("hb");
     }
 
     @DisplayName("Test(controller): search habits by frequency for admin")
@@ -78,9 +78,9 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
                                        .andReturn();
 
         List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertNotNull(dtos);
-        Assertions.assertEquals(2, dtos.size());
-        Assertions.assertEquals(Habit.Frequency.DAILY, dtos.get(0).frequency());
-        Assertions.assertEquals(Habit.Frequency.DAILY, dtos.get(1).frequency());
+        assertThat(dtos).isNotNull();
+        assertThat(dtos).size().isEqualTo(2);
+        assertThat(dtos.get(0).frequency()).isEqualTo(Habit.Frequency.DAILY);
+        assertThat(dtos.get(1).frequency()).isEqualTo(Habit.Frequency.DAILY);
     }
 }
