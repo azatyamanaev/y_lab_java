@@ -13,7 +13,6 @@ import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.ylab.dto.out.SignInResult;
@@ -24,6 +23,7 @@ import ru.ylab.repositories.RefreshTokenRepository;
 import ru.ylab.services.auth.JWToken;
 import ru.ylab.services.auth.JwtService;
 import ru.ylab.services.entities.UserService;
+import ru.ylab.settings.JwtSettings;
 import ru.ylab.utils.constants.ErrorConstants;
 
 /**
@@ -31,29 +31,31 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
-@RequiredArgsConstructor
 @Service("jwtService")
 public class JwtServiceImpl implements JwtService {
 
-    private static final int ACCESS_TOKEN_EXPIRATION = 1;
-    private static final int REFRESH_TOKEN_EXPIRATION = 14;
-    private static final String ROLE_KEY = "role";
-
-    private static final String SECRET_STRING = "habits-app-yLRdtN3NsFRHKkThmB6EN2QXLxXGTPa7bgzx0pY72";
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
+    private SecretKey secretKey;
 
     private final RefreshTokenRepository tokenRepository;
     private final UserService userService;
+    private final JwtSettings settings;
+
+    public JwtServiceImpl(RefreshTokenRepository tokenRepository, UserService userService, JwtSettings settings) {
+        this.tokenRepository = tokenRepository;
+        this.userService = userService;
+        this.settings = settings;
+        this.secretKey = Keys.hmacShaKeyFor(settings.secretString().getBytes(StandardCharsets.UTF_8));
+    }
 
     @Override
     public JWToken parse(String token) {
         final Claims claims = Jwts.parser()
-                                  .verifyWith(SECRET_KEY)
+                                  .verifyWith(secretKey)
                                   .build()
                                   .parseSignedClaims(token)
                                   .getPayload();
 
-        User.Role role = User.Role.valueOf(claims.get(ROLE_KEY, String.class));
+        User.Role role = User.Role.valueOf(claims.get(settings.roleKey(), String.class));
         return new JWToken(claims.getId(), claims.getSubject(), role,
                 claims.getIssuedAt().toInstant(), claims.getExpiration().toInstant());
     }
@@ -63,7 +65,7 @@ public class JwtServiceImpl implements JwtService {
         String access = generateAccess(user.getEmail(), user.getRole());
         String refresh = generateRefresh();
         Instant now = Instant.now();
-        Instant expires = now.plus(REFRESH_TOKEN_EXPIRATION, ChronoUnit.DAYS);
+        Instant expires = now.plus(settings.refreshTokenExpiration(), ChronoUnit.DAYS);
         RefreshToken refreshToken = RefreshToken.builder()
                                                 .token(refresh)
                                                 .userId(user.getId())
@@ -86,7 +88,7 @@ public class JwtServiceImpl implements JwtService {
 
     public String generateAccess(String username, User.Role role) {
         Instant now = Instant.now();
-        Instant expires = now.plus(ACCESS_TOKEN_EXPIRATION, ChronoUnit.DAYS);
+        Instant expires = now.plus(settings.accessTokenExpiration(), ChronoUnit.DAYS);
         return generate(username, role, now, expires);
     }
 
@@ -99,12 +101,12 @@ public class JwtServiceImpl implements JwtService {
 
     private String generate(String username, User.Role role, Instant issued, Instant expiration) {
         return Jwts.builder()
-                   .claim(ROLE_KEY, role.name())
+                   .claim(settings.roleKey(), role.name())
                    .claims()
                    .id(UUID.randomUUID().toString())
                    .subject(username)
                    .issuedAt(Date.from(issued))
                    .expiration(Date.from(expiration))
-                   .and().signWith(SECRET_KEY).compact();
+                   .and().signWith(secretKey).compact();
     }
 }
