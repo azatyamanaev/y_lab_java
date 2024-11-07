@@ -3,11 +3,6 @@
 server:
   port: 8080
 
-# APP
-spring:
-  profiles:
-    active:
-
 # LIQUIBASE
 liquibase:
   changelog-path: "db/changelog/changelog.xml"

@@ -20,7 +20,6 @@
     <java.version>17</java.version>
 
     <springdoc.version>2.5.0</springdoc.version>
-
     <javax.annotation.version>1.3.2</javax.annotation.version>
     <bcrypt.version>0.10.2</bcrypt.version>
     <jwt.version>0.12.6</jwt.version>
@@ -48,15 +47,17 @@
       </exclusions>
     </dependency>
 
-    <!-- AOP -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
-    </dependency>
-
+    <!-- AOP Starter -->
     <dependency>
       <groupId>ru.ylab</groupId>
       <artifactId>audit-spring-boot-starter</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <!-- OpenAPI Starter -->
+    <dependency>
+      <groupId>ru.ylab</groupId>
+      <artifactId>swagger-spring-boot-starter</artifactId>
       <version>1.0</version>
     </dependency>
 
@@ -79,13 +80,6 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.2</version>
-    </dependency>
-
-    <!-- Open API -->
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>${springdoc.version}</version>
     </dependency>
 
     <!-- Javax Annotation -->
@@ -216,7 +210,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>ru.ylab.WebApplication</mainClass>
+          <mainClass>ru.ylab.core.WebApplication</mainClass>
         </configuration>
       </plugin>
       <plugin>

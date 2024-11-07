@@ -20,11 +20,11 @@ public class AuditAspect {
 
     private static Logger logger = LoggerFactory.getLogger(AuditAspect.class);
 
-    @Pointcut("within(@ru.ylab.auditstarter.aspects.LogRequest *)")
+    @Pointcut("within(@ru.ylab.auditstarter.annotations.LogRequest *)")
     public void annotatedWithLogRequest() {
     }
 
-    @Pointcut("within(@ru.ylab.auditstarter.aspects.LogQuery *)")
+    @Pointcut("within(@ru.ylab.auditstarter.annotations.LogQuery *)")
     public void annotatedWithLogQuery() {
     }
 

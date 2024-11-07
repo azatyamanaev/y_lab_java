@@ -1,0 +1,89 @@
+package ru.ylab.core.web.controllers;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.ylab.auditstarter.annotations.LogRequest;
+import ru.ylab.core.dto.in.PeriodForm;
+import ru.ylab.core.dto.out.HabitCompletionPercent;
+import ru.ylab.core.dto.out.HabitCompletionStreak;
+import ru.ylab.core.dto.out.HabitHistoryProjection;
+import ru.ylab.core.models.User;
+import ru.ylab.core.services.entities.HabitHistoryService;
+
+import static ru.ylab.core.utils.constants.WebConstants.HABIT_HISTORY_URL;
+import static ru.ylab.core.utils.constants.WebConstants.HABIT_PERCENTAGE_URL;
+import static ru.ylab.core.utils.constants.WebConstants.HABIT_REPORT_URL;
+import static ru.ylab.core.utils.constants.WebConstants.HABIT_STREAK_URL;
+import static ru.ylab.core.utils.constants.WebConstants.ID_URL;
+import static ru.ylab.core.utils.constants.WebConstants.USER_URL;
+
+/**
+ * Controller for handling habit history HTTP requests.
+ *
+ * @author azatyamanaev
+ */
+@LogRequest
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(USER_URL + HABIT_HISTORY_URL)
+public class HabitHistoryController {
+
+    private final HabitHistoryService habitHistoryService;
+
+    /**
+     * Gets habit history for user and writes it to response.
+     */
+    @GetMapping(ID_URL)
+    public ResponseEntity<HabitHistoryProjection> getHabitHistory(@PathVariable("id") Long id,
+                                                                  @RequestAttribute("currentUser") User user) {
+        HabitHistoryProjection projection = habitHistoryService.getHabitHistory(user.getId(), id);
+        return ResponseEntity.ok(projection);
+    }
+
+    /**
+     * Marks habit completed for user.
+     */
+    @PutMapping(ID_URL)
+    public ResponseEntity<Void> markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
+                                                   @RequestParam("completed_on") LocalDate completedOn) {
+        habitHistoryService.markHabitCompleted(user.getId(), id, completedOn);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Gets habits completion streaks for user and writes them to response.
+     */
+    @GetMapping(HABIT_STREAK_URL)
+    public ResponseEntity<List<HabitCompletionStreak>> getHabitStreak(@RequestAttribute("currentUser") User user) {
+        List<HabitCompletionStreak> streaks = habitHistoryService.habitCompletionStreak(user.getId());
+        return ResponseEntity.ok(streaks);
+    }
+
+    /**
+     * Gets habits completion percentage for user and writes it to response.
+     */
+    @GetMapping(HABIT_PERCENTAGE_URL)
+    public ResponseEntity<List<HabitCompletionPercent>> getHabitPercentage(@RequestAttribute("currentUser") User user,
+                                                                           PeriodForm form) {
+        List<HabitCompletionPercent> percentage = habitHistoryService.habitCompletionPercent(user.getId(), form);
+        return ResponseEntity.ok(percentage);
+    }
+
+    /**
+     * Gets habits completion report for user and writes it to response.
+     */
+    @GetMapping(HABIT_REPORT_URL)
+    public ResponseEntity<List<HabitHistoryProjection>> getHabitReport(@RequestAttribute("currentUser") User user) {
+        return ResponseEntity.ok(habitHistoryService.habitCompletionReport(user.getId()));
+    }
+}
