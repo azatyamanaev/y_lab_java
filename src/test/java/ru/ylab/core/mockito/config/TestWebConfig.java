@@ -1,4 +1,4 @@
-package ru.ylab.core.testcontainers.config;
+package ru.ylab.core.mockito.config;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -11,13 +11,17 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import ru.ylab.core.models.User;
 import ru.ylab.core.repositories.RefreshTokenRepository;
+import ru.ylab.core.services.auth.AuthService;
 import ru.ylab.core.services.auth.JWToken;
 import ru.ylab.core.services.auth.JwtService;
+import ru.ylab.core.services.auth.PasswordService;
+import ru.ylab.core.services.auth.impl.AuthServiceImpl;
 import ru.ylab.core.services.auth.impl.JwtServiceImpl;
 import ru.ylab.core.services.entities.UserService;
 import ru.ylab.core.settings.JwtSettings;
@@ -28,7 +32,12 @@ import static org.mockito.Mockito.when;
 
 @Profile(AppConstants.TEST_PROFILE)
 @Configuration
-public class TestAppConfig {
+@ComponentScan(basePackages = {
+        "ru.ylab.core.web.controllers",
+        "ru.ylab.core.dto.mappers",
+        "ru.ylab.core.exception"
+})
+public class TestWebConfig {
 
     @Bean("mapper")
     public ObjectMapper mapper() {
@@ -39,6 +48,17 @@ public class TestAppConfig {
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper;
+    }
+
+    @Bean
+    public JwtSettings jwtSettings() {
+        return new JwtSettings(1, 14,
+                "role", UUID.randomUUID().toString());
+    }
+
+    @Bean
+    public AuthService authService(PasswordService passwordService, UserService userService, JwtService jwtService) {
+        return new AuthServiceImpl(passwordService, userService, jwtService);
     }
 
     @Bean

@@ -9,11 +9,11 @@ import ru.ylab.core.dto.in.SignUpForm;
 import ru.ylab.core.dto.in.UserSearchForm;
 import ru.ylab.core.models.User;
 import ru.ylab.core.repositories.UserRepository;
-import ru.ylab.core.testcontainers.config.AbstractSpringTest;
+import ru.ylab.core.testcontainers.config.AbstractDbTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserRepositoryTest extends AbstractSpringTest {
+public class UserRepositoryTest extends AbstractDbTest {
 
     @Autowired
     private UserRepository userRepository;

@@ -1,5 +1,6 @@
-package ru.ylab.core.testcontainers.controllers;
+package ru.ylab.core.mockito.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,14 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.ylab.core.dto.in.PeriodForm;
 import ru.ylab.core.dto.out.HabitCompletionPercent;
 import ru.ylab.core.dto.out.HabitCompletionStreak;
 import ru.ylab.core.dto.out.HabitHistoryProjection;
-import ru.ylab.core.testcontainers.config.AbstractSpringTest;
-import ru.ylab.core.testcontainers.config.TestConfigurer;
+import ru.ylab.core.mockito.config.AbstractWebTest;
+import ru.ylab.core.mockito.config.TestConfigurer;
+import ru.ylab.core.models.User;
 import ru.ylab.core.utils.constants.WebConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,7 +30,7 @@ import static ru.ylab.core.utils.constants.WebConstants.HABIT_REPORT_URL;
 import static ru.ylab.core.utils.constants.WebConstants.HABIT_STREAK_URL;
 import static ru.ylab.core.utils.constants.WebConstants.USER_URL;
 
-public class HabitHistoryControllerTest extends AbstractSpringTest {
+public class HabitHistoryControllerTest extends AbstractWebTest {
 
     @Autowired
     @Qualifier("mapper")
@@ -35,9 +39,14 @@ public class HabitHistoryControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): get habit history for user")
     @Test
     public void testGetHabitHistory() throws Exception {
-        MvcResult result = this.mockMvc.perform(get(USER_URL + HABIT_HISTORY_URL + "/-1")
+        User user = TestConfigurer.getTestUser();
+        Long id = 1L;
+        when(habitHistoryService.getHabitHistory(user.getId(), id))
+                .thenReturn(TestConfigurer.getHabitHistoryProjection());
+
+        MvcResult result = this.mockMvc.perform(get(USER_URL + HABIT_HISTORY_URL + "/" + id)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
-                                       .requestAttr("currentUser", TestConfigurer.getTestUser()))
+                                       .requestAttr("currentUser", user))
                                        .andExpect(status().isOk())
                                        .andReturn();
 
@@ -60,6 +69,10 @@ public class HabitHistoryControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): get habits streak for user")
     @Test
     public void testGetHabitStreak() throws Exception {
+        User user = TestConfigurer.getTestUser();
+        when(habitHistoryService.habitCompletionStreak(user.getId()))
+                .thenReturn(TestConfigurer.habitCompletionStreak());
+
         MvcResult result = this.mockMvc.perform(get(USER_URL + HABIT_HISTORY_URL + HABIT_STREAK_URL)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
                                        .requestAttr("currentUser", TestConfigurer.getTestUser()))
@@ -76,11 +89,20 @@ public class HabitHistoryControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): get habits percentage for user")
     @Test
     public void testGetHabitPercentage() throws Exception {
+        String from = "2024-07-01";
+        String to = "2024-10-30";
+        PeriodForm form = new PeriodForm();
+        form.setFrom(LocalDate.parse(from));
+        form.setTo(LocalDate.parse(to));
+        User user = TestConfigurer.getTestUser();
+        when(habitHistoryService.habitCompletionPercent(user.getId(), form))
+                .thenReturn(TestConfigurer.habitCompletionPercent(form));
+
         MvcResult result = this.mockMvc.perform(get(USER_URL + HABIT_HISTORY_URL + HABIT_PERCENTAGE_URL)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
-                                       .param("from", "2024-07-01")
-                                       .param("to", "2024-10-30")
-                                       .requestAttr("currentUser", TestConfigurer.getTestUser()))
+                                       .param("from", from)
+                                       .param("to", to)
+                                       .requestAttr("currentUser", user))
                                        .andExpect(status().isOk())
                                        .andReturn();
 
@@ -94,9 +116,13 @@ public class HabitHistoryControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): get habits report for user")
     @Test
     public void testGetHabitReport() throws Exception {
+        User user = TestConfigurer.getTestUser();
+        when(habitHistoryService.habitCompletionReport(user.getId()))
+                .thenReturn(TestConfigurer.habitCompletionReport());
+
         MvcResult result = this.mockMvc.perform(get(USER_URL + HABIT_HISTORY_URL + HABIT_REPORT_URL)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
-                                       .requestAttr("currentUser", TestConfigurer.getTestUser()))
+                                       .requestAttr("currentUser", user))
                                        .andExpect(status().isOk())
                                        .andReturn();
 

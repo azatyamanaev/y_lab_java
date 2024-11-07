@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.ylab.core.dto.in.HabitSearchForm;
 import ru.ylab.core.models.Habit;
 import ru.ylab.core.repositories.HabitRepository;
-import ru.ylab.core.testcontainers.config.AbstractSpringTest;
+import ru.ylab.core.testcontainers.config.AbstractDbTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HabitRepositoryTest extends AbstractSpringTest {
+public class HabitRepositoryTest extends AbstractDbTest {
 
     @Autowired
     private HabitRepository habitRepository;

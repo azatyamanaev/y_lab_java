@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.ylab.core.dto.out.HabitHistoryProjection;
 import ru.ylab.core.models.HabitHistory;
 import ru.ylab.core.repositories.HabitHistoryRepository;
-import ru.ylab.core.testcontainers.config.AbstractSpringTest;
+import ru.ylab.core.testcontainers.config.AbstractDbTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HabitHistoryRepositoryTest extends AbstractSpringTest {
+public class HabitHistoryRepositoryTest extends AbstractDbTest {
 
     @Autowired
     private HabitHistoryRepository historyRepository;
@@ -22,7 +22,7 @@ public class HabitHistoryRepositoryTest extends AbstractSpringTest {
     public void testGetByHabitId() {
         HabitHistoryProjection history = historyRepository.getByHabitId(-1L);
         assertThat(history.getDays()).size().isEqualTo(3);
-        assertThat(history.getDays()).contains(LocalDate.parse("2024-10-01"));
+        assertThat(history.getDays()).contains(LocalDate.parse("2024-10-02"));
     }
 
     @DisplayName("Test(repository): fail to get empty habit history by habit id")

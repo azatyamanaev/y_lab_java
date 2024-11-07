@@ -175,11 +175,10 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Script runner -->
+    <!-- Spring Jdbc -->
     <dependency>
-      <groupId>org.mybatis</groupId>
-      <artifactId>mybatis</artifactId>
-      <version>${script.runner.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

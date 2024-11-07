@@ -1,4 +1,8 @@
-package ru.ylab.core.testcontainers.controllers;
+package ru.ylab.core.mockito.controllers;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -10,10 +14,15 @@ import ru.ylab.core.dto.in.SignInForm;
 import ru.ylab.core.dto.in.SignUpForm;
 import ru.ylab.core.dto.out.SignInResult;
 import ru.ylab.core.exception.Error;
-import ru.ylab.core.testcontainers.config.AbstractSpringTest;
+import ru.ylab.core.exception.HttpException;
+import ru.ylab.core.mockito.config.AbstractWebTest;
+import ru.ylab.core.mockito.config.TestConfigurer;
+import ru.ylab.core.models.RefreshToken;
+import ru.ylab.core.models.User;
 import ru.ylab.core.utils.constants.ErrorConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,7 +32,7 @@ import static ru.ylab.core.utils.constants.WebConstants.REFRESH_TOKEN_URL;
 import static ru.ylab.core.utils.constants.WebConstants.SIGN_IN_URL;
 import static ru.ylab.core.utils.constants.WebConstants.SIGN_UP_URL;
 
-public class AuthControllerTest extends AbstractSpringTest {
+public class AuthControllerTest extends AbstractWebTest {
 
     @Autowired
     @Qualifier("mapper")
@@ -35,6 +44,8 @@ public class AuthControllerTest extends AbstractSpringTest {
         SignInForm form = new SignInForm();
         form.setEmail("a_test@mail.ru");
         form.setPassword("123");
+
+        when(userService.getByEmail("a_test@mail.ru")).thenReturn(TestConfigurer.getTestUser());
 
         MvcResult result = this.mockMvc.perform(post(AUTH_URL + SIGN_IN_URL)
                                        .contentType("application/json")
@@ -54,6 +65,8 @@ public class AuthControllerTest extends AbstractSpringTest {
         SignInForm form = new SignInForm();
         form.setEmail("a_test@mail.ru");
         form.setPassword("1234");
+
+        when(userService.getByEmail("a_test@mail.ru")).thenReturn(TestConfigurer.getTestUser());
 
         MvcResult result = this.mockMvc.perform(post(AUTH_URL + SIGN_IN_URL)
                                        .contentType("application/json")
@@ -75,6 +88,9 @@ public class AuthControllerTest extends AbstractSpringTest {
         form.setEmail("some_user@mail.ru");
         form.setPassword("123");
 
+        when(userService.getByEmail("some_user@mail.ru"))
+                .thenThrow(HttpException.badRequest().addDetail(ErrorConstants.NOT_FOUND, "user"));
+
         MvcResult result = this.mockMvc.perform(post(AUTH_URL + SIGN_IN_URL)
                                        .contentType("application/json")
                                        .content(mapper.writeValueAsString(form)))
@@ -95,6 +111,15 @@ public class AuthControllerTest extends AbstractSpringTest {
         form.setName("some_user");
         form.setEmail("some_user@mail.ru");
         form.setPassword("pass");
+
+        User user = User.builder()
+                        .id(3L)
+                        .email(form.getEmail())
+                        .name(form.getName())
+                        .role(User.Role.USER)
+                        .build();
+
+        when(userService.getByEmail("some_user@mail.ru")).thenReturn(user);
 
         MvcResult result = this.mockMvc.perform(post(AUTH_URL + SIGN_UP_URL)
                                        .contentType("application/json")
@@ -135,12 +160,22 @@ public class AuthControllerTest extends AbstractSpringTest {
         form.setEmail("a_test@mail.ru");
         form.setPassword("123");
 
+        when(userService.getByEmail("a_test@mail.ru")).thenReturn(TestConfigurer.getTestUser());
+
         MvcResult mvcResult = this.mockMvc.perform(post(AUTH_URL + SIGN_IN_URL)
                                           .contentType("application/json")
                                           .content(mapper.writeValueAsString(form)))
                                           .andReturn();
-
         SignInResult response = mapper.readValue(mvcResult.getResponse().getContentAsString(), SignInResult.class);
+
+        when(refreshTokenRepository.findByToken(response.refresh()))
+                .thenReturn(Optional.of(
+                        new RefreshToken(1L, form.getEmail(), 1L,
+                                Instant.now().minus(1, ChronoUnit.DAYS),
+                                Instant.now().minus(14, ChronoUnit.DAYS))
+                ));
+        when(userService.get(1L)).thenReturn(TestConfigurer.getTestUser());
+
         this.mockMvc.perform(get(AUTH_URL + REFRESH_TOKEN_URL).param("token", response.refresh()))
                     .andExpect(status().isOk())
                     .andExpect(result -> assertThat(result.getResponse().getContentAsString()).isNotBlank());

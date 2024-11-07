@@ -1,7 +1,7 @@
 ---
 # DATASOURCE
 datasource:
-  url: "jdbc:postgresql://localhost:54322/habits_app_db"
+  url: "jdbc:tc:postgresql:17-alpine:///habits_app_db?TC_INITSCRIPT=db/init.sql"
   username: "liquibase"
   password: "liquibase"
 ---

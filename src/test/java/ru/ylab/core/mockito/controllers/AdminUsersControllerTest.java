@@ -1,6 +1,7 @@
-package ru.ylab.core.testcontainers.controllers;
+package ru.ylab.core.mockito.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,13 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.ylab.core.dto.in.UserForm;
+import ru.ylab.core.dto.in.UserSearchForm;
 import ru.ylab.core.dto.out.UserDto;
 import ru.ylab.core.models.User;
-import ru.ylab.core.testcontainers.config.AbstractSpringTest;
-import ru.ylab.core.testcontainers.config.TestConfigurer;
+import ru.ylab.core.mockito.config.AbstractWebTest;
+import ru.ylab.core.mockito.config.TestConfigurer;
 import ru.ylab.core.utils.constants.WebConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,7 +28,7 @@ import static ru.ylab.core.utils.constants.WebConstants.ADMIN_URL;
 import static ru.ylab.core.utils.constants.WebConstants.SEARCH_URL;
 import static ru.ylab.core.utils.constants.WebConstants.USERS_URL;
 
-public class AdminUsersControllerTest extends AbstractSpringTest {
+public class AdminUsersControllerTest extends AbstractWebTest {
 
     @Autowired
     @Qualifier("mapper")
@@ -34,7 +37,10 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): get user for admin")
     @Test
     public void testGetUser() throws Exception {
-        MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + "/-1")
+        Long id = 1L;
+        when(userService.get(id)).thenReturn(TestConfigurer.getTestUser());
+
+        MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + "/" + id)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
@@ -48,9 +54,18 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): search users by email for admin")
     @Test
     public void testSearchUsersByEmail() throws Exception {
+        String email = "mail.ru";
+        UserSearchForm form = new UserSearchForm();
+        form.setEmail(email);
+        when(userService.searchUsers(form)).thenReturn(
+                TestConfigurer.getUsers()
+                        .stream()
+                        .filter(x -> x.getEmail().contains(email))
+                        .collect(Collectors.toList()));
+
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + SEARCH_URL)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
-                                       .param("email", "mail.ru")
+                                       .param("email", email)
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
@@ -65,10 +80,21 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
     @DisplayName("Test(controller): search users by email and role for admin")
     @Test
     public void testSearchUsersByEmailAndRole() throws Exception {
+        String email = "mail.ru";
+        User.Role role = User.Role.ADMIN;
+        UserSearchForm form = new UserSearchForm();
+        form.setEmail(email);
+        form.setRole(role);
+        when(userService.searchUsers(form)).thenReturn(
+                TestConfigurer.getUsers()
+                              .stream()
+                              .filter(x -> x.getEmail().contains(email) && x.getRole().equals(role))
+                              .collect(Collectors.toList()));
+
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + SEARCH_URL)
                                        .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
-                                       .param("email", "mail.ru")
-                                       .param("role", "ADMIN")
+                                       .param("email", email)
+                                       .param("role", role.name())
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
@@ -88,6 +114,8 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
         form.setName("cname");
         form.setPassword("pass");
         form.setRole(User.Role.USER);
+
+        when(userRepository.existsByEmail("c_user@mail.ru")).thenReturn(false);
 
         this.mockMvc.perform(post(ADMIN_URL + USERS_URL)
                     .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
