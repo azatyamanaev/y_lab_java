@@ -10,9 +10,18 @@
         </sql>
     </changeSet>
 
+    <changeSet id="create-refresh-tokens-sequence" author="azatyamanaev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="refresh_tokens_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="refresh_tokens_seq" schemaName="security" startValue="1" incrementBy="1"/>
+    </changeSet>
+
     <changeSet id="create-refresh-tokens-table" author="azatyamanaev">
         <createTable tableName="refresh_tokens" ifNotExists="true" schemaName="security">
-            <column name="id" type="bigint" defaultValueSequenceNext="habits_seq">
+            <column name="id" type="bigint" defaultValueNumeric="nextval('security.refresh_tokens_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="token" type="varchar(255)">
