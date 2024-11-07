@@ -7,6 +7,8 @@ package ru.ylab.utils.constants;
  */
 public interface WebConstants {
 
+    String JWTOKEN_USER_ACCESS = "user_access_token";
+    String JWTOKEN_ADMIN_ACCESS = "admin_access_token";
     String JWTOKEN_PREFIX = "Bearer ";
     String APP_CONTEXT_PATH = "habits-app";
 

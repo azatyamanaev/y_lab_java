@@ -3,6 +3,8 @@ package ru.ylab.config.datasource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -11,7 +13,6 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.RequiredArgsConstructor;
 import ru.ylab.exception.HttpException;
-import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.settings.LiquibaseSettings;
 import ru.ylab.utils.constants.ErrorConstants;
 
@@ -34,7 +35,7 @@ public class LiquibaseConfig {
      * @param datasource datasource for getting database connection
      * @return Liquibase instance
      */
-    public Liquibase liquibase(CPDataSource datasource) {
+    public Liquibase liquibase(DataSource datasource) {
         try {
             Connection connection = datasource.getConnection();
             Database database = DatabaseFactory.getInstance()

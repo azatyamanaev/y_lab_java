@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.in.HabitSearchForm;
@@ -19,7 +22,6 @@ import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;
 import ru.ylab.services.datasource.CPDataSource;
-import ru.ylab.utils.StringUtil;
 import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.SqlConstants;
 
@@ -36,7 +38,7 @@ public class HabitRepositoryImpl implements HabitRepository {
     /**
      * Instance of a {@link CPDataSource}.
      */
-    private final CPDataSource dataSource;
+    private final DataSource dataSource;
 
     @Override
     public Optional<Habit> find(Long id) {
@@ -101,7 +103,7 @@ public class HabitRepositoryImpl implements HabitRepository {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.SEARCH_HABITS)) {
 
-            String name = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            String name = !StringUtils.isBlank(form.getName()) ? "%" + form.getName() + "%" : null;
             statement.setString(1, name);
             statement.setString(2, name);
 
@@ -153,7 +155,7 @@ public class HabitRepositoryImpl implements HabitRepository {
 
             statement.setLong(1, userId);
 
-            String value = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            String value = !StringUtils.isBlank(form.getName()) ? "%" + form.getName() + "%" : null;
             statement.setString(2, value);
             statement.setString(3, value);
 

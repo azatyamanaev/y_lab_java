@@ -20,7 +20,7 @@ import ru.ylab.utils.constants.ErrorConstants;
  * @author azatyamanaev
  */
 @RequiredArgsConstructor
-@Service("userService")
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

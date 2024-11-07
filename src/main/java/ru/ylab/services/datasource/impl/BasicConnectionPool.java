@@ -8,12 +8,10 @@ import java.util.List;
 
 import javax.annotation.PreDestroy;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import lombok.extern.log4j.Log4j2;
 import ru.ylab.exception.HttpException;
 import ru.ylab.services.datasource.ConnectionPool;
 import ru.ylab.services.datasource.ProxyConnection;
-import ru.ylab.settings.DbSettings;
 import ru.ylab.utils.constants.ErrorConstants;
 
 /**
@@ -21,8 +19,7 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
-@Slf4j
-@Component
+@Log4j2
 public class BasicConnectionPool implements ConnectionPool {
 
     /**
@@ -69,24 +66,26 @@ public class BasicConnectionPool implements ConnectionPool {
      * Creates new BasicConnectionPool and populates connectionPool field
      * with initial pool size number of connections.
      *
-     * @param settings settings for connecting to database
+     * @param url database url
+     * @param username database username
+     * @param password database password
      */
-    public BasicConnectionPool(DbSettings settings) {
+    public BasicConnectionPool(String url, String username, String password) {
         try {
             DriverManager.registerDriver(new org.postgresql.Driver());
         } catch (SQLException e) {
             throw HttpException.databaseAccessError(e.getMessage(), e.getCause())
                                .addDetail(ErrorConstants.REGISTER_ERROR, "driver");
         }
-        this.url = settings.url();
-        this.username = settings.username();
-        this.password = settings.password();
+        this.url = url;
+        this.username = username;
+        this.password = password;
         this.usedConnections = new ArrayList<>();
 
         this.connectionPool = new ArrayList<>(INITIAL_POOL_SIZE);
         try {
             for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
-                connectionPool.add(createConnection(settings.url(), settings.username(), settings.password()));
+                connectionPool.add(createConnection(url, username, password));
             }
         } catch (SQLException e) {
             throw HttpException.databaseAccessError(e.getMessage(), e.getCause())

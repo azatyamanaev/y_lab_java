@@ -38,7 +38,7 @@ public class AuthControllerTest extends AbstractSpringTest {
 
         MvcResult result = this.mockMvc.perform(post(AUTH_URL + SIGN_IN_URL)
                                        .contentType("application/json")
-                                       .content(mapper.writeValueAsString(form)))
+                                       .content(mapper.writeValueAsString(form))).andDo(print())
                                        .andExpect(status().isOk())
                                        .andReturn();
 
@@ -64,7 +64,7 @@ public class AuthControllerTest extends AbstractSpringTest {
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertThat(error).isNotNull();
         assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
-        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.INVALID_PARAMETER);
+        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.INVALID_PARAM);
         assertThat(error.getDetails().get(0).getTarget()).isEqualTo("password");
     }
 
@@ -142,7 +142,6 @@ public class AuthControllerTest extends AbstractSpringTest {
 
         SignInResult response = mapper.readValue(mvcResult.getResponse().getContentAsString(), SignInResult.class);
         this.mockMvc.perform(get(AUTH_URL + REFRESH_TOKEN_URL).param("token", response.refresh()))
-                    .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(result -> assertThat(result.getResponse().getContentAsString()).isNotBlank());
     }

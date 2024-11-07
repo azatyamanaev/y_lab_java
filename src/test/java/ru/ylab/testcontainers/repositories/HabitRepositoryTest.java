@@ -3,9 +3,9 @@ package ru.ylab.testcontainers.repositories;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 import ru.ylab.repositories.HabitRepository;
@@ -15,12 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HabitRepositoryTest extends AbstractSpringTest {
 
+    @Autowired
     private HabitRepository habitRepository;
-
-    @BeforeEach
-    public void setup() {
-        habitRepository = this.appContext.getBean(HabitRepository.class);
-    }
 
     @DisplayName("Test(repository): find habit by id")
     @Test

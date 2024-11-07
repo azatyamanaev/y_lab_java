@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.in.SignUpForm;
@@ -19,7 +22,6 @@ import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
 import ru.ylab.services.datasource.CPDataSource;
-import ru.ylab.utils.StringUtil;
 import ru.ylab.utils.constants.ErrorConstants;
 import ru.ylab.utils.constants.SqlConstants;
 
@@ -36,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
     /**
      * Instance of a {@link CPDataSource}.
      */
-    private final CPDataSource dataSource;
+    private final DataSource dataSource;
 
     @Override
     public Optional<User> find(Long id) {
@@ -106,11 +108,11 @@ public class UserRepositoryImpl implements UserRepository {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(SqlConstants.SEARCH_USERS)) {
 
-            String value = !StringUtil.isEmpty(form.getName()) ? "%" + form.getName() + "%" : null;
+            String value = !StringUtils.isBlank(form.getName()) ? "%" + form.getName() + "%" : null;
             statement.setString(1, value);
             statement.setString(2, value);
 
-            value = !StringUtil.isEmpty(form.getEmail()) ? "%" + form.getEmail() + "%" : null;
+            value = !StringUtils.isBlank(form.getEmail()) ? "%" + form.getEmail() + "%" : null;
             statement.setString(3, value);
             statement.setString(4, value);
 

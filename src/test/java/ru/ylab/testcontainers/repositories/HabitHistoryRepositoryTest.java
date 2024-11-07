@@ -2,9 +2,9 @@ package ru.ylab.testcontainers.repositories;
 
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.models.HabitHistory;
 import ru.ylab.repositories.HabitHistoryRepository;
@@ -14,12 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HabitHistoryRepositoryTest extends AbstractSpringTest {
 
+    @Autowired
     private HabitHistoryRepository historyRepository;
-
-    @BeforeEach
-    public void setUp() {
-        historyRepository = this.appContext.getBean(HabitHistoryRepository.class);
-    }
 
     @DisplayName("Test(repository): get habit history by habit id")
     @Test

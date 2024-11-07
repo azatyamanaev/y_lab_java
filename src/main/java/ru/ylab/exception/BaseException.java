@@ -2,7 +2,7 @@ package ru.ylab.exception;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import ru.ylab.utils.constants.ErrorConstants;
 
 /**

@@ -14,6 +14,7 @@ import ru.ylab.dto.out.UserDto;
 import ru.ylab.models.User;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
+import ru.ylab.utils.constants.WebConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -30,11 +31,11 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
     @Qualifier("mapper")
     private ObjectMapper mapper;
 
-
     @DisplayName("Test(controller): get user for admin")
     @Test
     public void testGetUser() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + "/-1")
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
@@ -48,12 +49,14 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
     @Test
     public void testSearchUsersByEmail() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + SEARCH_URL)
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .param("email", "mail.ru")
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertThat(dtos).isNotNull();
         assertThat(dtos).size().isEqualTo(3);
         assertThat(dtos.get(0).name()).isEqualTo("admin_test");
@@ -63,13 +66,15 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
     @Test
     public void testSearchUsersByEmailAndRole() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + USERS_URL + SEARCH_URL)
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .param("email", "mail.ru")
                                        .param("role", "ADMIN")
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertThat(dtos).isNotNull();
         assertThat(dtos).size().isEqualTo(1);
         assertThat(dtos.get(0).name()).isEqualTo("admin_test");
@@ -85,16 +90,18 @@ public class AdminUsersControllerTest extends AbstractSpringTest {
         form.setRole(User.Role.USER);
 
         this.mockMvc.perform(post(ADMIN_URL + USERS_URL)
-                                       .requestAttr("currentUser", TestConfigurer.getTestAdmin())
-                                       .contentType("application/json")
-                                       .content(mapper.writeValueAsString(form)))
-                                       .andExpect(status().isCreated());
+                    .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
+                    .requestAttr("currentUser", TestConfigurer.getTestAdmin())
+                    .contentType("application/json")
+                    .content(mapper.writeValueAsString(form)))
+                    .andExpect(status().isCreated());
     }
 
     @DisplayName("Test(controller): delete user for admin")
     @Test
     public void testDeleteUser() throws Exception {
         this.mockMvc.perform(delete(ADMIN_URL + USERS_URL + "/-2")
+                    .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                     .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                     .andExpect(status().isNoContent());
     }

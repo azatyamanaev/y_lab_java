@@ -13,7 +13,7 @@ import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import ru.ylab.dto.out.SignInResult;
 import ru.ylab.exception.HttpException;
@@ -31,7 +31,7 @@ import ru.ylab.utils.constants.ErrorConstants;
  *
  * @author azatyamanaev
  */
-@Service("jwtService")
+@Service
 public class JwtServiceImpl implements JwtService {
 
     private SecretKey secretKey;

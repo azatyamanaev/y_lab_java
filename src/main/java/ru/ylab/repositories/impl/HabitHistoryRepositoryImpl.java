@@ -7,8 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 
+import javax.sql.DataSource;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
 import ru.ylab.dto.out.HabitHistoryProjection;
@@ -32,7 +34,7 @@ public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {
     /**
      * Instance of a {@link CPDataSource}.
      */
-    private final CPDataSource dataSource;
+    private final DataSource dataSource;
 
     @Override
     public boolean save(HabitHistory history) {

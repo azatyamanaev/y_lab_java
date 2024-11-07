@@ -1,6 +1,6 @@
 package ru.ylab.repositories;
 
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.models.HabitHistory;
 

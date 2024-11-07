@@ -2,14 +2,12 @@ package ru.ylab.web.controllers;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +19,6 @@ import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.dto.mappers.UserMapper;
 import ru.ylab.dto.out.UserDto;
 import ru.ylab.services.entities.UserService;
-import ru.ylab.services.validation.UserFormValidator;
 
 import static ru.ylab.utils.constants.WebConstants.ADMIN_URL;
 import static ru.ylab.utils.constants.WebConstants.ID_URL;
@@ -41,12 +38,6 @@ public class AdminUsersController {
 
     private final UserMapper userMapper;
     private final UserService userService;
-    private final UserFormValidator userFormValidator;
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(userFormValidator);
-    }
 
     /**
      * Gets user for admin and writes it to response.
@@ -79,7 +70,7 @@ public class AdminUsersController {
      * Creates user for admin and sets created response status.
      */
     @PostMapping
-    public ResponseEntity<Void> createUser(@Validated @RequestBody UserForm form) {
+    public ResponseEntity<Void> createUser(@Valid @RequestBody UserForm form) {
         userService.createByAdmin(form);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

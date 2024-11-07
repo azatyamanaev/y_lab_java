@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
         if (passwordService.verifyPassword(form.getPassword(), user.getPassword())) {
             return jwtService.createToken(user);
         } else {
-            throw HttpException.badRequest().addDetail(ErrorConstants.INVALID_PARAMETER, "password");
+            throw HttpException.badRequest().addDetail(ErrorConstants.INVALID_PARAM, "password");
         }
     }
 

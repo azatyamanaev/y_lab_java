@@ -1,13 +1,9 @@
 package ru.ylab.web.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Qualifier;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +14,6 @@ import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.out.SignInResult;
 import ru.ylab.services.auth.AuthService;
 import ru.ylab.services.auth.JwtService;
-import ru.ylab.services.validation.SignInFormValidator;
-import ru.ylab.services.validation.SignUpFormValidator;
 
 import static ru.ylab.utils.constants.WebConstants.AUTH_URL;
 import static ru.ylab.utils.constants.WebConstants.REFRESH_TOKEN_URL;
@@ -31,34 +25,13 @@ import static ru.ylab.utils.constants.WebConstants.SIGN_UP_URL;
  *
  * @author azatyamanaev
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(AUTH_URL)
 public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
-    private final SignInFormValidator signInFormValidator;
-    private final SignUpFormValidator signUpFormValidator;
-
-    public AuthController(AuthService authService, JwtService jwtService,
-                          SignInFormValidator signInFormValidator,
-                          @Qualifier("signUpFormValidator") SignUpFormValidator signUpFormValidator) {
-        this.authService = authService;
-        this.jwtService = jwtService;
-        this.signInFormValidator = signInFormValidator;
-        this.signUpFormValidator = signUpFormValidator;
-    }
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        if (binder.getTarget() == null) return;
-        List.of(signInFormValidator, signUpFormValidator)
-            .forEach(x -> {
-                if (x.supports(binder.getTarget().getClass())) {
-                    binder.addValidators(x);
-                }
-            });
-    }
 
     /**
      * Gets new access token for user and writes it to response.
@@ -72,7 +45,7 @@ public class AuthController {
      * Signs in user and writes access and refresh tokens to response.
      */
     @PostMapping(SIGN_IN_URL)
-    public ResponseEntity<SignInResult> signIn(@Validated @RequestBody SignInForm form) {
+    public ResponseEntity<SignInResult> signIn(@Valid @RequestBody SignInForm form) {
         SignInResult signInResult = authService.signIn(form);
         return ResponseEntity.ok(signInResult);
     }
@@ -81,7 +54,7 @@ public class AuthController {
      * Signs up user and writes access and refresh tokens to response.
      */
     @PostMapping(SIGN_UP_URL)
-    public ResponseEntity<SignInResult> signUp(@Validated @RequestBody SignUpForm form) {
+    public ResponseEntity<SignInResult> signUp(@Valid @RequestBody SignUpForm form) {
         SignInResult signInResult = authService.signUp(form);
         return ResponseEntity.ok(signInResult);
     }

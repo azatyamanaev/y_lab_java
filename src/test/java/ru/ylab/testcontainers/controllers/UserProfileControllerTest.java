@@ -10,6 +10,7 @@ import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.out.UserDto;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
+import ru.ylab.utils.constants.WebConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -29,6 +30,7 @@ public class UserProfileControllerTest extends AbstractSpringTest {
     @Test
     public void testGetProfile() throws Exception {
         MvcResult result = this.mockMvc.perform(get(USER_URL + SELF_URL)
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
                                        .requestAttr("currentUser", TestConfigurer.getTestUser()))
                                        .andExpect(status().isOk())
                                        .andReturn();
@@ -47,6 +49,7 @@ public class UserProfileControllerTest extends AbstractSpringTest {
         form.setPassword("1234");
 
         this.mockMvc.perform(put(USER_URL + SELF_URL)
+                    .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
                     .requestAttr("currentUser", TestConfigurer.getTestUser())
                     .contentType("application/json")
                     .content(mapper.writeValueAsString(form)))
@@ -57,6 +60,7 @@ public class UserProfileControllerTest extends AbstractSpringTest {
     @Test
     public void testDeleteProfile() throws Exception {
         this.mockMvc.perform(delete(USER_URL + SELF_URL)
+                    .header("Authorization", "Bearer " + WebConstants.JWTOKEN_USER_ACCESS)
                     .requestAttr("currentUser", TestConfigurer.getTestUser()))
                     .andExpect(status().isNoContent());
     }

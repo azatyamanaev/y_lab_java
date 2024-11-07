@@ -2,9 +2,9 @@ package ru.ylab.testcontainers.repositories;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;
@@ -15,12 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserRepositoryTest extends AbstractSpringTest {
 
+    @Autowired
     private UserRepository userRepository;
-
-    @BeforeEach
-    public void setup() {
-        userRepository = this.appContext.getBean(UserRepository.class);
-    }
 
     @DisplayName("Test(repository): find user by id")
     @Test

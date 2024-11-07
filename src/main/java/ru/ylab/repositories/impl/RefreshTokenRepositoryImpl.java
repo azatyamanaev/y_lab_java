@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.ylab.aspects.LogQuery;
@@ -30,7 +32,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     /**
      * Instance of a {@link CPDataSource}.
      */
-    private final CPDataSource dataSource;
+    private final DataSource dataSource;
 
     @Override
     public Optional<RefreshToken> findByToken(String token) {

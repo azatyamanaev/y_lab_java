@@ -55,7 +55,7 @@ public class HabitHistoryController {
      */
     @PutMapping(ID_URL)
     public ResponseEntity<Void> markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
-                                                     @RequestParam("completed_on") LocalDate completedOn) {
+                                                   @RequestParam("completed_on") LocalDate completedOn) {
         habitHistoryService.markHabitCompleted(user.getId(), id, completedOn);
         return ResponseEntity.noContent().build();
     }

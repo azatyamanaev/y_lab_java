@@ -24,15 +24,17 @@ services:
     networks:
       - ylab
 
-  tomcat:
-    container_name: tomcat
+  habits-app:
+    container_name: habits-app
     image: ylab-app
     build:
-      context: ./docker/tomcat
+      context: docker/habits-app
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: "dev"
     depends_on:
       postgres-db:
         condition: service_healthy

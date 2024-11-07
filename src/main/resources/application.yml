@@ -1,4 +1,13 @@
 ---
+# SERVER
+server:
+  port: 8080
+
+# APP
+spring:
+  profiles:
+    active:
+
 # LIQUIBASE
 liquibase:
   changelog-path: "db/changelog/changelog.xml"
@@ -17,4 +26,8 @@ jwt:
   refresh-token-expiration: 14
   role-key: "role"
   secret-string: "habits-app-yLRdtN3NsFRHKkThmB6EN2QXLxXGTPa7bgzx0pY72"
+
+# Logging
+logging:
+  config: "classpath:log4j2.xml"
 ---

@@ -7,12 +7,11 @@ package ru.ylab.utils.constants;
  */
 public interface ErrorConstants {
 
-    String ERROR_HANDLER_NAME = "errorHandler";
     String ERROR_HANDLER_URL = "/error-handler";
     String AUTHORIZATION_EMPTY = "Authorization header missing";
     String NOT_FOUND = "Resource not found";
     String TOKEN_EXPIRED = "Token expired";
-    String INVALID_PARAMETER = "Invalid parameter";
+    String INVALID_PARAM = "Invalid parameter";
     String VALIDATION_ERROR = "Validation error";
     String EMPTY_PARAM = "Empty parameter";
     String ALREADY_EXISTS = "Already exists";

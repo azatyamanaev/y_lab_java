@@ -13,6 +13,7 @@ import ru.ylab.dto.out.HabitDto;
 import ru.ylab.models.Habit;
 import ru.ylab.testcontainers.config.AbstractSpringTest;
 import ru.ylab.testcontainers.config.TestConfigurer;
+import ru.ylab.utils.constants.WebConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,6 +32,7 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
     @Test
     public void testGetHabit() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + HABITS_URL + "/-1")
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
@@ -44,6 +46,7 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
     @Test
     public void testGetHabits() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + HABITS_URL)
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
                                        .andReturn();
@@ -57,6 +60,7 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
     @Test
     public void testSearchHabitsByName() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + HABITS_URL + SEARCH_URL)
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .param("name", "hb")
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())
@@ -72,6 +76,7 @@ public class AdminHabitsControllerTest extends AbstractSpringTest {
     @Test
     public void testSearchHabitsByFrequency() throws Exception {
         MvcResult result = this.mockMvc.perform(get(ADMIN_URL + HABITS_URL + SEARCH_URL)
+                                       .header("Authorization", "Bearer " + WebConstants.JWTOKEN_ADMIN_ACCESS)
                                        .param("frequency", "DAILY")
                                        .requestAttr("currentUser", TestConfigurer.getTestAdmin()))
                                        .andExpect(status().isOk())

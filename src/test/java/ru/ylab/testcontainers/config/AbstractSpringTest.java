@@ -6,24 +6,22 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.containers.PostgreSQLContainer;
+import ru.ylab.WebApplication;
 import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.utils.constants.AppConstants;
 
 @ActiveProfiles(AppConstants.TEST_PROFILE)
-@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = WebApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestAppConfig.class})
-@WebAppConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public abstract class AbstractSpringTest {
 
@@ -41,12 +39,13 @@ public abstract class AbstractSpringTest {
     }
 
     @Autowired
-    protected WebApplicationContext appContext;
+    private WebApplicationContext appContext;
     protected MockMvc mockMvc;
 
     @BeforeEach
-    public void insertData() throws SQLException, FileNotFoundException {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.appContext).build();
+    public void setUp() throws SQLException, FileNotFoundException {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(appContext).build();
+
         TestConfigurer.executeScript(this.appContext.getBean(CPDataSource.class),
                 "./src/test/resources/db/delete_test_data.sql");
         TestConfigurer.executeScript(this.appContext.getBean(CPDataSource.class),
