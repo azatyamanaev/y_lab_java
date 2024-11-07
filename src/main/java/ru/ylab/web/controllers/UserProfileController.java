@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.aspects.LogRequest;
+import ru.ylab.auditstarter.aspects.LogRequest;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.mappers.UserMapper;
 import ru.ylab.dto.out.UserDto;

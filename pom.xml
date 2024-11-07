@@ -54,6 +54,12 @@
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>ru.ylab</groupId>
+      <artifactId>audit-spring-boot-starter</artifactId>
+      <version>1.0</version>
+    </dependency>
+
     <!-- Validation -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

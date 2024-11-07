@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.ylab.aspects.LogQuery;
+import ru.ylab.auditstarter.aspects.LogQuery;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.RefreshToken;
 import ru.ylab.repositories.RefreshTokenRepository;

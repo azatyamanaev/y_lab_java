@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.aspects.LogRequest;
+import ru.ylab.auditstarter.aspects.LogRequest;
 import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.mappers.HabitMapper;

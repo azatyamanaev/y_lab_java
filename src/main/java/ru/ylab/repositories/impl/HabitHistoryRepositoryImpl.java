@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.ylab.aspects.LogQuery;
+import ru.ylab.auditstarter.aspects.LogQuery;
 import ru.ylab.dto.out.HabitHistoryProjection;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.HabitHistory;

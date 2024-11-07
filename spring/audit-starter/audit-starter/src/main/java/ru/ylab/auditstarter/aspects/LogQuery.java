@@ -1,4 +1,4 @@
-package ru.ylab.aspects;
+package ru.ylab.auditstarter.aspects;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

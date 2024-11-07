@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
-import ru.ylab.aspects.LogQuery;
+import ru.ylab.auditstarter.aspects.LogQuery;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.Habit;
