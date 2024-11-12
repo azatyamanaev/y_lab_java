@@ -3,6 +3,7 @@ package ru.ylab.core.testcontainers.repositories;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class HabitRepositoryTest extends AbstractDbTest {
         HabitSearchForm form = new HabitSearchForm();
         form.setName("h1");
         List<Habit> habits = habitRepository.search(form);
-        assertThat(habits).size().isEqualTo(1);
+        assertThat(habits).hasSize(1);
         assertThat(habits.get(0).getName()).startsWith("h1");
     }
 
@@ -46,19 +47,23 @@ public class HabitRepositoryTest extends AbstractDbTest {
         HabitSearchForm form = new HabitSearchForm();
         form.setFrequency(Habit.Frequency.WEEKLY);
         List<Habit> habits = habitRepository.search(form);
-        assertThat(habits).size().isEqualTo(2);
-        assertThat(habits.get(0).getFrequency()).isEqualTo(Habit.Frequency.WEEKLY);
-        assertThat(habits.get(1).getFrequency()).isEqualTo(Habit.Frequency.WEEKLY);
+        assertThat(habits).hasSize(2);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(habits.get(0).getFrequency()).isEqualTo(Habit.Frequency.WEEKLY);
+            softly.assertThat(habits.get(1).getFrequency()).isEqualTo(Habit.Frequency.WEEKLY);
+        });
     }
 
     @DisplayName("Test(repository): get all habits for user")
     @Test
     public void testGetAllForUser() {
         List<Habit> habits = habitRepository.getAllForUser(-1L);
-        assertThat(habits).size().isEqualTo(3);
-        assertThat((long) habits.get(0).getUserId()).isEqualTo(-1L);
-        assertThat((long) habits.get(1).getUserId()).isEqualTo(-1L);
-        assertThat((long) habits.get(2).getUserId()).isEqualTo(-1L);
+        assertThat(habits).hasSize(3);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat((long) habits.get(0).getUserId()).isEqualTo(-1L);
+            softly.assertThat((long) habits.get(1).getUserId()).isEqualTo(-1L);
+            softly.assertThat((long) habits.get(2).getUserId()).isEqualTo(-1L);
+        });
     }
 
     @DisplayName("Test(repository): search habits for user by frequency")
@@ -67,7 +72,7 @@ public class HabitRepositoryTest extends AbstractDbTest {
         HabitSearchForm form = new HabitSearchForm();
         form.setFrequency(Habit.Frequency.WEEKLY);
         List<Habit> habits = habitRepository.searchForUser(-1L, form);
-        assertThat(habits).size().isEqualTo(1);
+        assertThat(habits).hasSize(1);
         assertThat(habits.get(0).getFrequency()).isEqualTo(Habit.Frequency.WEEKLY);
     }
 
@@ -77,7 +82,7 @@ public class HabitRepositoryTest extends AbstractDbTest {
         HabitSearchForm form = new HabitSearchForm();
         form.setName("hab");
         List<Habit> habits = habitRepository.searchForUser(-2L, form);
-        assertThat(habits).size().isEqualTo(0);
+        assertThat(habits).hasSize(0);
     }
 
     @DisplayName("Test(repository): save habit")

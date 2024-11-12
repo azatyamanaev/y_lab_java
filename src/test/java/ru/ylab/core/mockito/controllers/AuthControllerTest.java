@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,10 @@ public class AuthControllerTest extends AbstractWebTest {
 
         SignInResult res = mapper.readValue(result.getResponse().getContentAsString(), SignInResult.class);
         assertThat(res).isNotNull();
-        assertThat(res.access()).isNotNull();
-        assertThat(res.refresh()).isNotNull();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(res.access()).isNotNull();
+            softly.assertThat(res.refresh()).isNotNull();
+        });
     }
 
     @DisplayName("Test(controller): sign in fail on incorrect password")
@@ -76,9 +79,11 @@ public class AuthControllerTest extends AbstractWebTest {
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertThat(error).isNotNull();
-        assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
-        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.INVALID_PARAM);
-        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("password");
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
+            softly.assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.INVALID_PARAM);
+            softly.assertThat(error.getDetails().get(0).getTarget()).isEqualTo("password");
+        });
     }
 
     @DisplayName("Test(controller): sign in fail on user not found")
@@ -99,9 +104,11 @@ public class AuthControllerTest extends AbstractWebTest {
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertThat(error).isNotNull();
-        assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
-        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.NOT_FOUND);
-        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("user");
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
+            softly.assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.NOT_FOUND);
+            softly.assertThat(error.getDetails().get(0).getTarget()).isEqualTo("user");
+        });
     }
 
     @DisplayName("Test(controller): sign up")
@@ -129,8 +136,10 @@ public class AuthControllerTest extends AbstractWebTest {
 
         SignInResult res = mapper.readValue(result.getResponse().getContentAsString(), SignInResult.class);
         assertThat(res).isNotNull();
-        assertThat(res.access()).isNotNull();
-        assertThat(res.refresh()).isNotNull();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(res.access()).isNotNull();
+            softly.assertThat(res.refresh()).isNotNull();
+        });
     }
 
     @DisplayName("Test(controller): sign up fail on empty name")
@@ -148,9 +157,11 @@ public class AuthControllerTest extends AbstractWebTest {
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertThat(error).isNotNull();
-        assertThat(error.getMessage()).isEqualTo(ErrorConstants.VALIDATION_ERROR);
-        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.EMPTY_PARAM);
-        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("name");
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(error.getMessage()).isEqualTo(ErrorConstants.VALIDATION_ERROR);
+            softly.assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.EMPTY_PARAM);
+            softly.assertThat(error.getDetails().get(0).getTarget()).isEqualTo("name");
+        });
     }
 
     @DisplayName("Test(controller): refresh access token")

@@ -48,7 +48,7 @@ public class UserRepositoryTest extends AbstractDbTest {
         UserSearchForm form = new UserSearchForm();
         form.setRole(User.Role.ADMIN);
         List<User> users = userRepository.search(form);
-        assertThat(users).size().isEqualTo(1);
+        assertThat(users).hasSize(1);
         assertThat(users.get(0).getRole()).isEqualTo(User.Role.ADMIN);
     }
 
@@ -58,7 +58,7 @@ public class UserRepositoryTest extends AbstractDbTest {
         UserSearchForm form = new UserSearchForm();
         form.setEmail("admin_test");
         List<User> users = userRepository.search(form);
-        assertThat(users).size().isEqualTo(1);
+        assertThat(users).hasSize(1);
         assertThat(users.get(0).getEmail()).startsWith("admin_test");
     }
 

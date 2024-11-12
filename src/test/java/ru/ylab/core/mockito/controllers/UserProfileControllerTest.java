@@ -41,8 +41,7 @@ public class UserProfileControllerTest extends AbstractWebTest {
                                        .andReturn();
 
         UserDto dto = mapper.readValue(result.getResponse().getContentAsString(), UserDto.class);
-        assertThat(dto).isNotNull();
-        assertThat(dto.name()).isEqualTo("user1");
+        assertThat(dto).hasFieldOrPropertyWithValue("name", "user1");
     }
 
     @DisplayName("Test(controller): update profile for user")

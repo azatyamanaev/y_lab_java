@@ -47,8 +47,7 @@ public class AdminUsersControllerTest extends AbstractWebTest {
                                        .andReturn();
 
         UserDto dto = mapper.readValue(result.getResponse().getContentAsString(), UserDto.class);
-        assertThat(dto).isNotNull();
-        assertThat(dto.email()).isEqualTo("a_test@mail.ru");
+        assertThat(dto).hasFieldOrPropertyWithValue("email", "a_test@mail.ru");
     }
 
     @DisplayName("Test(controller): search users by email for admin")
@@ -70,10 +69,9 @@ public class AdminUsersControllerTest extends AbstractWebTest {
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(3);
+        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {});
+        assertThat(dtos).hasSize(3);
         assertThat(dtos.get(0).name()).isEqualTo("admin_test");
     }
 
@@ -99,10 +97,9 @@ public class AdminUsersControllerTest extends AbstractWebTest {
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(1);
+        List<UserDto> dtos = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {});
+        assertThat(dtos).hasSize(1);
         assertThat(dtos.get(0).name()).isEqualTo("admin_test");
     }
 

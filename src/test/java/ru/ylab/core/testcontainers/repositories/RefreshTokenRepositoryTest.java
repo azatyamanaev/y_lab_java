@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,10 @@ public class RefreshTokenRepositoryTest extends AbstractDbTest {
     public void testFindByToken() {
         Optional<RefreshToken> token = tokenRepository.findByToken("token");
         assertThat(token).isPresent();
-        assertThat(token.get().getToken()).isEqualTo("token");
-        assertThat(token.get().getUserId()).isEqualTo(-1L);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(token.get().getToken()).isEqualTo("token");
+            softly.assertThat(token.get().getUserId()).isEqualTo(-1L);
+        });
     }
 
     @Test

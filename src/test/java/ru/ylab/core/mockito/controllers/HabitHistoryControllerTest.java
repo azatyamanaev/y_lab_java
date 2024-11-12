@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,10 @@ public class HabitHistoryControllerTest extends AbstractWebTest {
 
         HabitHistoryProjection dto = mapper.readValue(result.getResponse().getContentAsString(), HabitHistoryProjection.class);
         assertThat(dto).isNotNull();
-        assertThat(dto.getHabitName()).isEqualTo("h1_test");
-        assertThat(dto.getDays()).size().isEqualTo(3);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(dto.getHabitName()).isEqualTo("h1_test");
+            softly.assertThat(dto.getDays()).size().isEqualTo(3);
+        });
     }
 
     @DisplayName("Test(controller): mark habit completed for user")
@@ -81,9 +84,13 @@ public class HabitHistoryControllerTest extends AbstractWebTest {
 
         List<HabitCompletionStreak> dtos = mapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {});
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(3);
-        assertThat(dtos).contains(new HabitCompletionStreak("h1_test", 1));
+        assertThat(dtos).hasSize(3);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(dtos).contains(new HabitCompletionStreak("h1_test", 1));
+            softly.assertThat(dtos).contains(new HabitCompletionStreak("h2_test", 0));
+            softly.assertThat(dtos).contains(new HabitCompletionStreak("h3_test", 0));
+        });
+
     }
 
     @DisplayName("Test(controller): get habits percentage for user")
@@ -108,9 +115,11 @@ public class HabitHistoryControllerTest extends AbstractWebTest {
 
         List<HabitCompletionPercent> dtos = mapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {});
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(3);
-        assertThat(dtos.get(2).percent()).isEqualTo("0%");
+        assertThat(dtos).hasSize(3);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(dtos.get(1).percent()).isEqualTo("0%");
+            softly.assertThat(dtos.get(2).percent()).isEqualTo("0%");
+        });
     }
 
     @DisplayName("Test(controller): get habits report for user")
@@ -128,8 +137,11 @@ public class HabitHistoryControllerTest extends AbstractWebTest {
 
         List<HabitHistoryProjection> dtos = mapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {});
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(3);
-        assertThat(dtos.get(0).getDays()).isNotEmpty();
+        assertThat(dtos).hasSize(3);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(dtos.get(0).getDays()).hasSize(3);
+            softly.assertThat(dtos.get(1).getDays()).isEmpty();
+            softly.assertThat(dtos.get(2).getDays()).isEmpty();
+        });
     }
 }

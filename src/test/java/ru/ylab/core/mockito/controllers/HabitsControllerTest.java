@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,7 @@ public class HabitsControllerTest extends AbstractWebTest {
                                        .andReturn();
 
         HabitDto dto = mapper.readValue(result.getResponse().getContentAsString(), HabitDto.class);
-        assertThat(dto).isNotNull();
-        assertThat(dto.name()).isEqualTo("h1_test");
+        assertThat(dto).hasFieldOrPropertyWithValue("name", "h1_test");
     }
 
     @DisplayName("Test(controller): fail get habit for user not author")
@@ -73,9 +73,11 @@ public class HabitsControllerTest extends AbstractWebTest {
 
         Error error = mapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertThat(error).isNotNull();
-        assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
-        assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.NOT_AUTHOR);
-        assertThat(error.getDetails().get(0).getTarget()).isEqualTo("user");
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(error.getMessage()).isEqualTo(ErrorConstants.BAD_REQUEST);
+            softly.assertThat(error.getDetails().get(0).getType()).isEqualTo(ErrorConstants.NOT_AUTHOR);
+            softly.assertThat(error.getDetails().get(0).getTarget()).isEqualTo("user");
+        });
     }
 
     @DisplayName("Test(controller): get habits for user")
@@ -95,10 +97,9 @@ public class HabitsControllerTest extends AbstractWebTest {
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(3);
+        List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {});
+        assertThat(dtos).hasSize(3);
     }
 
     @DisplayName("Test(controller): search habits by name for user")
@@ -123,10 +124,9 @@ public class HabitsControllerTest extends AbstractWebTest {
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(1);
+        List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {});
+        assertThat(dtos).hasSize(1);
         assertThat(dtos.get(0).name()).startsWith("h1");
     }
 
@@ -151,10 +151,9 @@ public class HabitsControllerTest extends AbstractWebTest {
                                        .andExpect(status().isOk())
                                        .andReturn();
 
-        List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
-        assertThat(dtos).isNotNull();
-        assertThat(dtos).size().isEqualTo(1);
+        List<HabitDto> dtos = mapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {});
+        assertThat(dtos).hasSize(1);
         assertThat(dtos.get(0).frequency()).isEqualTo(Habit.Frequency.WEEKLY);
     }
 
