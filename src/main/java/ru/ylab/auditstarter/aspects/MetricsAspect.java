@@ -7,20 +7,25 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Aspect for calculating method execution time.
+ *
+ * @author azatyamanaev
+ */
 @Aspect
 public class MetricsAspect {
 
     private static Logger logger = LoggerFactory.getLogger(MetricsAspect.class);
 
     @Pointcut("within(@ru.ylab.auditstarter.annotations.CalculateExecution *)")
-    public void annotatedWithLogQuery() {
+    public void annotatedWithCalculateExecution() {
     }
 
     @Pointcut("execution(public * *(..))")
     public void publicMethod() {
     }
 
-    @Around("annotatedWithLogQuery() && publicMethod()")
+    @Around("annotatedWithCalculateExecution() && publicMethod()")
     public Object calculateDatabaseRequestExecution(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();
