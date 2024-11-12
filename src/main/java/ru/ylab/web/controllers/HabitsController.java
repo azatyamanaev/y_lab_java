@@ -2,14 +2,12 @@ package ru.ylab.web.controllers;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,14 +15,13 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.aspects.LogRequest;
+import ru.spring.auditstarter.annotations.AuditRequest;
 import ru.ylab.dto.in.HabitForm;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.mappers.HabitMapper;
 import ru.ylab.dto.out.HabitDto;
 import ru.ylab.models.User;
 import ru.ylab.services.entities.HabitService;
-import ru.ylab.services.validation.HabitFormValidator;
 
 import static ru.ylab.utils.constants.WebConstants.HABITS_URL;
 import static ru.ylab.utils.constants.WebConstants.ID_URL;
@@ -36,7 +33,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
-@LogRequest
+@AuditRequest
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(USER_URL + HABITS_URL)
@@ -44,12 +41,6 @@ public class HabitsController {
 
     private final HabitMapper habitMapper;
     private final HabitService habitService;
-    private final HabitFormValidator habitFormValidator;
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(habitFormValidator);
-    }
 
     /**
      * Gets habit for user and writes it to response.
@@ -84,7 +75,7 @@ public class HabitsController {
      */
     @PostMapping
     public ResponseEntity<Void> createHabit(@RequestAttribute("currentUser") User user,
-                                              @Validated @RequestBody HabitForm form) {
+                                            @Valid @RequestBody HabitForm form) {
         habitService.create(user.getId(), form);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -94,8 +85,8 @@ public class HabitsController {
      */
     @PutMapping(ID_URL)
     public ResponseEntity<Void> updateHabit(@PathVariable("id") Long id,
-                                              @RequestAttribute("currentUser") User user,
-                                              @Validated @RequestBody HabitForm form) {
+                                            @RequestAttribute("currentUser") User user,
+                                            @Valid @RequestBody HabitForm form) {
         habitService.updateForUser(user.getId(), id, form);
         return ResponseEntity.noContent().build();
     }
@@ -105,7 +96,7 @@ public class HabitsController {
      */
     @DeleteMapping(ID_URL)
     public ResponseEntity<Void> deleteHabit(@PathVariable("id") Long id,
-                                              @RequestAttribute("currentUser") User user) {
+                                            @RequestAttribute("currentUser") User user) {
         habitService.deleteForUser(user.getId(), id);
         return ResponseEntity.noContent().build();
     }

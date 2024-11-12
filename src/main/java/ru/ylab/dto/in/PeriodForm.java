@@ -3,6 +3,7 @@ package ru.ylab.dto.in;
 import java.time.LocalDate;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springdoc.core.annotations.ParameterObject;
@@ -15,6 +16,7 @@ import org.springdoc.core.annotations.ParameterObject;
 @Setter
 @Getter
 @ParameterObject
+@EqualsAndHashCode
 public class PeriodForm {
 
     /**

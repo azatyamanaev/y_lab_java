@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.aspects.LogRequest;
+import ru.spring.auditstarter.annotations.AuditRequest;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.dto.mappers.HabitMapper;
 import ru.ylab.dto.out.HabitDto;
@@ -24,7 +24,7 @@ import static ru.ylab.utils.constants.WebConstants.SEARCH_URL;
  *
  * @author azatyamanaev
  */
-@LogRequest
+@AuditRequest
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(ADMIN_URL + HABITS_URL)

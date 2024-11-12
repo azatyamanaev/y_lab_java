@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.ylab.utils.constants.ErrorConstants;
 
-@Slf4j
+@Log4j2
 @RestControllerAdvice(annotations = RestController.class)
 public class GlobalExceptionHandler {
 
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
     private ErrorDetail extractDetail(FieldError fieldError) {
         return ErrorDetail.builder()
-                          .type(fieldError.getCode())
+                          .type(fieldError.getDefaultMessage())
                           .target(fieldError.getField())
                           .build();
     }
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
                              .body(Error.builder()
                                         .message(ErrorConstants.BAD_REQUEST)
                                         .details(List.of(ErrorDetail.builder()
-                                                                    .type(ErrorConstants.INVALID_PARAMETER)
+                                                                    .type(ErrorConstants.INVALID_PARAM)
                                                                     .target("request body")
                                                                     .build()))
                                         .build());
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
                              .body(Error.builder()
                                         .message(ErrorConstants.BAD_REQUEST)
                                         .details(List.of(ErrorDetail.builder()
-                                                                    .type(ErrorConstants.INVALID_PARAMETER)
+                                                                    .type(ErrorConstants.INVALID_PARAM)
                                                                     .target("request parameter")
                                                                     .build()))
                                         .build());

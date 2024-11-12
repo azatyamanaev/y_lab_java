@@ -7,5 +7,6 @@
     <include file="V001-create-sequences.xml" author="azatyamanaev" relativeToChangelogFile="true"/>
     <include file="V002-create-entity-tables.xml" author="azatyamanaev" relativeToChangelogFile="true"/>
     <include file="V003-create-refresh-tokens-table.xml" author="azatyamanaev" relativeToChangelogFile="true"/>
+    <include file="V004-create-user-requests-table.xml" author="azatyamanaev" relativeToChangelogFile="true"/>
     <include file="R001-insert-data.xml" author="azatyamanaev" relativeToChangelogFile="true"/>
 </databaseChangeLog>

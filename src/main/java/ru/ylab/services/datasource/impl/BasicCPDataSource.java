@@ -3,8 +3,6 @@ package ru.ylab.services.datasource.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import ru.ylab.services.datasource.CPDataSource;
 import ru.ylab.services.datasource.ConnectionPool;
 
@@ -13,8 +11,6 @@ import ru.ylab.services.datasource.ConnectionPool;
  *
  * @author azatyamanaev
  */
-@Component
-@RequiredArgsConstructor
 public class BasicCPDataSource implements CPDataSource {
 
     /**
@@ -26,6 +22,17 @@ public class BasicCPDataSource implements CPDataSource {
      * Connection pool, associated with this datasource.
      */
     private final ConnectionPool connectionPool;
+
+    /**
+     * Creates new BasicCPDatasource.
+     *
+     * @param url database url
+     * @param username database username
+     * @param password database password
+     */
+    public BasicCPDataSource(String url, String username, String password) {
+        this.connectionPool = new BasicConnectionPool(url, username, password);
+    }
 
     @Override
     public Connection getConnection() throws SQLException {
@@ -48,5 +55,15 @@ public class BasicCPDataSource implements CPDataSource {
      */
     private void configureConnection(Connection connection) throws SQLException {
         connection.setAutoCommit(autoCommit);
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
     }
 }

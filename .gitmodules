@@ -1,0 +1,8 @@
+[submodule "spring-boot/audit-starter"]
+	path = spring-boot/audit-starter
+	url = https://github.com/azatyamanaev/y_lab_java.git
+	branch = audit-starter
+[submodule "spring-boot/swagger-starter"]
+	path = spring-boot/swagger-starter
+	url = https://github.com/azatyamanaev/y_lab_java.git
+	branch = swagger-starter

@@ -11,7 +11,7 @@ values (-1, 'h1_test', 'd1', 'DAILY', to_date('2024-10-01', 'YYYY/MM/DD'), -1),
        (-5, 'hb_2test', 'ds2', 'MONTHLY', to_date('2024-05-01', 'YYYY/MM/DD'), -2);
 
 insert into entity.habit_history(user_id, habit_id, completed_on)
-values (-1, -1, to_date('2024-10-01', 'YYYY/MM/DD')),
+values (-1, -1, to_date('2024-10-02', 'YYYY/MM/DD')),
        (-1, -1, to_date('2024-10-05', 'YYYY/MM/DD')),
        (-1, -1, to_date('2024-10-10', 'YYYY/MM/DD')),
        (-2, -4, to_date('2024-09-10', 'YYYY/MM/DD')),

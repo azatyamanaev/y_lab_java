@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.aspects.LogRequest;
+import ru.spring.auditstarter.annotations.AuditRequest;
 import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.dto.out.HabitCompletionPercent;
 import ru.ylab.dto.out.HabitCompletionStreak;
@@ -32,7 +32,7 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
-@LogRequest
+@AuditRequest
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(USER_URL + HABIT_HISTORY_URL)
@@ -55,7 +55,7 @@ public class HabitHistoryController {
      */
     @PutMapping(ID_URL)
     public ResponseEntity<Void> markHabitCompleted(@PathVariable("id") Long id, @RequestAttribute("currentUser") User user,
-                                                     @RequestParam("completed_on") LocalDate completedOn) {
+                                                   @RequestParam("completed_on") LocalDate completedOn) {
         habitHistoryService.markHabitCompleted(user.getId(), id, completedOn);
         return ResponseEntity.noContent().build();
     }

@@ -1,24 +1,21 @@
 package ru.ylab.web.controllers;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.aspects.LogRequest;
+import ru.spring.auditstarter.annotations.AuditRequest;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.mappers.UserMapper;
 import ru.ylab.dto.out.UserDto;
 import ru.ylab.models.User;
 import ru.ylab.services.entities.UserService;
-import ru.ylab.services.validation.SignUpFormValidator;
 
 import static ru.ylab.utils.constants.WebConstants.SELF_URL;
 import static ru.ylab.utils.constants.WebConstants.USER_URL;
@@ -28,26 +25,14 @@ import static ru.ylab.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
-@LogRequest
+@AuditRequest
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(USER_URL + SELF_URL)
 public class UserProfileController {
 
     private final UserMapper userMapper;
     private final UserService userService;
-    private final SignUpFormValidator signUpFormValidator;
-
-    public UserProfileController(UserMapper userMapper, UserService userService,
-                                 @Qualifier("signUpFormValidator") SignUpFormValidator signUpFormValidator) {
-        this.userMapper = userMapper;
-        this.userService = userService;
-        this.signUpFormValidator = signUpFormValidator;
-    }
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(signUpFormValidator);
-    }
 
     /**
      * Gets user data for user and writes it to response.
@@ -63,7 +48,7 @@ public class UserProfileController {
      */
     @PutMapping
     public ResponseEntity<Void> updateProfile(@RequestAttribute("currentUser") User user,
-                                                @Validated @RequestBody SignUpForm form) {
+                                                @Valid @RequestBody SignUpForm form) {
         userService.update(user.getId(), form);
         return ResponseEntity.noContent().build();
     }

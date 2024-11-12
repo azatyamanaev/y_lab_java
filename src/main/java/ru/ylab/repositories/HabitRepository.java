@@ -3,7 +3,7 @@ package ru.ylab.repositories;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import ru.ylab.dto.in.HabitSearchForm;
 import ru.ylab.models.Habit;
 

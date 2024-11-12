@@ -9,7 +9,9 @@ import ru.ylab.dto.in.UserForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.exception.HttpException;
 import ru.ylab.models.User;
+import ru.ylab.models.UserRequest;
 import ru.ylab.repositories.UserRepository;
+import ru.ylab.repositories.UserRequestRepository;
 import ru.ylab.services.auth.PasswordService;
 import ru.ylab.services.entities.UserService;
 import ru.ylab.utils.constants.ErrorConstants;
@@ -20,11 +22,12 @@ import ru.ylab.utils.constants.ErrorConstants;
  * @author azatyamanaev
  */
 @RequiredArgsConstructor
-@Service("userService")
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordService passwordService;
+    private final UserRequestRepository userRequestRepository;
 
     @Override
     public User get(Long id) {
@@ -73,5 +76,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Long userId) {
         userRepository.delete(userId);
+    }
+
+    @Override
+    public List<UserRequest> getUserActions(Long id) {
+        return userRequestRepository.getAllForUser(id);
     }
 }

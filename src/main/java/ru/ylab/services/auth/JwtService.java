@@ -1,6 +1,6 @@
 package ru.ylab.services.auth;
 
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import ru.ylab.dto.out.SignInResult;
 import ru.ylab.models.User;
 

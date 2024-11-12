@@ -2,25 +2,21 @@ package ru.ylab.testcontainers.repositories;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.ylab.dto.in.SignUpForm;
 import ru.ylab.dto.in.UserSearchForm;
 import ru.ylab.models.User;
 import ru.ylab.repositories.UserRepository;
-import ru.ylab.testcontainers.config.AbstractSpringTest;
+import ru.ylab.testcontainers.config.AbstractDbTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserRepositoryTest extends AbstractSpringTest {
+public class UserRepositoryTest extends AbstractDbTest {
 
+    @Autowired
     private UserRepository userRepository;
-
-    @BeforeEach
-    public void setup() {
-        userRepository = this.appContext.getBean(UserRepository.class);
-    }
 
     @DisplayName("Test(repository): find user by id")
     @Test
@@ -52,7 +48,7 @@ public class UserRepositoryTest extends AbstractSpringTest {
         UserSearchForm form = new UserSearchForm();
         form.setRole(User.Role.ADMIN);
         List<User> users = userRepository.search(form);
-        assertThat(users).size().isEqualTo(1);
+        assertThat(users).hasSize(1);
         assertThat(users.get(0).getRole()).isEqualTo(User.Role.ADMIN);
     }
 
@@ -62,7 +58,7 @@ public class UserRepositoryTest extends AbstractSpringTest {
         UserSearchForm form = new UserSearchForm();
         form.setEmail("admin_test");
         List<User> users = userRepository.search(form);
-        assertThat(users).size().isEqualTo(1);
+        assertThat(users).hasSize(1);
         assertThat(users.get(0).getEmail()).startsWith("admin_test");
     }
 

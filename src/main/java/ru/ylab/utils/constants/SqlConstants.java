@@ -148,4 +148,16 @@ public interface SqlConstants {
      */
     @Language("SQL")
     String INSERT_INTO_REFRESH_TOKENS = "INSERT INTO security.refresh_tokens(token, user_id, created, expires) VALUES (?, ?, ?, ?)";
+
+    /**
+     * Sql request for selecting user http request.
+     */
+    @Language("SQL")
+    String SELECT_FROM_USER_REQUESTS_BY_USER_ID = "SELECT * FROM security.user_requests where user_id = ?";
+
+    /**
+     * Sql request for saving user http request.
+     */
+    @Language("SQL")
+    String INSERT_INTO_USER_REQUESTS = "INSERT INTO security.user_requests(method, uri, user_id, role, timestamp) VALUES (?, ?, ?, ?, ?)";
 }

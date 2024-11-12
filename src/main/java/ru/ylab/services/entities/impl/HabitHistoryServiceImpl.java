@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import ru.ylab.dto.in.PeriodForm;
 import ru.ylab.dto.out.HabitCompletionPercent;
