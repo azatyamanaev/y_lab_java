@@ -16,6 +16,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 
+/**
+ * Class containing swagger configuration.
+ *
+ * @author azatyamanaev
+ */
 @Configuration
 @EnableConfigurationProperties(SwaggerProperties.class)
 @Import(value = {SpringDocConfiguration.class})
