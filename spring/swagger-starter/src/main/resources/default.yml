@@ -1,8 +1,0 @@
-spring:
-  swagger-starter:
-    group-name: "habits-app"
-    packages: "ru.ylab.core.web.controllers"
-    server-url: "http://localhost:8080"
-    title: "Habits App REST API"
-    description: ""
-    version: "v1"
