@@ -1,1 +1,1 @@
-org.springframework.boot.env.EnvironmentPostProcessor=ru.ylab.swaggerstarter.config.EnvPostProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=ru.spring.swaggerstarter.config.EnvPostProcessor

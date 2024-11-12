@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>ru.ylab</groupId>
+	<groupId>ru.spring</groupId>
 	<artifactId>swagger-spring-boot-starter</artifactId>
 	<version>1.0</version>
 	<name>swagger-starter</name>

@@ -1,4 +1,4 @@
-package ru.ylab.swaggerstarter.config;
+package ru.spring.swaggerstarter.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -1,4 +1,4 @@
-package ru.ylab.swaggerstarter.config;
+package ru.spring.swaggerstarter.config;
 
 import java.io.IOException;
 
