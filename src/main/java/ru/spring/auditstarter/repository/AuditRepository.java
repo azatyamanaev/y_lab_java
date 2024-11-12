@@ -1,4 +1,4 @@
-package ru.ylab.auditstarter.repository;
+package ru.spring.auditstarter.repository;
 
 import java.time.Instant;
 

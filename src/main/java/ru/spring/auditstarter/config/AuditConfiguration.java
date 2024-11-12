@@ -1,10 +1,10 @@
-package ru.ylab.auditstarter.config;
+package ru.spring.auditstarter.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.ylab.auditstarter.aspects.AuditAspect;
-import ru.ylab.auditstarter.repository.AuditRepository;
+import ru.spring.auditstarter.aspects.AuditAspect;
+import ru.spring.auditstarter.repository.AuditRepository;
 
 /**
  * Class containing user requests audit configuration.

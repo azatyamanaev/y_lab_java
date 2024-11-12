@@ -1,4 +1,4 @@
-package ru.ylab.auditstarter.aspects;
+package ru.spring.auditstarter.aspects;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,7 +17,7 @@ public class MetricsAspect {
 
     private static Logger logger = LoggerFactory.getLogger(MetricsAspect.class);
 
-    @Pointcut("within(@ru.ylab.auditstarter.annotations.CalculateExecution *)")
+    @Pointcut("within(@ru.spring.auditstarter.annotations.CalculateExecution *)")
     public void annotatedWithCalculateExecution() {
     }
 

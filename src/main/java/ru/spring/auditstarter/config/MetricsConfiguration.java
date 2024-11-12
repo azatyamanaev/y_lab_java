@@ -1,9 +1,9 @@
-package ru.ylab.auditstarter.config;
+package ru.spring.auditstarter.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.ylab.auditstarter.aspects.MetricsAspect;
+import ru.spring.auditstarter.aspects.MetricsAspect;
 
 /**
  * Class containing application metrics configuration.

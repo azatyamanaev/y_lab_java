@@ -1,4 +1,4 @@
-package ru.ylab.auditstarter.annotations;
+package ru.spring.auditstarter.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,10 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
-import ru.ylab.auditstarter.config.MetricsConfiguration;
+import ru.spring.auditstarter.aspects.MetricsAspect;
+import ru.spring.auditstarter.config.MetricsConfiguration;
 
 /**
- * Annotation for enabling {@link ru.ylab.auditstarter.aspects.MetricsAspect}.
+ * Annotation for enabling {@link MetricsAspect}.
  *
  * @author azatyamanaev
  */

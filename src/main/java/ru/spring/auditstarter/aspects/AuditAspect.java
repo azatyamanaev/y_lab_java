@@ -1,4 +1,4 @@
-package ru.ylab.auditstarter.aspects;
+package ru.spring.auditstarter.aspects;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,7 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import ru.ylab.auditstarter.repository.AuditRepository;
+import ru.spring.auditstarter.repository.AuditRepository;
 
 /**
  * Aspect for auditing user actions.
@@ -27,7 +27,7 @@ public class AuditAspect {
         this.auditRepository = auditRepository;
     }
 
-    @Pointcut("within(@ru.ylab.auditstarter.annotations.AuditRequest *)")
+    @Pointcut("within(@ru.spring.auditstarter.annotations.AuditRequest *)")
     public void annotatedWithAuditRequest() {
     }
 
