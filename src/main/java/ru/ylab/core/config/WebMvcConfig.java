@@ -11,9 +11,19 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Class for customizing Spring MVC configuration.
+ *
+ * @author azatyamanaev
+ */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    /**
+     * Adds custom {@link HttpMessageConverter}s.
+     *
+     * @param converters list of converters to use in application
+     */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new ByteArrayHttpMessageConverter());

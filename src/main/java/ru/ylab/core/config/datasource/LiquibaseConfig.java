@@ -17,7 +17,7 @@ import ru.ylab.core.settings.LiquibaseSettings;
 import ru.ylab.core.utils.constants.ErrorConstants;
 
 /**
- * Class for migrating database with Liquibase.
+ * Class for configuring and creating {@link Liquibase} instance.
  *
  * @author azatyamanaev
  */
@@ -30,7 +30,7 @@ public class LiquibaseConfig {
     private final LiquibaseSettings settings;
 
     /**
-     * Creates new Liquibase instance.
+     * Creates new {@link Liquibase} instance.
      *
      * @param datasource datasource for getting database connection
      * @return Liquibase instance
