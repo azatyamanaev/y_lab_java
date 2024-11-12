@@ -3,19 +3,19 @@ package ru.ylab.auditstarter.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.ylab.auditstarter.aspects.AuditAspect;
+import ru.ylab.auditstarter.aspects.MetricsAspect;
 
 /**
- * Class containing user requests audit configuration.
+ * Class containing application metrics configuration.
  *
  * @author azatyamanaev
  */
 @Configuration
-public class AuditConfiguration {
+public class MetricsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AuditAspect auditAspect() {
-        return new AuditAspect();
+    public MetricsAspect metricsAspect() {
+        return new MetricsAspect();
     }
 }

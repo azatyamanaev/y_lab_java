@@ -5,9 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
@@ -20,12 +18,8 @@ public class AuditAspect {
 
     private static Logger logger = LoggerFactory.getLogger(AuditAspect.class);
 
-    @Pointcut("within(@ru.ylab.auditstarter.annotations.LogRequest *)")
+    @Pointcut("within(@ru.ylab.auditstarter.annotations.AuditRequest *)")
     public void annotatedWithLogRequest() {
-    }
-
-    @Pointcut("within(@ru.ylab.auditstarter.annotations.LogQuery *)")
-    public void annotatedWithLogQuery() {
     }
 
     @Pointcut("execution(public * *(..))")
@@ -42,15 +36,5 @@ public class AuditAspect {
         Method getRole = Arrays.stream(methods).filter(x -> x.getName().equals("getRole")).findFirst().get();
         logger.info("Request {} {} completed for user {} with role {}", req.getMethod(), req.getRequestURI(),
                 getEmail.invoke(user), getRole.invoke(user));
-    }
-
-    @Around("annotatedWithLogQuery() && publicMethod()")
-    public Object calculateDatabaseRequestExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-        Object result = joinPoint.proceed();
-        long endTime = System.currentTimeMillis() - startTime;
-        logger.info("Method {} in class {} executed in {} ms", joinPoint.getSignature().getName(),
-                joinPoint.getTarget().getClass().getSimpleName(), endTime);
-        return result;
     }
 }

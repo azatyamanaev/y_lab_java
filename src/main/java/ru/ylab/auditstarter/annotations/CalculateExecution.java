@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for marking classes or methods working with database.
+ * Annotation for marking classes or methods for which execution time will be calculated.
  *
  * @author azatyamanaev
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LogQuery {
+public @interface CalculateExecution {
 }

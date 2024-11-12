@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for marking classes ot methods processing http requests.
+ * Annotation for marking classes or methods processing http requests.
  *
  * @author azatyamanaev
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LogRequest {
+public @interface AuditRequest {
 }
