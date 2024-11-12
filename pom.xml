@@ -49,14 +49,14 @@
 
     <!-- AOP Starter -->
     <dependency>
-      <groupId>ru.ylab</groupId>
+      <groupId>ru.spring</groupId>
       <artifactId>audit-spring-boot-starter</artifactId>
       <version>1.0</version>
     </dependency>
 
     <!-- OpenAPI Starter -->
     <dependency>
-      <groupId>ru.ylab</groupId>
+      <groupId>ru.spring</groupId>
       <artifactId>swagger-spring-boot-starter</artifactId>
       <version>1.0</version>
     </dependency>
@@ -209,7 +209,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>ru.ylab.core.WebApplication</mainClass>
+          <mainClass>ru.ylab.WebApplication</mainClass>
         </configuration>
       </plugin>
       <plugin>
