@@ -7,6 +7,7 @@ import ru.ylab.core.dto.in.UserForm;
 import ru.ylab.core.dto.in.UserSearchForm;
 import ru.ylab.core.exception.HttpException;
 import ru.ylab.core.models.User;
+import ru.ylab.core.models.UserRequest;
 
 /**
  * Interface describing logic for working with users.
@@ -76,4 +77,12 @@ public interface UserService {
      * @param userId user id
      */
     void delete(Long userId);
+
+    /**
+     * Gets user actions.
+     *
+     * @param id user id
+     * @return list of user actions
+     */
+    List<UserRequest> getUserActions(Long id);
 }

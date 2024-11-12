@@ -17,13 +17,16 @@ import ru.ylab.auditstarter.annotations.AuditRequest;
 import ru.ylab.core.dto.in.UserForm;
 import ru.ylab.core.dto.in.UserSearchForm;
 import ru.ylab.core.dto.mappers.UserMapper;
+import ru.ylab.core.dto.mappers.UserRequestMapper;
 import ru.ylab.core.dto.out.UserDto;
+import ru.ylab.core.dto.out.UserRequestDto;
 import ru.ylab.core.services.entities.UserService;
 
 import static ru.ylab.core.utils.constants.WebConstants.ADMIN_URL;
 import static ru.ylab.core.utils.constants.WebConstants.ID_URL;
 import static ru.ylab.core.utils.constants.WebConstants.SEARCH_URL;
 import static ru.ylab.core.utils.constants.WebConstants.USERS_URL;
+import static ru.ylab.core.utils.constants.WebConstants.USER_ACTIONS_URL;
 
 /**
  * Controller for handling users HTTP requests for admin.
@@ -37,6 +40,7 @@ import static ru.ylab.core.utils.constants.WebConstants.USERS_URL;
 public class AdminUsersController {
 
     private final UserMapper userMapper;
+    private final UserRequestMapper userRequestMapper;
     private final UserService userService;
 
     /**
@@ -82,5 +86,13 @@ public class AdminUsersController {
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Gets user requests by user id.
+     */
+    @GetMapping(USER_ACTIONS_URL + ID_URL)
+    public ResponseEntity<List<UserRequestDto>> getUserRequests(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(userRequestMapper.mapToDto(userService.getUserActions(id)));
     }
 }

@@ -44,6 +44,7 @@ public interface WebConstants {
     String USER_URL = "/user";
     String SELF_URL = "/self";
     String USERS_URL = "/users";
+    String USER_ACTIONS_URL = "/actions";
 
     // admin patterns
 
