@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.auditstarter.annotations.LogRequest;
+import ru.ylab.auditstarter.annotations.AuditRequest;
 import ru.ylab.core.dto.in.PeriodForm;
 import ru.ylab.core.dto.out.HabitCompletionPercent;
 import ru.ylab.core.dto.out.HabitCompletionStreak;
@@ -32,7 +32,7 @@ import static ru.ylab.core.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
-@LogRequest
+@AuditRequest
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(USER_URL + HABIT_HISTORY_URL)

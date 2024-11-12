@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
-import ru.ylab.auditstarter.annotations.LogQuery;
+import ru.ylab.auditstarter.annotations.CalculateExecution;
 import ru.ylab.core.dto.in.HabitSearchForm;
 import ru.ylab.core.exception.HttpException;
 import ru.ylab.core.models.Habit;
@@ -30,7 +30,7 @@ import ru.ylab.core.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
-@LogQuery
+@CalculateExecution
 @RequiredArgsConstructor
 @Repository
 public class HabitRepositoryImpl implements HabitRepository {

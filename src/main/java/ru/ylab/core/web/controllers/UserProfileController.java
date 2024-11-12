@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.ylab.auditstarter.annotations.LogRequest;
+import ru.ylab.auditstarter.annotations.AuditRequest;
 import ru.ylab.core.dto.in.SignUpForm;
 import ru.ylab.core.dto.mappers.UserMapper;
 import ru.ylab.core.dto.out.UserDto;
@@ -25,7 +25,7 @@ import static ru.ylab.core.utils.constants.WebConstants.USER_URL;
  *
  * @author azatyamanaev
  */
-@LogRequest
+@AuditRequest
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(USER_URL + SELF_URL)

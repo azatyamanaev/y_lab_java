@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.ylab.auditstarter.annotations.LogQuery;
+import ru.ylab.auditstarter.annotations.CalculateExecution;
 import ru.ylab.core.dto.out.HabitHistoryProjection;
 import ru.ylab.core.exception.HttpException;
 import ru.ylab.core.models.HabitHistory;
@@ -26,7 +26,7 @@ import ru.ylab.core.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
-@LogQuery
+@CalculateExecution
 @RequiredArgsConstructor
 @Repository
 public class HabitHistoryRepositoryImpl implements HabitHistoryRepository {

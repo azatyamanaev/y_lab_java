@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.ylab.auditstarter.annotations.LogQuery;
+import ru.ylab.auditstarter.annotations.CalculateExecution;
 import ru.ylab.core.exception.HttpException;
 import ru.ylab.core.models.RefreshToken;
 import ru.ylab.core.repositories.RefreshTokenRepository;
@@ -24,7 +24,7 @@ import ru.ylab.core.utils.constants.SqlConstants;
  *
  * @author azatyamanaev
  */
-@LogQuery
+@CalculateExecution
 @RequiredArgsConstructor
 @Repository
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
