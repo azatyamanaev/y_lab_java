@@ -32,7 +32,7 @@ public interface ErrorConstants {
     String DATABASE_ACCESS_ERROR = "Database access error";
     String BAD_REQUEST = "Bad request";
     String UNAUTHORIZED = "Unauthorized";
-    String FORBIDDEN = "Access forbidden";
+    String FORBIDDEN = "Access denied";
     String INTERNAL_SERVER_ERROR = "Internal server error";
     String METHOD_NOT_ALLOWED = "Method not allowed";
 }

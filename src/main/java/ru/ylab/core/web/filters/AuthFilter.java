@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -40,38 +39,47 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
         try {
             HttpServletRequest request = (HttpServletRequest) req;
-            String uri = request.getRequestURI();
-            uri = uri.substring(uri.lastIndexOf(WebConstants.APP_CONTEXT_PATH) + WebConstants.APP_CONTEXT_PATH.length());
-
-            HttpServletResponse response = (HttpServletResponse) resp;
             String authorization = request.getHeader("Authorization");
+            validateAuthorization(authorization);
 
-            if (StringUtils.isBlank(authorization)) {
-                throw HttpException.unauthorized().addDetail(ErrorConstants.EMPTY_PARAM, "Authorization Header");
-            } else if (!authorization.startsWith(WebConstants.JWTOKEN_PREFIX)) {
-                throw HttpException.unauthorized().addDetail(ErrorConstants.INVALID_PARAM, "Authorization Header");
-            } else {
-                authorization = authorization.substring(WebConstants.JWTOKEN_PREFIX.length());
-                JWToken token = jwtService.parse(authorization);
-                User.Role role = token.getRole();
+            authorization = authorization.substring(WebConstants.JWTOKEN_PREFIX.length());
+            JWToken token = jwtService.parse(authorization);
+            checkUserRole(request, token.getRole());
 
-                if (uri.startsWith(ADMIN_URL) && role.equals(User.Role.USER) ||
-                        uri.startsWith(USER_URL) && role.equals(User.Role.ADMIN)) {
-                    throw HttpException.forbidden();
-                } else {
-                    User user = userService.getByEmail(token.getUsername());
-                    if (user == null) {
-                        throw HttpException.badRequest().addDetail(ErrorConstants.NOT_FOUND, "user");
-                    } else {
-                        request.setAttribute("currentUser", user);
-                        log.info("User {} authorized", token.getUsername());
-                        chain.doFilter(req, resp);
-                    }
-                }
-            }
+            User user = userService.getByEmail(token.getUsername());
+            request.setAttribute("currentUser", user);
+            log.info("User {} authorized", token.getUsername());
+            chain.doFilter(req, resp);
         } catch (Exception e) {
             req.setAttribute(ERROR_EXCEPTION, e);
             req.getRequestDispatcher(ErrorConstants.ERROR_HANDLER_URL).forward(req, resp);
+        }
+    }
+
+    /**
+     * Checks whether Authorization header is valid.
+     *
+     * @param authorization Authorization header
+     */
+    private void validateAuthorization(String authorization) {
+        if (StringUtils.isBlank(authorization)) {
+            throw HttpException.unauthorized().addDetail(ErrorConstants.EMPTY_PARAM, "Authorization Header");
+        } else if (!authorization.startsWith(WebConstants.JWTOKEN_PREFIX)) {
+            throw HttpException.unauthorized().addDetail(ErrorConstants.INVALID_PARAM, "Authorization Header");
+        }
+    }
+
+    /**
+     * Checks whether user role has permissions for executing http request.
+     *
+     * @param request http request
+     * @param role user role
+     */
+    private void checkUserRole(HttpServletRequest request, User.Role role) {
+        String uri = request.getRequestURI();
+        if (uri.startsWith(ADMIN_URL) && role.equals(User.Role.USER) ||
+                uri.startsWith(USER_URL) && role.equals(User.Role.ADMIN)) {
+            throw HttpException.forbidden();
         }
     }
 }
